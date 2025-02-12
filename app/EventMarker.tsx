@@ -11,7 +11,7 @@ interface Props {
     onPress: (item: IFeature) => void;
 }
 
-export const Point: FunctionComponent<Props> = memo(
+export const EventMarker: FunctionComponent<Props> = memo(
     ({ item, onPress }) => {
         return (
             <MapsMarker
@@ -23,8 +23,9 @@ export const Point: FunctionComponent<Props> = memo(
                     latitude: item.geometry.coordinates[1],
                     longitude: item.geometry.coordinates[0],
                 }}
-                // tracksViewChanges={false}
+                tracksViewChanges={false}
                 onPress={() => onPress(item)}
+                useLegacyPinView={true}
             >
                 {item.properties?.cluster ? (
                     // Render Cluster

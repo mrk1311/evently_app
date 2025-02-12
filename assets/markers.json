@@ -5,10 +5,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    -0.09,
-                    51.505
-                ]
+                "coordinates": [-0.09, 51.505]
             },
             "properties": {
                 "name": "London Music Festival",
@@ -24,10 +21,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    -1.89,
-                    52.486
-                ]
+                "coordinates": [-1.89, 52.486]
             },
             "properties": {
                 "name": "Birmingham Sports Meet",
@@ -43,10 +37,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    20.4801,
-                    53.7784
-                ]
+                "coordinates": [20.4801, 53.7784]
             },
             "properties": {
                 "name": "Olsztyn Science Conference",
@@ -62,10 +53,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    19.945,
-                    50.0647
-                ]
+                "coordinates": [19.945, 50.0647]
             },
             "properties": {
                 "name": "Krak\u00f3w Art Exhibition",
@@ -81,10 +69,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    21.0122,
-                    52.2297
-                ]
+                "coordinates": [21.0122, 52.2297]
             },
             "properties": {
                 "name": "Warsaw Music Festival",
@@ -100,10 +85,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    18.6466,
-                    54.352
-                ]
+                "coordinates": [18.6466, 54.352]
             },
             "properties": {
                 "name": "Gda\u0144sk Theatre Show",
@@ -119,10 +101,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    -3.188,
-                    55.953
-                ]
+                "coordinates": [-3.188, 55.953]
             },
             "properties": {
                 "name": "Edinburgh Film Festival",
@@ -138,10 +117,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    18.93,
-                    50.341
-                ]
+                "coordinates": [18.93, 50.341]
             },
             "properties": {
                 "name": "Bytom Music Show",
@@ -157,10 +133,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    -1.549,
-                    53.799
-                ]
+                "coordinates": [-1.549, 53.799]
             },
             "properties": {
                 "name": "Leeds Theatre Performance",
@@ -176,10 +149,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    14.5528,
-                    53.4285
-                ]
+                "coordinates": [14.5528, 53.4285]
             },
             "properties": {
                 "name": "Szczecin Festival",
@@ -195,10 +165,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    17.4829,
-                    50.8683
-                ]
+                "coordinates": [17.4829, 50.8683]
             },
             "properties": {
                 "name": "Nysa Theatre Night",
@@ -214,10 +181,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    -2.587,
-                    51.454
-                ]
+                "coordinates": [-2.587, 51.454]
             },
             "properties": {
                 "name": "Bristol Arts Fair",
@@ -233,10 +197,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    19.456,
-                    51.759
-                ]
+                "coordinates": [19.456, 51.759]
             },
             "properties": {
                 "name": "\u0141\u00f3d\u017a Sport Gala",
@@ -252,10 +213,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    -4.1427,
-                    50.3755
-                ]
+                "coordinates": [-4.1427, 50.3755]
             },
             "properties": {
                 "name": "Plymouth Cultural Fair",
@@ -271,10 +229,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    23.1688,
-                    53.1325
-                ]
+                "coordinates": [23.1688, 53.1325]
             },
             "properties": {
                 "name": "Bia\u0142ystok Science Summit",
@@ -290,10 +245,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    19.126,
-                    50.292
-                ]
+                "coordinates": [19.126, 50.292]
             },
             "properties": {
                 "name": "Jaworzno Jazz Nights",
@@ -309,10 +261,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    19.45,
-                    51.75
-                ]
+                "coordinates": [19.45, 51.75]
             },
             "properties": {
                 "name": "Pabianice Theatre Festival",
@@ -328,10 +277,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    22.9297,
-                    54.0935
-                ]
+                "coordinates": [22.9297, 54.0935]
             },
             "properties": {
                 "name": "Suwa\u0142ki Sports Marathon",
@@ -347,10 +293,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    20.983,
-                    50.0167
-                ]
+                "coordinates": [20.983, 50.0167]
             },
             "properties": {
                 "name": "Bochnia Arts Expo",
@@ -366,10 +309,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    14.7035,
-                    51.822
-                ]
+                "coordinates": [14.7035, 51.822]
             },
             "properties": {
                 "name": "\u017bary Summer Music Fest",
@@ -385,10 +325,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    15.5059,
-                    51.9397
-                ]
+                "coordinates": [15.5059, 51.9397]
             },
             "properties": {
                 "name": "Zielona G\u00f3ra Science Expo",
@@ -404,10 +341,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    16.9252,
-                    52.4064
-                ]
+                "coordinates": [16.9252, 52.4064]
             },
             "properties": {
                 "name": "Pozna\u0144 Art and Wine",
@@ -423,10 +357,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    19.9456,
-                    50.0669
-                ]
+                "coordinates": [19.9456, 50.0669]
             },
             "properties": {
                 "name": "Krak\u00f3w International Conference",
@@ -442,10 +373,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    19.279,
-                    52.618
-                ]
+                "coordinates": [19.279, 52.618]
             },
             "properties": {
                 "name": "W\u0142oc\u0142awek Open Air Festival",
@@ -461,10 +389,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    21.0122,
-                    52.2296
-                ]
+                "coordinates": [21.0122, 52.2296]
             },
             "properties": {
                 "name": "Warsaw Summer Jazz Nights",
@@ -480,10 +405,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    17.0385,
-                    51.1079
-                ]
+                "coordinates": [17.0385, 51.1079]
             },
             "properties": {
                 "name": "Wroc\u0142aw Science Symposium",
@@ -499,10 +421,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    -0.1278,
-                    51.5074
-                ]
+                "coordinates": [-0.1278, 51.5074]
             },
             "properties": {
                 "name": "London Theatre Week",
@@ -518,10 +437,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    18.0084,
-                    53.1235
-                ]
+                "coordinates": [18.0084, 53.1235]
             },
             "properties": {
                 "name": "Bydgoszcz Science Expo",
@@ -537,10 +453,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    21.0122,
-                    52.2296
-                ]
+                "coordinates": [21.0122, 52.2296]
             },
             "properties": {
                 "name": "Warsaw Tech Meetup",
@@ -556,10 +469,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    19.379,
-                    51.676
-                ]
+                "coordinates": [19.379, 51.676]
             },
             "properties": {
                 "name": "\u0141\u00f3d\u017a Theatre Night",
@@ -575,10 +485,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    13.0384,
-                    51.1077
-                ]
+                "coordinates": [13.0384, 51.1077]
             },
             "properties": {
                 "name": "Dresden Art Expo",
@@ -594,10 +501,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    12.5683,
-                    55.6761
-                ]
+                "coordinates": [12.5683, 55.6761]
             },
             "properties": {
                 "name": "Copenhagen Jazz Festival",
@@ -613,10 +517,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    16.3738,
-                    48.2082
-                ]
+                "coordinates": [16.3738, 48.2082]
             },
             "properties": {
                 "name": "Vienna International Film Festival",
@@ -632,10 +533,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    6.9603,
-                    50.9375
-                ]
+                "coordinates": [6.9603, 50.9375]
             },
             "properties": {
                 "name": "Cologne Carnival",
@@ -651,10 +549,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    10.7522,
-                    59.9139
-                ]
+                "coordinates": [10.7522, 59.9139]
             },
             "properties": {
                 "name": "Oslo Science Fair",
@@ -670,10 +565,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    12.4964,
-                    41.9028
-                ]
+                "coordinates": [12.4964, 41.9028]
             },
             "properties": {
                 "name": "Rome Music Fest",
@@ -689,10 +581,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    4.8952,
-                    52.3702
-                ]
+                "coordinates": [4.8952, 52.3702]
             },
             "properties": {
                 "name": "Amsterdam Art Walk",
@@ -708,10 +597,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    24.9354,
-                    60.1695
-                ]
+                "coordinates": [24.9354, 60.1695]
             },
             "properties": {
                 "name": "Helsinki Theatre Festival",
@@ -727,10 +613,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    -9.1393,
-                    38.7223
-                ]
+                "coordinates": [-9.1393, 38.7223]
             },
             "properties": {
                 "name": "Lisbon Music in the Park",
@@ -746,10 +629,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    23.7275,
-                    37.9838
-                ]
+                "coordinates": [23.7275, 37.9838]
             },
             "properties": {
                 "name": "Athens History Conference",
@@ -765,10 +645,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    -3.7038,
-                    40.4168
-                ]
+                "coordinates": [-3.7038, 40.4168]
             },
             "properties": {
                 "name": "Madrid Open-Air Theatre",
@@ -784,10 +661,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    -6.2603,
-                    53.3498
-                ]
+                "coordinates": [-6.2603, 53.3498]
             },
             "properties": {
                 "name": "Dublin Writers' Festival",
@@ -803,10 +677,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    19.0402,
-                    47.4979
-                ]
+                "coordinates": [19.0402, 47.4979]
             },
             "properties": {
                 "name": "Budapest Science Symposium",
@@ -822,10 +693,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    14.4378,
-                    50.0755
-                ]
+                "coordinates": [14.4378, 50.0755]
             },
             "properties": {
                 "name": "Prague International Art Fair",
@@ -841,10 +709,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    8.6821,
-                    50.1109
-                ]
+                "coordinates": [8.6821, 50.1109]
             },
             "properties": {
                 "name": "Frankfurt Music Showcase",
@@ -860,10 +725,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    24.7536,
-                    59.437
-                ]
+                "coordinates": [24.7536, 59.437]
             },
             "properties": {
                 "name": "Tallinn Design Week",
@@ -879,10 +741,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    9.19,
-                    45.4642
-                ]
+                "coordinates": [9.19, 45.4642]
             },
             "properties": {
                 "name": "Milan Fashion Conference",
@@ -898,10 +757,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    4.3499,
-                    50.8467
-                ]
+                "coordinates": [4.3499, 50.8467]
             },
             "properties": {
                 "name": "Brussels Theatre Nights",
@@ -917,10 +773,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    2.3522,
-                    48.8566
-                ]
+                "coordinates": [2.3522, 48.8566]
             },
             "properties": {
                 "name": "Paris Arts and Culture Fest",
@@ -936,10 +789,7 @@
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [
-                    2.1734,
-                    41.3851
-                ]
+                "coordinates": [2.1734, 41.3851]
             },
             "properties": {
                 "name": "Barcelona Film Showcase",
