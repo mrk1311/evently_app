@@ -5,7 +5,9 @@ import { Clusterer, isPointCluster } from "react-native-clusterer";
 import type { Region } from "react-native-maps";
 import type { Feature, Point, FeatureCollection } from "geojson";
 import { EventMarker } from "./EventMarker";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import type { supercluster } from "react-native-clusterer";
+
+type IFeature = supercluster.PointOrClusterFeature<any, any>;
 
 type EventProperties = {
     id: number;
@@ -33,6 +35,15 @@ const { width, height } = Dimensions.get("window");
 const MAP_DIMENSIONS = { width, height };
 
 const ClusteredMap: React.FC<MapProps> = ({ data }) => {
+    const mapRef = React.useRef<MapView>(null);
+
+    const _handlePointPress = (point: IFeature) => {
+        if (isPointCluster(point)) {
+            const toRegion = point.properties.getExpansionRegion();
+            mapRef.current?.animateToRegion(toRegion, 500);
+        }
+    };
+
     const [region, setRegion] = useState<Region>({
         // Center on Europe
         latitude: 51.1657,
@@ -41,21 +52,10 @@ const ClusteredMap: React.FC<MapProps> = ({ data }) => {
         longitudeDelta: 30,
     });
 
-    // const getMarkerColor = (type: string) => {
-    //     const colors: { [key: string]: string } = {
-    //         music: "#FF4081",
-    //         sport: "#7C4DFF",
-    //         conference: "#00BCD4",
-    //         art: "#FF9800",
-    //         theatre: "#4CAF50",
-    //         festival: "#9C27B0",
-    //     };
-    //     return colors[type] || "#2196F3";
-    // };
-
     return (
         <View style={styles.container}>
             <MapView
+                ref={mapRef}
                 style={styles.map}
                 region={region}
                 onRegionChangeComplete={setRegion}
@@ -73,17 +73,7 @@ const ClusteredMap: React.FC<MapProps> = ({ data }) => {
                                         : `point-${item.properties.id}`
                                 }
                                 item={item}
-                                onPress={(item) => {
-                                    // zoom to the cluster
-                                    if (isPointCluster(item)) {
-                                        const expansionRegion =
-                                            item.properties.getExpansionRegion();
-                                        setRegion(expansionRegion);
-                                    } else {
-                                        // handle point press
-                                        console.log("Point pressed", item);
-                                    }
-                                }}
+                                onPress={_handlePointPress}
                             />
                         );
                     }}
@@ -134,4 +124,4 @@ const styles = StyleSheet.create({
 });
 
 export default ClusteredMap;
-export type { EventFeatureCollection };
+export type { EventFeature, EventFeatureCollection };

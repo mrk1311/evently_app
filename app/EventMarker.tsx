@@ -11,6 +11,18 @@ interface Props {
     onPress: (item: IFeature) => void;
 }
 
+const getMarkerColor = (type: string) => {
+    const colors: { [key: string]: string } = {
+        music: "#FF4081",
+        sport: "#7C4DFF",
+        conference: "#00BCD4",
+        art: "#FF9800",
+        theatre: "#4CAF50",
+        festival: "#9C27B0",
+    };
+    return colors[type] || "#2196F3";
+};
+
 export const EventMarker: FunctionComponent<Props> = memo(
     ({ item, onPress }) => {
         return (
@@ -35,13 +47,31 @@ export const EventMarker: FunctionComponent<Props> = memo(
                         </Text>
                     </View>
                 ) : (
-                    // Else, use default behavior to render
+                    // Else, create a custom marker for the event
                     // a marker and add a callout to it
-                    <Callout>
-                        <View style={styles.calloutContainer}>
-                            <Text>{JSON.stringify(item.properties)}</Text>
+                    <>
+                        <View
+                            style={[
+                                styles.eventMarker,
+                                {
+                                    backgroundColor: getMarkerColor(
+                                        item.properties.type
+                                    ),
+                                },
+                            ]}
+                        >
+                            <Text style={styles.clusterMarkerText}>
+                                {item.properties.type.charAt(0).toUpperCase()}
+                            </Text>
                         </View>
-                    </Callout>
+
+                        <Callout tooltip>
+                            <View style={styles.calloutContainer}>
+                                <Text>{item.properties.title}</Text>
+                                <Text>{item.properties.description}</Text>
+                            </View>
+                        </Callout>
+                    </>
                 )}
             </MapsMarker>
         );
@@ -71,6 +101,14 @@ const styles = StyleSheet.create({
         height: 40,
         borderRadius: 20,
         backgroundColor: "#8eb3ed",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    eventMarker: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: "#2196F3",
         justifyContent: "center",
         alignItems: "center",
     },
