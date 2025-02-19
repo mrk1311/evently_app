@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MapView from "react-native-maps";
 import { StyleSheet, View, Dimensions } from "react-native";
 import { Clusterer, isPointCluster } from "react-native-clusterer";
@@ -29,28 +29,34 @@ type EventFeatureCollection = FeatureCollection & {
 
 type MapProps = {
     data: EventFeatureCollection;
+    center: Region;
 };
 
 const { width, height } = Dimensions.get("window");
 const MAP_DIMENSIONS = { width, height };
 
-const ClusteredMap: React.FC<MapProps> = ({ data }) => {
+const ClusteredMap: React.FC<MapProps> = ({ data, center }) => {
     const mapRef = React.useRef<MapView>(null);
+
+    const [region, setRegion] = useState<Region>(center);
+
+    const handleRegionChange = (newRegion: Region) => {
+        console.log(newRegion);
+        setRegion(newRegion);
+    };
 
     const _handlePointPress = (point: IFeature) => {
         if (isPointCluster(point)) {
             const toRegion = point.properties.getExpansionRegion();
             mapRef.current?.animateToRegion(toRegion, 500);
+        } else {
+            console.log("Point pressed", point);
         }
     };
 
-    const [region, setRegion] = useState<Region>({
-        // Center on Europe
-        latitude: 51.1657,
-        longitude: 10.4515,
-        latitudeDelta: 30,
-        longitudeDelta: 30,
-    });
+    useEffect(() => {
+        mapRef.current?.animateToRegion(center, 500);
+    }, [center]);
 
     return (
         <View style={styles.container}>
@@ -58,7 +64,7 @@ const ClusteredMap: React.FC<MapProps> = ({ data }) => {
                 ref={mapRef}
                 style={styles.map}
                 region={region}
-                onRegionChangeComplete={setRegion}
+                onRegionChangeComplete={handleRegionChange}
             >
                 <Clusterer
                     data={data.features}

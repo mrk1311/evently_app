@@ -48,29 +48,38 @@ export const EventMarker: FunctionComponent<Props> = memo(
                     </View>
                 ) : (
                     // Else, create a custom marker for the event
-                    // a marker and add a callout to it
+                    // a marker and add a always visible callout to it
                     <>
-                        <View
-                            style={[
-                                styles.eventMarker,
-                                {
-                                    backgroundColor: getMarkerColor(
-                                        item.properties.type
-                                    ),
-                                },
-                            ]}
-                        >
-                            <Text style={styles.clusterMarkerText}>
-                                {item.properties.type.charAt(0).toUpperCase()}
-                            </Text>
-                        </View>
+                        <View style={styles.markerContainer}>
+                            <View style={styles.markerTitlePopup}>
+                                <Text style={styles.markerTitle}>
+                                    {item.properties.name}
+                                </Text>
+                            </View>
+                            <View
+                                style={[
+                                    styles.eventMarker,
+                                    {
+                                        backgroundColor: getMarkerColor(
+                                            item.properties.type
+                                        ),
+                                    },
+                                ]}
+                            >
+                                <Text style={styles.clusterMarkerText}>
+                                    {item.properties.type
+                                        .charAt(0)
+                                        .toUpperCase()}
+                                </Text>
+                            </View>
 
-                        <Callout tooltip>
+                            {/* <Callout tooltip>
                             <View style={styles.calloutContainer}>
                                 <Text>{item.properties.title}</Text>
                                 <Text>{item.properties.description}</Text>
                             </View>
-                        </Callout>
+                        </Callout> */}
+                        </View>
                     </>
                 )}
             </MapsMarker>
@@ -115,5 +124,25 @@ const styles = StyleSheet.create({
     clusterMarkerText: {
         color: "#fff",
         fontSize: 16,
+    },
+    markerTitlePopup: {
+        width: 100,
+        padding: 2,
+        borderRadius: 5,
+        backgroundColor: "#fff",
+    },
+    markerTitle: {
+        justifyContent: "center",
+        alignItems: "center",
+        color: "#000",
+        fontSize: 12,
+        textAlign: "center",
+    },
+    markerContainer: {
+        display: "flex",
+        gap: 3,
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
