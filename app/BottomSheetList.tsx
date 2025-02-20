@@ -101,6 +101,8 @@ const BottomSheetList: React.FC<BottomSheetProps> = ({
     );
 };
 
+// TODO make the bottom sheet as wide as the searchbar
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,

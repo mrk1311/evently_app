@@ -17,6 +17,7 @@ import {
 } from "react-native";
 // import { parseISO, isValid, isWithinInterval } from "date-fns";
 import type { EventFeature, EventFeatureCollection } from "./ClusteredMap";
+import FiltersBottomSheet from "./FiltersBottomSheet";
 
 type SearchBarProps = {
     onSearch: (lat: number, lon: number) => void;
@@ -119,6 +120,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
         onClose();
     }, [onClose]);
 
+    const openFilter = (type: string) => {
+        return (
+            <FiltersBottomSheet
+                type={type}
+                onSearch={handleSearch}
+                onClose={handleCloseSearch}
+            />
+        );
+    };
+
     const FilterButton: React.FC<{ type: "Type" | "Place" | "Date" }> = ({
         type,
     }) => {
@@ -139,6 +150,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     setPickedFilter(type);
                     setIsSearchOpen(true);
                     onOpen();
+                    openFilter(type);
                 }}
             >
                 <Text style={styles.filterButtonText}>{title}</Text>
