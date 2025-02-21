@@ -7,6 +7,7 @@ import { StyleSheet, Keyboard, ScrollView } from "react-native";
 import React, { useState } from "react";
 import type { Region } from "react-native-maps";
 import SearchBar from "./SearchBar";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 export default function App() {
     const [center, setCenter] = useState<Region>({
@@ -39,26 +40,28 @@ export default function App() {
     return (
         <>
             <GestureHandlerRootView style={styles.container}>
-                <SearchBar
-                    onClose={closeSearch}
-                    onSearch={(query) => console.log("Search query", query)}
-                    onOpen={openSearch}
-                    filteredEvents={filteredEvents}
-                    setFilteredEvents={setFilteredEvents}
-                    events={eventData as EventFeatureCollection}
-                />
-                <ScrollView horizontal={true} style={styles.container}>
-                    <ClusteredMap
-                        data={eventData as EventFeatureCollection}
-                        center={center}
+                <BottomSheetModalProvider>
+                    <SearchBar
+                        onClose={closeSearch}
+                        onSearch={(query) => console.log("Search query", query)}
+                        onOpen={openSearch}
+                        filteredEvents={filteredEvents}
+                        setFilteredEvents={setFilteredEvents}
+                        events={eventData as EventFeatureCollection}
                     />
-                    <BottomSheetList
-                        events={filteredEvents as EventFeatureCollection}
-                        onListItemClick={onListItemClick}
-                        isSearchOpen={isSearchOpen}
-                        setIsSearchOpen={setIsSearchOpen}
-                    />
-                </ScrollView>
+                    <ScrollView horizontal={true} style={styles.container}>
+                        <ClusteredMap
+                            data={eventData as EventFeatureCollection}
+                            center={center}
+                        />
+                        <BottomSheetList
+                            events={filteredEvents as EventFeatureCollection}
+                            onListItemClick={onListItemClick}
+                            isSearchOpen={isSearchOpen}
+                            setIsSearchOpen={setIsSearchOpen}
+                        />
+                    </ScrollView>
+                </BottomSheetModalProvider>
             </GestureHandlerRootView>
         </>
     );
