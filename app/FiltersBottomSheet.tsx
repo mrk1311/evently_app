@@ -1,21 +1,37 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
-import type { Region } from "react-native-maps";
+import React, { forwardRef, useMemo } from "react";
+import { View, StyleSheet, Text } from "react-native";
+import BottomSheet from "@gorhom/bottom-sheet";
 
-interface BottomSheetProps {
+interface Props {
     type: string;
-    onSearch: (query: string) => void;
-    onClose: () => void;
+    // onSearch: (query: string) => void;
+    // onClose: () => void;
 }
 
-const FiltersBottomSheet: React.FC<BottomSheetProps> = ({}) => {
+type Ref = BottomSheet;
+
+const FiltersBottomSheet = forwardRef<Ref, Props>((props, ref) => {
+    const snapPoints = useMemo(() => ["25%", "50%"], []);
     return (
-        <View>
-            <Text>Filter</Text>
-        </View>
+        <BottomSheet
+            ref={ref}
+            // index={1}
+            snapPoints={snapPoints}
+            // enablePanDownToClose={true}
+        >
+            <View style={styles.container}>
+                <Text>Filters</Text>
+            </View>
+        </BottomSheet>
     );
-};
+});
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        // justifyContent: "center",
+        // alignItems: "center",
+    },
+});
 
 export default FiltersBottomSheet;

@@ -1,14 +1,22 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    forwardRef,
+} from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
 
 interface BottomSheetProps {
+    // ref: React.RefObject<BottomSheet>;
     events: EventFeatureCollection;
     onListItemClick: (region: Region) => void;
     isSearchOpen: boolean;
     setIsSearchOpen: (isOpen: boolean) => void;
+    snapToIndex: (index: number) => void;
 }
 
 const coordinatesToRegion = (coordinates: number[]) => ({
@@ -18,31 +26,32 @@ const coordinatesToRegion = (coordinates: number[]) => ({
     longitudeDelta: 0.1,
 });
 
-const BottomSheetList: React.FC<BottomSheetProps> = ({
-    events,
-    onListItemClick,
-    isSearchOpen,
-    setIsSearchOpen,
-}) => {
+type Ref = BottomSheet;
+
+// events, onListItemClick, isSearchOpen, setIsSearchOpen
+const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // hooks
-    const sheetRef = useRef<BottomSheet>(null);
+    // const sheetRef = useRef<BottomSheet>(null);
 
     // variables
     const snapPoints = useMemo(() => ["15%", "30%", "85%"], []);
 
     useEffect(() => {
-        if (isSearchOpen) {
-            sheetRef.current?.snapToIndex(2);
+        if (props.isSearchOpen) {
+            // ref?.current?.snapToIndex(2);
             console.log("Opening bottom sheet");
         }
-    }, [isSearchOpen]);
+    }, [props.isSearchOpen]);
 
     const renderEventCard = ({ item }: { item: EventFeature }) => (
         <TouchableOpacity
             style={styles.cardContainer}
             onPress={() => {
-                onListItemClick(coordinatesToRegion(item.geometry.coordinates));
-                sheetRef.current?.snapToIndex(0);
+                props.onListItemClick(
+                    coordinatesToRegion(item.geometry.coordinates)
+                );
+                props.setIsSearchOpen(false);
+                // ref.current?.snapToIndex(0);
             }}
         >
             {/* Event Type Indicator */}
@@ -86,20 +95,22 @@ const BottomSheetList: React.FC<BottomSheetProps> = ({
 
     return (
         <BottomSheet
-            ref={sheetRef}
+            ref={ref}
             snapPoints={snapPoints}
-            enableDynamicSizing={false}
+            // enableDynamicSizing={false}
         >
-            <Text style={styles.header}>Events: {events.features.length}</Text>
+            <Text style={styles.header}>
+                Events: {props.events.features.length}
+            </Text>
             <BottomSheetFlatList
-                data={events.features as EventFeature[]}
+                data={props.events.features as EventFeature[]}
                 keyExtractor={(item) => item.properties.id.toString()}
                 renderItem={renderEventCard}
                 contentContainerStyle={styles.contentContainer}
             />
         </BottomSheet>
     );
-};
+});
 
 // TODO make the bottom sheet as wide as the searchbar
 
@@ -187,4 +198,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default BottomSheetList;
+export default ListBottomSheet;

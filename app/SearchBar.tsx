@@ -17,12 +17,13 @@ import {
 } from "react-native";
 // import { parseISO, isValid, isWithinInterval } from "date-fns";
 import type { EventFeature, EventFeatureCollection } from "./ClusteredMap";
-import FiltersBottomSheet from "./FiltersBottomSheet";
 
 type SearchBarProps = {
     onSearch: (lat: number, lon: number) => void;
     onOpen: () => void;
     onClose: () => void;
+    openFilterBottomSheet: () => void;
+    openListBottomSheet: () => void;
     filteredEvents: EventFeatureCollection;
     setFilteredEvents: (events: EventFeatureCollection) => void;
     events: EventFeatureCollection;
@@ -31,6 +32,8 @@ type SearchBarProps = {
 const SearchBar: React.FC<SearchBarProps> = ({
     onSearch,
     onOpen,
+    openFilterBottomSheet,
+    openListBottomSheet,
     onClose,
     filteredEvents,
     setFilteredEvents,
@@ -120,16 +123,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
         onClose();
     }, [onClose]);
 
-    const openFilter = (type: string) => {
-        return (
-            <FiltersBottomSheet
-                type={type}
-                onSearch={handleSearch}
-                onClose={handleCloseSearch}
-            />
-        );
-    };
-
     const FilterButton: React.FC<{ type: "Type" | "Place" | "Date" }> = ({
         type,
     }) => {
@@ -147,10 +140,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     pickedFilter === type && styles.selectedFilter,
                 ]}
                 onPress={() => {
-                    setPickedFilter(type);
-                    setIsSearchOpen(true);
-                    onOpen();
-                    openFilter(type);
+                    // setPickedFilter(type);
+                    // setIsSearchOpen(true);
+                    // onOpen();
+                    openFilterBottomSheet();
                 }}
             >
                 <Text style={styles.filterButtonText}>{title}</Text>
@@ -264,6 +257,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     onFocus={() => {
                         onOpen();
                         setIsSearchOpen(true);
+                        openListBottomSheet();
                     }}
                     onBlur={onClose}
                 />
@@ -320,7 +314,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 const styles = StyleSheet.create({
     container: {
         position: "absolute",
-        top: 50,
+        top: 45,
         width: "90%",
         alignSelf: "center",
         zIndex: 1000,

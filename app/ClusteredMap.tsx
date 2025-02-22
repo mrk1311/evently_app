@@ -65,6 +65,13 @@ const ClusteredMap: React.FC<MapProps> = ({ data, center }) => {
                 style={styles.map}
                 region={region}
                 onRegionChangeComplete={handleRegionChange}
+                showsCompass={false}
+                showsUserLocation={true}
+                showsMyLocationButton={true}
+                showsTraffic={false}
+                showsBuildings={true}
+                rotateEnabled={false}
+                pitchEnabled={false}
             >
                 <Clusterer
                     data={data.features}
