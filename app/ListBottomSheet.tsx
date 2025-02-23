@@ -34,7 +34,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // const sheetRef = useRef<BottomSheet>(null);
 
     // variables
-    const snapPoints = useMemo(() => ["15%", "30%", "85%"], []);
+    const snapPoints = useMemo(() => ["15%", "85%"], []);
 
     useEffect(() => {
         if (props.isSearchOpen) {
@@ -52,6 +52,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 );
                 props.setIsSearchOpen(false);
                 // ref.current?.snapToIndex(0);
+                props.snapToIndex(0);
             }}
         >
             {/* Event Type Indicator */}
@@ -97,7 +98,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         <BottomSheet
             ref={ref}
             snapPoints={snapPoints}
-            // enableDynamicSizing={false}
+            enableDynamicSizing={false}
         >
             <Text style={styles.header}>
                 Events: {props.events.features.length}
@@ -111,8 +112,6 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         </BottomSheet>
     );
 });
-
-// TODO make the bottom sheet as wide as the searchbar
 
 const styles = StyleSheet.create({
     container: {

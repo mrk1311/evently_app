@@ -1,20 +1,25 @@
 import ClusteredMap from "./ClusteredMap";
 import eventData from "../assets/markers.json";
-import type { EventFeatureCollection } from "./ClusteredMap";
+import type { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import ListBottomSheet from "./ListBottomSheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StyleSheet, Keyboard, ScrollView } from "react-native";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import type { Region } from "react-native-maps";
 import SearchBar from "./SearchBar";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import FiltersBottomSheet from "./FiltersBottomSheet";
+import TypesBottomSheet from "./TypesBottomSheet";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import BottomSheet from "@gorhom/bottom-sheet";
 
 export default function App() {
     const bottomSheetRef = useRef<BottomSheet>(null);
     const filterBottomSheetRef = useRef<BottomSheet>(null);
+    const [filteredEvents, setFilteredEvents] =
+        useState<EventFeatureCollection>(eventData as EventFeatureCollection);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [pickedTypes, setpickedTypes] = useState<string[]>([]);
+    const [searchQuery, setSearchQuery] = useState<string>("");
 
     const [center, setCenter] = useState<Region>({
         // Center on Europe
@@ -24,10 +29,36 @@ export default function App() {
         longitudeDelta: 30,
     });
 
-    const [filteredEvents, setFilteredEvents] =
-        useState<EventFeatureCollection>(eventData as EventFeatureCollection);
+    const filterByType = (
+        array: EventFeatureCollection
+    ): EventFeatureCollection => {
+        console.log("Filtering by type", pickedTypes);
+        const filteredFeatures = array.features.filter((event) =>
+            pickedTypes.includes(event.properties?.type)
+        );
+        console.log(filteredFeatures);
+        return {
+            type: "FeatureCollection",
+            features: filteredFeatures as EventFeature[], // Ensure the filtered features are cast to EventFeature[]
+        };
+    };
 
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const filterBySearch = (array: EventFeatureCollection) => {
+        setFilteredEvents({
+            type: "FeatureCollection",
+            features: eventData.features.filter((event) =>
+                event.properties?.name.toLowerCase().includes(searchQuery)
+            ) as EventFeature[], // Ensure the filtered features are cast to EventFeature[]
+        });
+    };
+
+    useEffect(() => {
+        let result = eventData as EventFeatureCollection;
+        result = filterByType(result);
+        // filterBySearch(result);
+        console.log("Filtered events", result.features.length);
+        setFilteredEvents(result);
+    }, [pickedTypes, searchQuery]);
 
     const onListItemClick = (region: Region): void => {
         setCenter(region);
@@ -44,12 +75,13 @@ export default function App() {
     };
 
     const openFilterBottomSheet = () => {
-        filterBottomSheetRef.current?.snapToIndex(2);
+        filterBottomSheetRef.current?.snapToIndex(0);
+
         console.log("Opening filter modal");
     };
 
     const openListBottomSheet = () => {
-        bottomSheetRef.current?.snapToIndex(2);
+        bottomSheetRef.current?.snapToIndex(1);
         console.log("Opening filter bottom sheet");
     };
 
@@ -68,14 +100,16 @@ export default function App() {
                 openListBottomSheet={openListBottomSheet}
                 filteredEvents={filteredEvents}
                 setFilteredEvents={setFilteredEvents}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
                 events={eventData as EventFeatureCollection}
             />
             <ScrollView horizontal={true} style={styles.container}>
                 <ClusteredMap
-                    data={eventData as EventFeatureCollection}
+                    data={filteredEvents as EventFeatureCollection}
                     center={center}
                 />
-                <FiltersBottomSheet type="type" ref={bottomSheetRef} />
+
                 <ListBottomSheet
                     ref={bottomSheetRef}
                     events={filteredEvents as EventFeatureCollection}
@@ -85,8 +119,19 @@ export default function App() {
                     snapToIndex={(index) =>
                         bottomSheetRef.current?.snapToIndex(index)
                     }
-                    // openListBottomSheet={openListBottomSheet}
-                    // closeListBottomSheet={closeListBottomSheet}
+                />
+
+                <TypesBottomSheet
+                    ref={filterBottomSheetRef}
+                    events={eventData as EventFeatureCollection}
+                    onListItemClick={onListItemClick}
+                    isSearchOpen={isSearchOpen}
+                    setIsSearchOpen={setIsSearchOpen}
+                    snapToIndex={(index) =>
+                        bottomSheetRef.current?.snapToIndex(index)
+                    }
+                    pickedTypes={pickedTypes}
+                    setpickedTypes={setpickedTypes}
                 />
             </ScrollView>
         </>

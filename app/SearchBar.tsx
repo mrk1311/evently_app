@@ -26,6 +26,8 @@ type SearchBarProps = {
     openListBottomSheet: () => void;
     filteredEvents: EventFeatureCollection;
     setFilteredEvents: (events: EventFeatureCollection) => void;
+    searchQuery: string;
+    setSearchQuery: (query: string) => void;
     events: EventFeatureCollection;
 };
 
@@ -37,9 +39,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
     onClose,
     filteredEvents,
     setFilteredEvents,
+    searchQuery,
+    setSearchQuery,
     events,
 }) => {
-    const [searchQuery, setSearchQuery] = useState("");
+    // const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [pickedFilter, setPickedFilter] = useState<
@@ -88,7 +92,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
             ),
         };
         setFilteredEvents(filtered);
-        console.log(filtered);
     }, [searchQuery, events]);
 
     const handleDateSearch = useCallback(() => {
@@ -140,7 +143,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     pickedFilter === type && styles.selectedFilter,
                 ]}
                 onPress={() => {
-                    // setPickedFilter(type);
+                    setPickedFilter(type);
                     // setIsSearchOpen(true);
                     // onOpen();
                     openFilterBottomSheet();
