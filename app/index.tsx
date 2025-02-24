@@ -43,19 +43,26 @@ export default function App() {
         };
     };
 
-    const filterBySearch = (array: EventFeatureCollection) => {
-        setFilteredEvents({
+    const filterBySearch = (
+        array: EventFeatureCollection
+    ): EventFeatureCollection => {
+        console.log("Filtering by search", searchQuery);
+        const filteredFeatures = array.features.filter((event) =>
+            event.properties?.name
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase())
+        );
+        console.log(filteredFeatures);
+        return {
             type: "FeatureCollection",
-            features: eventData.features.filter((event) =>
-                event.properties?.name.toLowerCase().includes(searchQuery)
-            ) as EventFeature[], // Ensure the filtered features are cast to EventFeature[]
-        });
+            features: filteredFeatures as EventFeature[], // Ensure the filtered features are cast to EventFeature[]
+        };
     };
 
     useEffect(() => {
         let result = eventData as EventFeatureCollection;
         result = filterByType(result);
-        // filterBySearch(result);
+        result = filterBySearch(result);
         console.log("Filtered events", result.features.length);
         setFilteredEvents(result);
     }, [pickedTypes, searchQuery]);
@@ -104,6 +111,9 @@ export default function App() {
                 setSearchQuery={setSearchQuery}
                 events={eventData as EventFeatureCollection}
             />
+
+            {/* TODO find another way to dismiss the keyboard than scrollview */}
+
             <ScrollView horizontal={true} style={styles.container}>
                 <ClusteredMap
                     data={filteredEvents as EventFeatureCollection}

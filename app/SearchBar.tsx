@@ -130,11 +130,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         type,
     }) => {
         const title =
-            type === "Type"
-                ? "All Events"
-                : type === "Place"
-                ? "Everywhere"
-                : "Any time";
+            type === "Type" ? "Types" : type === "Place" ? "Place" : "Time";
 
         return (
             <TouchableOpacity
@@ -147,6 +143,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     // setIsSearchOpen(true);
                     // onOpen();
                     openFilterBottomSheet();
+                    inputRef.current?.blur();
                 }}
             >
                 <Text style={styles.filterButtonText}>{title}</Text>

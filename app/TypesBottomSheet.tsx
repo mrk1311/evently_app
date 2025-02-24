@@ -65,12 +65,12 @@ const FiltersBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         props.setpickedTypes(uniqueEventTypes);
     }, [uniqueEventTypes]);
 
-    const handleSelectAll = () => {
-        props.setpickedTypes(uniqueEventTypes);
-    };
-
-    const handleClearAll = () => {
-        props.setpickedTypes([]);
+    const handleSelectClearAll = () => {
+        if (props.pickedTypes.length === uniqueEventTypes.length) {
+            props.setpickedTypes([]);
+        } else {
+            props.setpickedTypes(uniqueEventTypes);
+        }
     };
 
     const renderFilterCard = ({ item }: { item: string }) => (
@@ -129,13 +129,26 @@ const FiltersBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             index={-1}
             snapPoints={snapPoints}
             enableDynamicSizing={false}
-            enablePanDownToClose={true}
             backdropComponent={renderBackdrop}
+            enableContentPanningGesture={true}
+            // enablePanDownToClose={true}
         >
-            <Text style={styles.header}>Filters</Text>
+            <View style={styles.horizontalContainer}>
+                <Button title="Close" onPress={() => ref?.current?.close()} />
+                <Text style={styles.header}>Filters</Text>
+                <Button title="Accept" onPress={() => ref?.current?.close()} />
+            </View>
+
             <View style={styles.buttonsContainer}>
-                <Button title="Select All" onPress={handleSelectAll} />
-                <Button title="Clear All" onPress={handleClearAll} />
+                <Button
+                    title={
+                        // alternate between "Clear All" and "Select All"
+                        props.pickedTypes.length === uniqueEventTypes.length
+                            ? "Clear All"
+                            : "Select All"
+                    }
+                    onPress={handleSelectClearAll}
+                />
             </View>
 
             <BottomSheetFlatList
@@ -155,6 +168,12 @@ const styles = StyleSheet.create({
     contentContainer: {
         // backgroundColor: "white",
     },
+    horizontalContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        padding: 8,
+    },
+
     buttonsContainer: {
         flexDirection: "row",
         justifyContent: "center",
