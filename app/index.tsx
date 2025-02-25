@@ -33,6 +33,9 @@ export default function App() {
         array: EventFeatureCollection
     ): EventFeatureCollection => {
         console.log("Filtering by type", pickedTypes);
+        if (pickedTypes.length === 0) {
+            return array;
+        }
         const filteredFeatures = array.features.filter((event) =>
             pickedTypes.includes(event.properties?.type)
         );
@@ -85,6 +88,17 @@ export default function App() {
         filterBottomSheetRef.current?.snapToIndex(0);
 
         console.log("Opening filter modal");
+    };
+
+    // TODO accept and cancel types only on button press
+    const handleAcceptTypes = () => {
+        console.log("Accepting types");
+        filterBottomSheetRef.current?.close();
+    };
+
+    const handleCancelTypes = () => {
+        console.log("Cancelling types");
+        filterBottomSheetRef.current?.close();
     };
 
     const openListBottomSheet = () => {
@@ -142,6 +156,8 @@ export default function App() {
                     }
                     pickedTypes={pickedTypes}
                     setpickedTypes={setpickedTypes}
+                    handleAcceptTypes={handleAcceptTypes}
+                    handleCancelTypes={handleCancelTypes}
                 />
             </ScrollView>
         </>

@@ -30,6 +30,8 @@ interface BottomSheetProps {
     snapToIndex: (index: number) => void;
     pickedTypes: string[];
     setpickedTypes: (types: string[]) => void;
+    handleCancelTypes: () => void;
+    handleAcceptTypes: () => void;
 }
 
 type Ref = BottomSheet;
@@ -134,9 +136,17 @@ const FiltersBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             // enablePanDownToClose={true}
         >
             <View style={styles.horizontalContainer}>
-                <Button title="Close" onPress={() => ref?.current?.close()} />
+                <Button
+                    title="Cancel"
+                    // change to cancel and close
+                    onPress={props.handleCancelTypes}
+                />
                 <Text style={styles.header}>Filters</Text>
-                <Button title="Accept" onPress={() => ref?.current?.close()} />
+                <Button
+                    title="Accept"
+                    // change to accept and close
+                    onPress={props.handleAcceptTypes}
+                />
             </View>
 
             <View style={styles.buttonsContainer}>
