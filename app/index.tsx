@@ -91,8 +91,9 @@ export default function App() {
     };
 
     // TODO accept and cancel types only on button press
-    const handleAcceptTypes = () => {
+    const handleAcceptTypes = (types: string[]) => {
         console.log("Accepting types");
+        setpickedTypes(types);
         filterBottomSheetRef.current?.close();
     };
 
@@ -127,7 +128,6 @@ export default function App() {
             />
 
             {/* TODO find another way to dismiss the keyboard than scrollview */}
-
             <ScrollView horizontal={true} style={styles.container}>
                 <ClusteredMap
                     data={filteredEvents as EventFeatureCollection}
@@ -155,7 +155,7 @@ export default function App() {
                         bottomSheetRef.current?.snapToIndex(index)
                     }
                     pickedTypes={pickedTypes}
-                    setpickedTypes={setpickedTypes}
+                    // setpickedTypes={setpickedTypes}
                     handleAcceptTypes={handleAcceptTypes}
                     handleCancelTypes={handleCancelTypes}
                 />

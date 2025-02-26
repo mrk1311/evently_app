@@ -29,9 +29,9 @@ interface BottomSheetProps {
     setIsSearchOpen: (isOpen: boolean) => void;
     snapToIndex: (index: number) => void;
     pickedTypes: string[];
-    setpickedTypes: (types: string[]) => void;
+    // setpickedTypes: (types: string[]) => void;
     handleCancelTypes: () => void;
-    handleAcceptTypes: () => void;
+    handleAcceptTypes: (types: string[]) => void;
 }
 
 type Ref = BottomSheet;
@@ -39,7 +39,7 @@ type Ref = BottomSheet;
 // events, onListItemClick, isSearchOpen, setIsSearchOpen
 const FiltersBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // hooks
-    // const [pickedTypes, setpickedTypes] = useState<string[]>([]);
+    const [picks, setPicks] = useState<string[]>(props.pickedTypes);
 
     // variables
     const snapPoints = useMemo(() => ["85%"], []);
@@ -64,14 +64,14 @@ const FiltersBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     );
 
     useEffect(() => {
-        props.setpickedTypes(uniqueEventTypes);
+        setPicks(uniqueEventTypes);
     }, [uniqueEventTypes]);
 
     const handleSelectClearAll = () => {
-        if (props.pickedTypes.length === uniqueEventTypes.length) {
-            props.setpickedTypes([]);
+        if (picks.length === uniqueEventTypes.length) {
+            setPicks([]);
         } else {
-            props.setpickedTypes(uniqueEventTypes);
+            setPicks(uniqueEventTypes);
         }
     };
 
@@ -80,24 +80,19 @@ const FiltersBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             style={[
                 styles.cardContainer,
                 {
-                    backgroundColor: props.pickedTypes.includes(item)
+                    backgroundColor: picks.includes(item)
                         ? "lightblue"
                         : "white",
                 },
             ]}
             onPress={() => {
-                // props.onListItemClick(
-
-                // );
                 // props.setIsSearchOpen(false);
                 // ref.current?.snapToIndex(0);
                 console.log("Filter card pressed");
-                if (props.pickedTypes.includes(item)) {
-                    props.setpickedTypes(
-                        props.pickedTypes.filter((filter) => filter !== item)
-                    );
+                if (picks.includes(item)) {
+                    setPicks(picks.filter((filter) => filter !== item));
                 } else {
-                    props.setpickedTypes([...props.pickedTypes, item]);
+                    setPicks([...picks, item]);
                 }
             }}
         >
@@ -110,17 +105,6 @@ const FiltersBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             />
             <View style={styles.cardContent}>
                 <Text style={styles.cardTitle}>{item}</Text>
-                {/* <View style={styles.metaContainer}>
-                    <Text style={styles.cardSubtitle}>
-                        {item.properties.subtitle}
-                    </Text>
-                    <Text style={styles.cardDate}>
-                        {new Date(item.properties.date).toLocaleDateString()}
-                    </Text>
-                </View>
-                <Text style={styles.cardDescription}>
-                    {item.properties.description}
-                </Text> */}
             </View>
         </TouchableOpacity>
     );
@@ -133,19 +117,22 @@ const FiltersBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             enableDynamicSizing={false}
             backdropComponent={renderBackdrop}
             enableContentPanningGesture={true}
-            // enablePanDownToClose={true}
+            enablePanDownToClose={false}
         >
             <View style={styles.horizontalContainer}>
                 <Button
                     title="Cancel"
                     // change to cancel and close
-                    onPress={props.handleCancelTypes}
+                    onPress={() => {
+                        props.handleCancelTypes();
+                        setPicks(props.pickedTypes);
+                    }}
                 />
                 <Text style={styles.header}>Filters</Text>
                 <Button
                     title="Accept"
                     // change to accept and close
-                    onPress={props.handleAcceptTypes}
+                    onPress={() => props.handleAcceptTypes(picks)}
                 />
             </View>
 
@@ -153,7 +140,7 @@ const FiltersBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 <Button
                     title={
                         // alternate between "Clear All" and "Select All"
-                        props.pickedTypes.length === uniqueEventTypes.length
+                        picks.length === uniqueEventTypes.length
                             ? "Clear All"
                             : "Select All"
                     }
