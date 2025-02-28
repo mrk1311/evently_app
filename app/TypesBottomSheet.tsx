@@ -37,7 +37,7 @@ interface BottomSheetProps {
 type Ref = BottomSheet;
 
 // events, onListItemClick, isSearchOpen, setIsSearchOpen
-const FiltersBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
+const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // hooks
     const [picks, setPicks] = useState<string[]>([]);
 
@@ -254,4 +254,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default FiltersBottomSheet;
+export default TypesBottomSheet;

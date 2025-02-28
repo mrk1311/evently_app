@@ -11,10 +11,12 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import TypesBottomSheet from "./TypesBottomSheet";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import BottomSheet from "@gorhom/bottom-sheet";
+import PlaceBottomSheet from "./PlaceBottomSheet";
 
 export default function App() {
-    const bottomSheetRef = useRef<BottomSheet>(null);
-    const filterBottomSheetRef = useRef<BottomSheet>(null);
+    const listBottomSheetRef = useRef<BottomSheet>(null);
+    const typesBottomSheetRef = useRef<BottomSheet>(null);
+    const placeBottomSheetRef = useRef<BottomSheet>(null);
     const [filteredEvents, setFilteredEvents] =
         useState<EventFeatureCollection>(eventData as EventFeatureCollection);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -84,27 +86,32 @@ export default function App() {
         console.log("Closing search");
     };
 
-    const openFilterBottomSheet = () => {
-        filterBottomSheetRef.current?.snapToIndex(0);
+    const openTypesBottomSheet = () => {
+        typesBottomSheetRef.current?.snapToIndex(0);
 
-        console.log("Opening filter modal");
+        console.log("Opening types modal");
     };
 
     // TODO accept and cancel types only on button press
     const handleAcceptTypes = (types: string[]) => {
         console.log("Accepting types");
         setpickedTypes(types);
-        filterBottomSheetRef.current?.close();
+        typesBottomSheetRef.current?.close();
     };
 
     const handleCancelTypes = () => {
         console.log("Cancelling types");
-        filterBottomSheetRef.current?.close();
+        typesBottomSheetRef.current?.close();
     };
 
     const openListBottomSheet = () => {
-        bottomSheetRef.current?.snapToIndex(1);
-        console.log("Opening filter bottom sheet");
+        listBottomSheetRef.current?.snapToIndex(1);
+        console.log("Opening list bottom sheet");
+    };
+
+    const openPlaceBottomSheet = () => {
+        placeBottomSheetRef.current?.snapToIndex(0);
+        console.log("Opening place bottom sheet");
     };
 
     // const closeListBottomSheet = () => {
@@ -118,7 +125,8 @@ export default function App() {
                 onClose={closeSearch}
                 onSearch={(query) => console.log("Search query", query)}
                 onOpen={openSearch}
-                openFilterBottomSheet={openFilterBottomSheet}
+                openTypesBottomSheet={openTypesBottomSheet}
+                openPlaceBottomSheet={openPlaceBottomSheet}
                 openListBottomSheet={openListBottomSheet}
                 filteredEvents={filteredEvents}
                 setFilteredEvents={setFilteredEvents}
@@ -135,30 +143,32 @@ export default function App() {
                 />
 
                 <ListBottomSheet
-                    ref={bottomSheetRef}
+                    ref={listBottomSheetRef}
                     events={filteredEvents as EventFeatureCollection}
                     onListItemClick={onListItemClick}
                     isSearchOpen={isSearchOpen}
                     setIsSearchOpen={setIsSearchOpen}
                     snapToIndex={(index) =>
-                        bottomSheetRef.current?.snapToIndex(index)
+                        listBottomSheetRef.current?.snapToIndex(index)
                     }
                 />
 
                 <TypesBottomSheet
-                    ref={filterBottomSheetRef}
+                    ref={typesBottomSheetRef}
                     events={eventData as EventFeatureCollection}
                     onListItemClick={onListItemClick}
                     isSearchOpen={isSearchOpen}
                     setIsSearchOpen={setIsSearchOpen}
                     snapToIndex={(index) =>
-                        bottomSheetRef.current?.snapToIndex(index)
+                        listBottomSheetRef.current?.snapToIndex(index)
                     }
                     pickedTypes={pickedTypes}
                     // setpickedTypes={setpickedTypes}
                     handleAcceptTypes={handleAcceptTypes}
                     handleCancelTypes={handleCancelTypes}
                 />
+
+                <PlaceBottomSheet ref={placeBottomSheetRef} />
             </ScrollView>
         </>
     );

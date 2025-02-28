@@ -22,7 +22,8 @@ type SearchBarProps = {
     onSearch: (lat: number, lon: number) => void;
     onOpen: () => void;
     onClose: () => void;
-    openFilterBottomSheet: () => void;
+    openTypesBottomSheet: () => void;
+    openPlaceBottomSheet: () => void;
     openListBottomSheet: () => void;
     filteredEvents: EventFeatureCollection;
     setFilteredEvents: (events: EventFeatureCollection) => void;
@@ -31,18 +32,7 @@ type SearchBarProps = {
     events: EventFeatureCollection;
 };
 
-const SearchBar: React.FC<SearchBarProps> = ({
-    onSearch,
-    onOpen,
-    openFilterBottomSheet,
-    openListBottomSheet,
-    onClose,
-    filteredEvents,
-    setFilteredEvents,
-    searchQuery,
-    setSearchQuery,
-    events,
-}) => {
+const SearchBar: React.FC<SearchBarProps> = (props) => {
     // const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -56,22 +46,24 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
     const uniqueTypes = useMemo(
         () => [
-            ...new Set(events.features.map((event) => event.properties?.type)),
+            ...new Set(
+                props.events.features.map((event) => event.properties?.type)
+            ),
         ],
-        [events]
+        [props.events]
     );
 
     const handlePlaceSearch = useCallback(async () => {
         try {
             const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}`
+                `https://nominatim.openstreetmap.org/search?format=json&q=${props.searchQuery}`
             );
             const data = await response.json();
             setSearchResults(data);
         } catch (error) {
             console.error("Location search failed:", error);
         }
-    }, [searchQuery]);
+    }, [props.searchQuery]);
 
     const handleTypeSearch = useCallback(() => {
         // const filtered = events.features.filter((event) =>
@@ -79,20 +71,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
         // );
         // setFilteredEvents(filtered);
         handleCloseSearch();
-    }, [selectedTypes, events]);
+    }, [selectedTypes, props.events]);
 
     useEffect(() => {
-        console.log(searchQuery);
+        console.log(props.searchQuery);
         const filtered: EventFeatureCollection = {
             type: "FeatureCollection",
-            features: events.features.filter((event: EventFeature) =>
+            features: props.events.features.filter((event: EventFeature) =>
                 event.properties?.name
                     .toLowerCase()
-                    .includes(searchQuery.toLowerCase())
+                    .includes(props.searchQuery.toLowerCase())
             ),
         };
-        setFilteredEvents(filtered);
-    }, [searchQuery, events]);
+        props.setFilteredEvents(filtered);
+    }, [props.searchQuery, props.events]);
 
     const handleDateSearch = useCallback(() => {
         if (!startDate || !endDate) return;
@@ -107,7 +99,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
         // setFilteredEvents(filtered);
         handleCloseSearch();
-    }, [startDate, endDate, events]);
+    }, [startDate, endDate, props.events]);
 
     const handleSearch = (input: string) => {
         if (pickedFilter === "Type") {
@@ -121,10 +113,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const handleCloseSearch = useCallback(() => {
         setIsSearchOpen(false);
         setPickedFilter(null);
-        setSearchQuery("");
+        props.setSearchQuery("");
         Keyboard.dismiss();
-        onClose();
-    }, [onClose]);
+        props.onClose();
+    }, [props.onClose]);
 
     const FilterButton: React.FC<{ type: "Type" | "Place" | "Date" }> = ({
         type,
@@ -142,7 +134,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     setPickedFilter(type);
                     // setIsSearchOpen(true);
                     // onOpen();
-                    openFilterBottomSheet();
+                    if (type === "Type") {
+                        props.openTypesBottomSheet();
+                    } else if (type === "Place") {
+                        console.log("dupa");
+                        props.openPlaceBottomSheet();
+                    }
                     inputRef.current?.blur();
                 }}
             >
@@ -225,7 +222,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         <TouchableOpacity
                             style={styles.resultItem}
                             onPress={() => {
-                                onSearch(
+                                props.onSearch(
                                     parseFloat(item.lat),
                                     parseFloat(item.lon)
                                 );
@@ -239,7 +236,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             );
         }
         return null;
-    }, [searchResults, pickedFilter, onSearch, handleCloseSearch]);
+    }, [searchResults, pickedFilter, props.onSearch, handleCloseSearch]);
 
     return (
         <View style={styles.container}>
@@ -251,15 +248,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     placeholderTextColor={"#666"}
                     // value={searchQuery}
                     onChangeText={(input) => {
-                        setSearchQuery(input);
+                        props.setSearchQuery(input);
                     }}
                     // onSubmitEditing={handleSearch}
                     onFocus={() => {
-                        onOpen();
+                        props.onOpen();
                         setIsSearchOpen(true);
-                        openListBottomSheet();
+                        props.openListBottomSheet();
                     }}
-                    onBlur={onClose}
+                    onBlur={props.onClose}
                 />
             </View>
 
