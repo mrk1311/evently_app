@@ -88,8 +88,13 @@ export default function App() {
 
     const openTypesBottomSheet = () => {
         typesBottomSheetRef.current?.snapToIndex(0);
-
+        placeBottomSheetRef.current?.close();
         console.log("Opening types modal");
+    };
+    const openPlaceBottomSheet = () => {
+        placeBottomSheetRef.current?.snapToIndex(0);
+        typesBottomSheetRef.current?.close();
+        console.log("Opening place bottom sheet");
     };
 
     // TODO accept and cancel types only on button press
@@ -107,11 +112,6 @@ export default function App() {
     const openListBottomSheet = () => {
         listBottomSheetRef.current?.snapToIndex(1);
         console.log("Opening list bottom sheet");
-    };
-
-    const openPlaceBottomSheet = () => {
-        placeBottomSheetRef.current?.snapToIndex(0);
-        console.log("Opening place bottom sheet");
     };
 
     // const closeListBottomSheet = () => {
@@ -168,7 +168,12 @@ export default function App() {
                     handleCancelTypes={handleCancelTypes}
                 />
 
-                <PlaceBottomSheet ref={placeBottomSheetRef} />
+                <PlaceBottomSheet
+                    ref={placeBottomSheetRef}
+                    // snapToIndex={(index) =>
+                    //     placeBottomSheetRef.current?.snapToIndex(index)
+                    // }
+                />
             </ScrollView>
         </>
     );

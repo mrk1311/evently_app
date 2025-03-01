@@ -22,7 +22,6 @@ import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
 
 interface BottomSheetProps {
-    // ref: React.RefObject<BottomSheet>;
     events: EventFeatureCollection;
     onListItemClick: (region: Region) => void;
     isSearchOpen: boolean;
