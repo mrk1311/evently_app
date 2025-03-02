@@ -4,7 +4,7 @@ import { StyleSheet, View, Dimensions } from "react-native";
 import { Clusterer, isPointCluster } from "react-native-clusterer";
 import type { Region } from "react-native-maps";
 import type { Feature, Point, FeatureCollection } from "geojson";
-import { EventMarker } from "./EventMarker";
+import EventMarker from "./EventMarker";
 import type { supercluster } from "react-native-clusterer";
 
 type IFeature = supercluster.PointOrClusterFeature<any, any>;

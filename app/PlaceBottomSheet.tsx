@@ -29,8 +29,9 @@ interface BottomSheetProps {
     // snapToIndex: (index: number) => void;
     // pickedTypes: string[];
     // setpickedTypes: (types: string[]) => void;
-    // handleCancelTypes: () => void;
-    // handleAcceptTypes: (types: string[]) => void;
+    handleCancelPlace: () => void;
+    handleAcceptPlace: (types: string[]) => void;
+    places: string[];
 }
 
 type Ref = BottomSheet;
@@ -98,14 +99,25 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             enableContentPanningGesture={true}
             enablePanDownToClose={false}
         >
-            <View style={styles.buttonsContainer}>
-                <Button title="Cancel" onPress={() => {}} />
-                <Button title="Accept" onPress={() => {}} />
+            <View style={styles.horizontalContainer}>
+                <Button
+                    title="Cancel"
+                    // change to cancel and close
+                    onPress={() => {
+                        props.handleCancelPlace();
+                        // setPicks(props.pickedTypes);
+                    }}
+                />
+                <Text style={styles.header}>Choose Place</Text>
+                <Button
+                    title="Accept"
+                    // change to accept and close
+                    onPress={() => props.handleAcceptPlace(picks)}
+                />
             </View>
             <View style={styles.container}>
-                <Text style={styles.header}>Choose Place</Text>
                 <BottomSheetFlatList
-                    data={["Place 1", "Place 2", "Place 3", "Place 4"]}
+                    data={props.places}
                     keyExtractor={(item) => item}
                     renderItem={renderFilterCard}
                 />

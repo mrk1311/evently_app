@@ -23,7 +23,7 @@ const getMarkerColor = (type: string) => {
     return colors[type] || "#2196F3";
 };
 
-export const EventMarker: FunctionComponent<Props> = memo(
+const EventMarker: FunctionComponent<Props> = memo(
     ({ item, onPress }) => {
         return (
             <MapsMarker
@@ -146,3 +146,5 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
 });
+
+export default EventMarker;

@@ -22,13 +22,13 @@ import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
 
 interface BottomSheetProps {
-    events: EventFeatureCollection;
+    eventTypes: string[];
     onListItemClick: (region: Region) => void;
-    isSearchOpen: boolean;
-    setIsSearchOpen: (isOpen: boolean) => void;
     snapToIndex: (index: number) => void;
     pickedTypes: string[];
     // setpickedTypes: (types: string[]) => void;
+    // openedFilter: string | null;
+    // setOpenedFilter: (filter: "Type" | "Place" | "Date" | null) => void;
     handleCancelTypes: () => void;
     handleAcceptTypes: (types: string[]) => void;
 }
@@ -42,15 +42,7 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
     // variables
     const snapPoints = useMemo(() => ["85%"], []);
-    const uniqueEventTypes = useMemo(
-        () =>
-            Array.from(
-                new Set(
-                    props.events.features.map((event) => event.properties?.type)
-                )
-            ),
-        [props.events.features]
-    );
+
     const renderBackdrop = useCallback(
         (props: any) => (
             <BottomSheetBackdrop
@@ -62,17 +54,15 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         []
     );
 
-    useEffect(() => {
-        setPicks(uniqueEventTypes);
-    }, [uniqueEventTypes]);
-
     const handleSelectClearAll = () => {
-        if (picks.length === uniqueEventTypes.length) {
+        if (picks.length === props.eventTypes.length) {
             setPicks([]);
         } else {
-            setPicks(uniqueEventTypes);
+            setPicks(props.eventTypes);
         }
     };
+
+    console.log("TypesBottomSheet picks", picks);
 
     const renderFilterCard = ({ item }: { item: string }) => (
         <TouchableOpacity
@@ -86,7 +76,6 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             ]}
             onPress={() => {
                 // props.setIsSearchOpen(false);
-                // ref.current?.snapToIndex(0);
                 console.log("Filter card pressed");
                 if (picks.includes(item)) {
                     setPicks(picks.filter((filter) => filter !== item));
@@ -127,7 +116,7 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                         setPicks(props.pickedTypes);
                     }}
                 />
-                <Text style={styles.header}>Filters</Text>
+                <Text style={styles.header}>Choose Types</Text>
                 <Button
                     title="Accept"
                     // change to accept and close
@@ -139,7 +128,7 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 <Button
                     title={
                         // alternate between "Clear All" and "Select All"
-                        picks.length === uniqueEventTypes.length
+                        picks.length === props.eventTypes.length
                             ? "Clear All"
                             : "Select All"
                     }
@@ -149,8 +138,8 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
             <BottomSheetFlatList
                 // pass unique types of events to flatlist data
-                data={uniqueEventTypes}
-                keyExtractor={(uniqueEventTypes) => uniqueEventTypes.toString()}
+                data={props.eventTypes}
+                keyExtractor={(eventTypes) => eventTypes.toString()}
                 renderItem={renderFilterCard}
             />
         </BottomSheet>

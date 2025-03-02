@@ -4,7 +4,7 @@ import type { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import ListBottomSheet from "./ListBottomSheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StyleSheet, Keyboard, ScrollView } from "react-native";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import type { Region } from "react-native-maps";
 import SearchBar from "./SearchBar";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -19,9 +19,20 @@ export default function App() {
     const placeBottomSheetRef = useRef<BottomSheet>(null);
     const [filteredEvents, setFilteredEvents] =
         useState<EventFeatureCollection>(eventData as EventFeatureCollection);
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [openedFilter, setOpenedFilter] = useState<
+        "Type" | "Place" | "Date" | null
+    >(null);
+    const [activeFilters, setActiveFilters] = useState<"Type" | "Date" | null>(
+        null
+    );
     const [pickedTypes, setpickedTypes] = useState<string[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>("");
+    const [places, setPlaces] = useState<string[]>([
+        "Last Search 1",
+        "Last Search 2",
+        "Last Search 3",
+        "Last Search 4",
+    ]);
 
     const [center, setCenter] = useState<Region>({
         // Center on Europe
@@ -31,17 +42,28 @@ export default function App() {
         longitudeDelta: 30,
     });
 
+    const uniqueEventTypes = useMemo(
+        () =>
+            Array.from(
+                new Set(
+                    eventData.features.map((event) => event.properties?.type)
+                )
+            ),
+        [eventData.features]
+    );
+
+    const [filteredEventTypes, setFilteredEventTypes] =
+        useState<string[]>(uniqueEventTypes);
+
     const filterByType = (
         array: EventFeatureCollection
     ): EventFeatureCollection => {
-        console.log("Filtering by type", pickedTypes);
         if (pickedTypes.length === 0) {
             return array;
         }
         const filteredFeatures = array.features.filter((event) =>
             pickedTypes.includes(event.properties?.type)
         );
-        console.log(filteredFeatures);
         return {
             type: "FeatureCollection",
             features: filteredFeatures as EventFeature[], // Ensure the filtered features are cast to EventFeature[]
@@ -51,67 +73,85 @@ export default function App() {
     const filterBySearch = (
         array: EventFeatureCollection
     ): EventFeatureCollection => {
-        console.log("Filtering by search", searchQuery);
         const filteredFeatures = array.features.filter((event) =>
             event.properties?.name
                 .toLowerCase()
                 .includes(searchQuery.toLowerCase())
         );
-        console.log(filteredFeatures);
         return {
             type: "FeatureCollection",
             features: filteredFeatures as EventFeature[], // Ensure the filtered features are cast to EventFeature[]
         };
     };
 
+    // filter events by all the filters, also handle the search query for events, types and places
     useEffect(() => {
-        let result = eventData as EventFeatureCollection;
-        result = filterByType(result);
-        result = filterBySearch(result);
-        console.log("Filtered events", result.features.length);
-        setFilteredEvents(result);
+        if (openedFilter === "Type") {
+            setFilteredEventTypes(
+                uniqueEventTypes.filter((type) =>
+                    searchQuery === ""
+                        ? true
+                        : type.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+            );
+        } else if (openedFilter === null) {
+            let result = eventData as EventFeatureCollection;
+            result = filterByType(result);
+            result = filterBySearch(result);
+            setFilteredEvents(result);
+        }
     }, [pickedTypes, searchQuery]);
 
     const onListItemClick = (region: Region): void => {
         setCenter(region);
     };
 
-    const openSearch = () => {
-        setIsSearchOpen(true);
-        console.log("Opening search");
-    };
-
-    const closeSearch = () => {
-        setIsSearchOpen(false);
-        console.log("Closing search");
-    };
-
     const openTypesBottomSheet = () => {
+        setOpenedFilter("Type");
         typesBottomSheetRef.current?.snapToIndex(0);
         placeBottomSheetRef.current?.close();
-        console.log("Opening types modal");
     };
     const openPlaceBottomSheet = () => {
+        setOpenedFilter("Place");
         placeBottomSheetRef.current?.snapToIndex(0);
         typesBottomSheetRef.current?.close();
-        console.log("Opening place bottom sheet");
     };
 
-    // TODO accept and cancel types only on button press
     const handleAcceptTypes = (types: string[]) => {
-        console.log("Accepting types");
+        // set opened filter to change the color of the filter button and change the behaviour of the search bar
+        setOpenedFilter(null);
+
+        // set picked types to filter the events
         setpickedTypes(types);
+
+        // set active filters to change their color in the search bar
+        if (types.length === 0 || types.length === uniqueEventTypes.length) {
+            setActiveFilters(null);
+        } else setActiveFilters("Type");
+
         typesBottomSheetRef.current?.close();
+        setFilteredEventTypes(uniqueEventTypes);
     };
 
     const handleCancelTypes = () => {
-        console.log("Cancelling types");
+        setFilteredEventTypes(uniqueEventTypes);
+        setOpenedFilter(null);
         typesBottomSheetRef.current?.close();
     };
 
+    const handleAcceptPlace = (place: string[]) => {
+        placeBottomSheetRef.current?.close();
+    };
+
+    const handleCancelPlace = () => {
+        setOpenedFilter(null);
+        placeBottomSheetRef.current?.close();
+    };
+
     const openListBottomSheet = () => {
-        listBottomSheetRef.current?.snapToIndex(1);
-        console.log("Opening list bottom sheet");
+        if (openedFilter === null) {
+            listBottomSheetRef.current?.snapToIndex(1);
+        }
     };
 
     // const closeListBottomSheet = () => {
@@ -122,14 +162,14 @@ export default function App() {
     return (
         <>
             <SearchBar
-                onClose={closeSearch}
                 onSearch={(query) => console.log("Search query", query)}
-                onOpen={openSearch}
                 openTypesBottomSheet={openTypesBottomSheet}
                 openPlaceBottomSheet={openPlaceBottomSheet}
                 openListBottomSheet={openListBottomSheet}
-                filteredEvents={filteredEvents}
-                setFilteredEvents={setFilteredEvents}
+                openedFilter={openedFilter}
+                activeFilters={activeFilters}
+                // filteredEvents={filteredEvents}
+                // setFilteredEvents={setFilteredEvents}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 events={eventData as EventFeatureCollection}
@@ -146,8 +186,6 @@ export default function App() {
                     ref={listBottomSheetRef}
                     events={filteredEvents as EventFeatureCollection}
                     onListItemClick={onListItemClick}
-                    isSearchOpen={isSearchOpen}
-                    setIsSearchOpen={setIsSearchOpen}
                     snapToIndex={(index) =>
                         listBottomSheetRef.current?.snapToIndex(index)
                     }
@@ -155,10 +193,10 @@ export default function App() {
 
                 <TypesBottomSheet
                     ref={typesBottomSheetRef}
-                    events={eventData as EventFeatureCollection}
+                    eventTypes={filteredEventTypes}
                     onListItemClick={onListItemClick}
-                    isSearchOpen={isSearchOpen}
-                    setIsSearchOpen={setIsSearchOpen}
+                    // openedFilter={openedFilter}
+                    // setOpenedFilter={setOpenedFilter}
                     snapToIndex={(index) =>
                         listBottomSheetRef.current?.snapToIndex(index)
                     }
@@ -170,6 +208,9 @@ export default function App() {
 
                 <PlaceBottomSheet
                     ref={placeBottomSheetRef}
+                    handleAcceptPlace={handleAcceptPlace}
+                    handleCancelPlace={handleCancelPlace}
+                    places={places}
                     // snapToIndex={(index) =>
                     //     placeBottomSheetRef.current?.snapToIndex(index)
                     // }

@@ -9,13 +9,12 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
+import { Ionicons } from "@expo/vector-icons";
+import bottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet";
 
 interface BottomSheetProps {
-    // ref: React.RefObject<BottomSheet>;
     events: EventFeatureCollection;
     onListItemClick: (region: Region) => void;
-    isSearchOpen: boolean;
-    setIsSearchOpen: (isOpen: boolean) => void;
     snapToIndex: (index: number) => void;
 }
 
@@ -28,20 +27,9 @@ const coordinatesToRegion = (coordinates: number[]) => ({
 
 type Ref = BottomSheet;
 
-// events, onListItemClick, isSearchOpen, setIsSearchOpen
 const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
-    // hooks
-    // const sheetRef = useRef<BottomSheet>(null);
-
     // variables
     const snapPoints = useMemo(() => ["15%", "85%"], []);
-
-    useEffect(() => {
-        if (props.isSearchOpen) {
-            // ref?.current?.snapToIndex(2);
-            console.log("Opening bottom sheet");
-        }
-    }, [props.isSearchOpen]);
 
     const renderEventCard = ({ item }: { item: EventFeature }) => (
         <TouchableOpacity
@@ -50,12 +38,10 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 props.onListItemClick(
                     coordinatesToRegion(item.geometry.coordinates)
                 );
-                props.setIsSearchOpen(false);
-                // ref.current?.snapToIndex(0);
                 props.snapToIndex(0);
             }}
         >
-            {/* Event Type Indicator */}
+            {/* Event Type Indicator NOT WORKING*/}
             <View
                 style={[
                     styles.typeIndicator,
@@ -99,10 +85,23 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             ref={ref}
             snapPoints={snapPoints}
             enableDynamicSizing={false}
+            style={styles.container}
         >
-            <Text style={styles.header}>
-                Events: {props.events.features.length}
-            </Text>
+            <View style={styles.horizontalContainer}>
+                <Text style={styles.header}>
+                    Events: {props.events.features.length}
+                </Text>
+
+                {/* {
+                    <TouchableOpacity
+                        onPress={() => {
+                            props.snapToIndex(0);
+                        }}
+                    >
+                        <Ionicons name="chevron-down" size={24} color="black" />
+                    </TouchableOpacity>
+                } */}
+            </View>
             <BottomSheetFlatList
                 data={props.events.features as EventFeature[]}
                 keyExtractor={(item) => item.properties.id.toString()}
@@ -116,6 +115,15 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingTop: 8,
+    },
+    horizontalContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingLeft: 38,
+        paddingRight: 38,
+        borderBottomWidth: 1,
+        borderBottomColor: "#eeeeee",
     },
     contentContainer: {
         backgroundColor: "white",
@@ -150,12 +158,13 @@ const styles = StyleSheet.create({
         marginTop: 4,
     },
     header: {
+        // width: "30%",
         fontSize: 20,
         fontWeight: "700",
         marginBottom: 16,
+        marginTop: 8,
         color: "#333333",
-        textAlign: "center",
-        padding: 8,
+        textAlign: "left",
     },
     cardContainer: {
         flexDirection: "row",

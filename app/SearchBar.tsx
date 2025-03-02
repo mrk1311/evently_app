@@ -4,6 +4,7 @@ import React, {
     useMemo,
     useEffect,
     useCallback,
+    act,
 } from "react";
 import {
     View,
@@ -20,38 +21,23 @@ import type { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 
 type SearchBarProps = {
     onSearch: (lat: number, lon: number) => void;
-    onOpen: () => void;
-    onClose: () => void;
     openTypesBottomSheet: () => void;
     openPlaceBottomSheet: () => void;
     openListBottomSheet: () => void;
-    filteredEvents: EventFeatureCollection;
-    setFilteredEvents: (events: EventFeatureCollection) => void;
+    openedFilter: string | null;
+    activeFilters: "Type" | "Date" | null;
+    // filteredEvents: EventFeatureCollection;
+    // setFilteredEvents: (events: EventFeatureCollection) => void;
     searchQuery: string;
     setSearchQuery: (query: string) => void;
     events: EventFeatureCollection;
 };
 
 const SearchBar: React.FC<SearchBarProps> = (props) => {
-    // const [searchQuery, setSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState<any[]>([]);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [pickedFilter, setPickedFilter] = useState<
-        "Type" | "Place" | "Date" | null
-    >(null);
-    const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
     const [startDate, setStartDate] = useState<string | null>(null);
     const [endDate, setEndDate] = useState<string | null>(null);
     const inputRef = useRef<TextInput>(null);
-
-    const uniqueTypes = useMemo(
-        () => [
-            ...new Set(
-                props.events.features.map((event) => event.properties?.type)
-            ),
-        ],
-        [props.events]
-    );
 
     const handlePlaceSearch = useCallback(async () => {
         try {
@@ -59,32 +45,11 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                 `https://nominatim.openstreetmap.org/search?format=json&q=${props.searchQuery}`
             );
             const data = await response.json();
-            setSearchResults(data);
+            // setSearchResults(data);
         } catch (error) {
             console.error("Location search failed:", error);
         }
     }, [props.searchQuery]);
-
-    const handleTypeSearch = useCallback(() => {
-        // const filtered = events.features.filter((event) =>
-        //     selectedTypes.includes(event.properties.type)
-        // );
-        // setFilteredEvents(filtered);
-        handleCloseSearch();
-    }, [selectedTypes, props.events]);
-
-    useEffect(() => {
-        console.log(props.searchQuery);
-        const filtered: EventFeatureCollection = {
-            type: "FeatureCollection",
-            features: props.events.features.filter((event: EventFeature) =>
-                event.properties?.name
-                    .toLowerCase()
-                    .includes(props.searchQuery.toLowerCase())
-            ),
-        };
-        props.setFilteredEvents(filtered);
-    }, [props.searchQuery, props.events]);
 
     const handleDateSearch = useCallback(() => {
         if (!startDate || !endDate) return;
@@ -98,25 +63,10 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
         // });
 
         // setFilteredEvents(filtered);
-        handleCloseSearch();
+        // handleCloseSearch();
     }, [startDate, endDate, props.events]);
 
-    const handleSearch = (input: string) => {
-        if (pickedFilter === "Type") {
-            handleTypeSearch();
-        } else if (pickedFilter === "Place") {
-            handlePlaceSearch();
-        } else if (pickedFilter === "Date") {
-            handleDateSearch();
-        }
-    };
-    const handleCloseSearch = useCallback(() => {
-        setIsSearchOpen(false);
-        setPickedFilter(null);
-        props.setSearchQuery("");
-        Keyboard.dismiss();
-        props.onClose();
-    }, [props.onClose]);
+    console.log("acitve filters", props.activeFilters);
 
     const FilterButton: React.FC<{ type: "Type" | "Place" | "Date" }> = ({
         type,
@@ -128,16 +78,16 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
             <TouchableOpacity
                 style={[
                     styles.filterButton,
-                    pickedFilter === type && styles.selectedFilter,
+                    props.activeFilters === type && styles.activeFilter,
+                    props.openedFilter === type && styles.selectedFilter,
                 ]}
                 onPress={() => {
-                    setPickedFilter(type);
+                    // setPickedFilter(type);
                     // setIsSearchOpen(true);
                     // onOpen();
                     if (type === "Type") {
                         props.openTypesBottomSheet();
                     } else if (type === "Place") {
-                        console.log("dupa");
                         props.openPlaceBottomSheet();
                     }
                     inputRef.current?.blur();
@@ -148,95 +98,29 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
         );
     };
 
-    const TypeSelector = useCallback(
-        () => (
-            <ScrollView style={styles.typeSelector}>
-                <View style={styles.typeButtons}>
-                    <TouchableOpacity
-                        style={styles.typeControlButton}
-                        onPress={() => setSelectedTypes(uniqueTypes)}
-                    >
-                        <Text>Select All</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.typeControlButton}
-                        onPress={() => setSelectedTypes([])}
-                    >
-                        <Text>Clear All</Text>
-                    </TouchableOpacity>
-                </View>
-                {uniqueTypes.map((type) => (
-                    <TouchableOpacity
-                        key={type}
-                        style={[
-                            styles.typeItem,
-                            selectedTypes.includes(type) && styles.selectedType,
-                        ]}
-                        onPress={() =>
-                            setSelectedTypes((prev) =>
-                                prev.includes(type)
-                                    ? prev.filter((t) => t !== type)
-                                    : [...prev, type]
-                            )
-                        }
-                    >
-                        <Text>{type}</Text>
-                    </TouchableOpacity>
-                ))}
-            </ScrollView>
-        ),
-        [uniqueTypes, selectedTypes]
-    );
-
-    const DatePicker = useCallback(
-        () => (
-            <View style={styles.dateContainer}>
-                <Text>From:</Text>
-                <TextInput
-                    style={styles.dateInput}
-                    placeholder="Start Date"
-                    value={startDate || ""}
-                    onChangeText={setStartDate}
-                    onFocus={() => setPickedFilter("Date")}
-                />
-                <Text>To:</Text>
-                <TextInput
-                    style={styles.dateInput}
-                    placeholder="End Date"
-                    value={endDate || ""}
-                    onChangeText={setEndDate}
-                    onFocus={() => setPickedFilter("Date")}
-                />
-            </View>
-        ),
-        [startDate, endDate]
-    );
-
-    const SearchResults = useCallback(() => {
-        if (pickedFilter === "Place") {
-            return (
-                <FlatList
-                    data={searchResults}
-                    keyExtractor={(item) => item.place_id}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity
-                            style={styles.resultItem}
-                            onPress={() => {
-                                props.onSearch(
-                                    parseFloat(item.lat),
-                                    parseFloat(item.lon)
-                                );
-                                handleCloseSearch();
-                            }}
-                        >
-                            <Text>{item.display_name}</Text>
-                        </TouchableOpacity>
-                    )}
-                />
-            );
-        }
-        return null;
-    }, [searchResults, pickedFilter, props.onSearch, handleCloseSearch]);
+    // const DatePicker = useCallback(
+    //     () => (
+    //         <View style={styles.dateContainer}>
+    //             <Text>From:</Text>
+    //             <TextInput
+    //                 style={styles.dateInput}
+    //                 placeholder="Start Date"
+    //                 value={startDate || ""}
+    //                 onChangeText={setStartDate}
+    //                 onFocus={() => setPickedFilter("Date")}
+    //             />
+    //             <Text>To:</Text>
+    //             <TextInput
+    //                 style={styles.dateInput}
+    //                 placeholder="End Date"
+    //                 value={endDate || ""}
+    //                 onChangeText={setEndDate}
+    //                 onFocus={() => setPickedFilter("Date")}
+    //             />
+    //         </View>
+    //     ),
+    //     [startDate, endDate]
+    // );
 
     return (
         <View style={styles.container}>
@@ -244,7 +128,16 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                 <TextInput
                     ref={inputRef}
                     style={styles.input}
-                    placeholder="Search for events..."
+                    placeholder={
+                        //depending on the picked filter, the placeholder will change
+                        props.openedFilter === "Type"
+                            ? "Find event types..."
+                            : props.openedFilter === "Place"
+                            ? "Find location..."
+                            : props.openedFilter === "Date"
+                            ? "Find date..."
+                            : "Find events..."
+                    }
                     placeholderTextColor={"#666"}
                     // value={searchQuery}
                     onChangeText={(input) => {
@@ -252,11 +145,11 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                     }}
                     // onSubmitEditing={handleSearch}
                     onFocus={() => {
-                        props.onOpen();
+                        // props.onOpen();
                         setIsSearchOpen(true);
                         props.openListBottomSheet();
                     }}
-                    onBlur={props.onClose}
+                    // onBlur={props.onClose}
                 />
             </View>
 
@@ -321,7 +214,6 @@ const styles = StyleSheet.create({
         top: -20,
         flexDirection: "row",
         justifyContent: "space-around",
-        // marginBottom: 10,
         backgroundColor: "white",
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
@@ -338,6 +230,9 @@ const styles = StyleSheet.create({
     },
     selectedFilter: {
         backgroundColor: "#2196F3",
+    },
+    activeFilter: {
+        backgroundColor: "#8eb3ed",
     },
     filterButtonText: {
         color: "#333",
