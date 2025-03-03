@@ -84,6 +84,24 @@ export default function App() {
         };
     };
 
+    const handlePlaceSearch = async () => {
+        try {
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}`
+            );
+            const data = await response.json();
+            // filter by addresstype: "city"
+
+            const placesNames = data.filter(
+                (place: any) => place.addresstype === "city"
+            );
+            setPlaces(placesNames.map((place: any) => place.display_name));
+            console.log("Location search results:", data);
+        } catch (error) {
+            console.error("Location search failed:", error);
+        }
+    };
+
     // filter events by all the filters, also handle the search query for events, types and places
     useEffect(() => {
         if (openedFilter === "Type") {
@@ -94,6 +112,11 @@ export default function App() {
                         : type.toLowerCase().includes(searchQuery.toLowerCase())
                 )
             );
+        } else if (openedFilter === "Place") {
+            // search for place only after user stops typing
+            handlePlaceSearch();
+
+            // handlePlaceSearch();
         } else if (openedFilter === null) {
             let result = eventData as EventFeatureCollection;
             result = filterByType(result);
@@ -119,7 +142,7 @@ export default function App() {
 
     const handleAcceptTypes = (types: string[]) => {
         // set opened filter to change the color of the filter button and change the behaviour of the search bar
-        setOpenedFilter(null);
+        handleCloseFilter();
 
         // set picked types to filter the events
         setpickedTypes(types);
@@ -135,16 +158,17 @@ export default function App() {
 
     const handleCancelTypes = () => {
         setFilteredEventTypes(uniqueEventTypes);
-        setOpenedFilter(null);
+        handleCloseFilter();
         typesBottomSheetRef.current?.close();
     };
 
     const handleAcceptPlace = (place: string[]) => {
         placeBottomSheetRef.current?.close();
+        handleCloseFilter();
     };
 
     const handleCancelPlace = () => {
-        setOpenedFilter(null);
+        handleCloseFilter();
         placeBottomSheetRef.current?.close();
     };
 
@@ -152,6 +176,11 @@ export default function App() {
         if (openedFilter === null) {
             listBottomSheetRef.current?.snapToIndex(1);
         }
+    };
+
+    const handleCloseFilter = () => {
+        setOpenedFilter(null);
+        setSearchQuery("");
     };
 
     // const closeListBottomSheet = () => {
