@@ -231,6 +231,8 @@ PODS:
     - ExpoModulesCore
   - ExpoLinking (7.0.3):
     - ExpoModulesCore
+  - ExpoLocation (18.0.7):
+    - ExpoModulesCore
   - ExpoModulesCore (2.0.6):
     - DoubleConversion
     - glog
@@ -1820,7 +1822,9 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated (3.16.3):
+  - RNPermissions (5.2.5):
+    - React-Core
+  - RNReanimated (3.16.7):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1840,10 +1844,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 3.16.3)
-    - RNReanimated/worklets (= 3.16.3)
+    - RNReanimated/reanimated (= 3.16.7)
+    - RNReanimated/worklets (= 3.16.7)
     - Yoga
-  - RNReanimated/reanimated (3.16.3):
+  - RNReanimated/reanimated (3.16.7):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1863,9 +1867,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated/apple (= 3.16.3)
+    - RNReanimated/reanimated/apple (= 3.16.7)
     - Yoga
-  - RNReanimated/reanimated/apple (3.16.3):
+  - RNReanimated/reanimated/apple (3.16.7):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1886,7 +1890,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated/worklets (3.16.3):
+  - RNReanimated/worklets (3.16.7):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1951,6 +1955,7 @@ DEPENDENCIES:
   - ExpoHead (from `../node_modules/expo-router/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoLinking (from `../node_modules/expo-linking/ios`)
+  - ExpoLocation (from `../node_modules/expo-location/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - ExpoSymbols (from `../node_modules/expo-symbols/ios`)
@@ -2024,6 +2029,7 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -2069,6 +2075,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-keep-awake/ios"
   ExpoLinking:
     :path: "../node_modules/expo-linking/ios"
+  ExpoLocation:
+    :path: "../node_modules/expo-location/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
   ExpoSplashScreen:
@@ -2212,6 +2220,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNPermissions:
+    :path: "../node_modules/react-native-permissions"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -2238,6 +2248,7 @@ SPEC CHECKSUMS:
   ExpoHead: 3d555eb5d0d68c478b9ea259337686c58de22c71
   ExpoKeepAwake: 783e68647b969b210a786047c3daa7b753dcac1f
   ExpoLinking: a8332a219379ba80f8e612d5a5de4a3da446886e
+  ExpoLocation: 33f4e00cd3c2a4d3424175cb6e433bee108b76a2
   ExpoModulesCore: f71914f0725f2f4ca7a8d25dc551263e730d5d7f
   ExpoSplashScreen: 47a5c337586329223b70b5ef777d34c1f9edf412
   ExpoSymbols: 81d7f433d7a7b20658029eae524a4fa93627159e
@@ -2309,7 +2320,8 @@ SPEC CHECKSUMS:
   ReactCodegen: ae99a130606068ed40d1d9c0d5f25fda142a0647
   ReactCommon: 89c87b343deacc8610b099ac764848f0ce937e3e
   RNGestureHandler: 511250b190a284388f9dd0d2e56c1df76f14cfb8
-  RNReanimated: 365e7d6c1ed443cf8e1b7ba4f0b15dd9f82f052a
+  RNPermissions: f500290831d891c5d156e042c229675d747bda3b
+  RNReanimated: 849c4bfc1a185b123ca9a89f2a98d679b3d79b4e
   RNScreens: e6f9bc3a41be76af2ba0a815ea299a0000b1c838
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 3deb2471faa9916c8a82dda2a22d3fba2620ad37

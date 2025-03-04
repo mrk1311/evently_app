@@ -30,7 +30,7 @@ interface BottomSheetProps {
     // pickedTypes: string[];
     // setpickedTypes: (types: string[]) => void;
     handleCancelPlace: () => void;
-    handleAcceptPlace: (types: string[]) => void;
+    handleAcceptPlace: (place: string[]) => void;
     places: string[];
 }
 

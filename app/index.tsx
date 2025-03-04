@@ -92,9 +92,9 @@ export default function App() {
             const data = await response.json();
             // filter by addresstype: "city"
 
-            const placesNames = data.filter(
-                (place: any) => place.addresstype === "city"
-            );
+            const placesNames = data;
+            // (place: any) => place.addresstype === "city"
+            // );
             setPlaces(placesNames.map((place: any) => place.display_name));
             console.log("Location search results:", data);
         } catch (error) {
@@ -115,8 +115,6 @@ export default function App() {
         } else if (openedFilter === "Place") {
             // search for place only after user stops typing
             handlePlaceSearch();
-
-            // handlePlaceSearch();
         } else if (openedFilter === null) {
             let result = eventData as EventFeatureCollection;
             result = filterByType(result);

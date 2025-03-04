@@ -7,6 +7,8 @@ import type { Feature, Point, FeatureCollection } from "geojson";
 import EventMarker from "./EventMarker";
 import type { supercluster } from "react-native-clusterer";
 
+import * as Location from "expo-location";
+
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
 
 type EventProperties = {
@@ -37,6 +39,26 @@ const MAP_DIMENSIONS = { width, height };
 
 const ClusteredMap: React.FC<MapProps> = ({ data, center }) => {
     const mapRef = React.useRef<MapView>(null);
+
+    // user location
+    const [location, setLocation] = useState<Location.LocationObject | null>(
+        null
+    );
+
+    useEffect(() => {
+        async function getCurrentLocation() {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== "granted") {
+                console.log("Permission to access location was denied");
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            setLocation(location);
+        }
+
+        getCurrentLocation();
+    }, []);
 
     const [region, setRegion] = useState<Region>(center);
 
