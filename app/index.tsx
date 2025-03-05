@@ -13,6 +13,8 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import BottomSheet from "@gorhom/bottom-sheet";
 import PlaceBottomSheet from "./PlaceBottomSheet";
 
+import * as Location from "expo-location";
+
 export default function App() {
     const listBottomSheetRef = useRef<BottomSheet>(null);
     const typesBottomSheetRef = useRef<BottomSheet>(null);
@@ -33,6 +35,37 @@ export default function App() {
         "Last Search 3",
         "Last Search 4",
     ]);
+
+    // user location
+    const [location, setLocation] = useState<Location.LocationObject | null>(
+        null
+    );
+
+    useEffect(() => {
+        async function getCurrentLocation() {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== "granted") {
+                console.log("Permission to access location was denied");
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            setLocation(location);
+        }
+
+        getCurrentLocation();
+    }, []);
+
+    useEffect(() => {
+        if (location) {
+            setCenter({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.1,
+                longitudeDelta: 0.1,
+            });
+        }
+    }, [location]);
 
     const [center, setCenter] = useState<Region>({
         // Center on Europe
@@ -188,7 +221,7 @@ export default function App() {
 
     return (
         <>
-            <SearchBar
+            {/* <SearchBar
                 onSearch={(query) => console.log("Search query", query)}
                 openTypesBottomSheet={openTypesBottomSheet}
                 openPlaceBottomSheet={openPlaceBottomSheet}
@@ -200,16 +233,17 @@ export default function App() {
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 events={eventData as EventFeatureCollection}
-            />
+            /> */}
 
             {/* TODO find another way to dismiss the keyboard than scrollview */}
             <ScrollView horizontal={true} style={styles.container}>
                 <ClusteredMap
                     data={filteredEvents as EventFeatureCollection}
                     center={center}
+                    location={location}
                 />
 
-                <ListBottomSheet
+                {/* <ListBottomSheet
                     ref={listBottomSheetRef}
                     events={filteredEvents as EventFeatureCollection}
                     onListItemClick={onListItemClick}
@@ -241,7 +275,7 @@ export default function App() {
                     // snapToIndex={(index) =>
                     //     placeBottomSheetRef.current?.snapToIndex(index)
                     // }
-                />
+                /> */}
             </ScrollView>
         </>
     );

@@ -18,8 +18,6 @@ import BottomSheet, {
     BottomSheetBackdrop,
     BottomSheetFlatList,
 } from "@gorhom/bottom-sheet";
-import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
-import type { Region } from "react-native-maps";
 
 interface BottomSheetProps {
     // events: EventFeatureCollection;
@@ -36,7 +34,6 @@ interface BottomSheetProps {
 
 type Ref = BottomSheet;
 
-// events, onListItemClick, isSearchOpen, setIsSearchOpen
 const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // hooks
     const [picks, setPicks] = useState<string[]>([]);
@@ -55,7 +52,7 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         []
     );
 
-    const renderFilterCard = ({ item }: { item: string }) => (
+    const renderPlaceCard = ({ item }: { item: string }) => (
         <TouchableOpacity
             style={[
                 styles.cardContainer,
@@ -119,7 +116,7 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 <BottomSheetFlatList
                     data={props.places}
                     keyExtractor={(item) => item}
-                    renderItem={renderFilterCard}
+                    renderItem={renderPlaceCard}
                 />
             </View>
         </BottomSheet>

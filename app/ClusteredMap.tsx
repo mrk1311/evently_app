@@ -32,33 +32,14 @@ type EventFeatureCollection = FeatureCollection & {
 type MapProps = {
     data: EventFeatureCollection;
     center: Region;
+    location: Location.LocationObject | null;
 };
 
 const { width, height } = Dimensions.get("window");
 const MAP_DIMENSIONS = { width, height };
 
-const ClusteredMap: React.FC<MapProps> = ({ data, center }) => {
+const ClusteredMap: React.FC<MapProps> = ({ data, center, location }) => {
     const mapRef = React.useRef<MapView>(null);
-
-    // user location
-    const [location, setLocation] = useState<Location.LocationObject | null>(
-        null
-    );
-
-    useEffect(() => {
-        async function getCurrentLocation() {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== "granted") {
-                console.log("Permission to access location was denied");
-                return;
-            }
-
-            let location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
-        }
-
-        getCurrentLocation();
-    }, []);
 
     const [region, setRegion] = useState<Region>(center);
 
