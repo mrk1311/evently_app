@@ -9,12 +9,10 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
-import { Ionicons } from "@expo/vector-icons";
-import bottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet";
 
 interface BottomSheetProps {
     events: EventFeatureCollection;
-    onListItemClick: (region: Region) => void;
+    setCenter: (region: Region) => void;
     snapToIndex: (index: number) => void;
 }
 
@@ -35,9 +33,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         <TouchableOpacity
             style={styles.cardContainer}
             onPress={() => {
-                props.onListItemClick(
-                    coordinatesToRegion(item.geometry.coordinates)
-                );
+                props.setCenter(coordinatesToRegion(item.geometry.coordinates));
                 props.snapToIndex(0);
             }}
         >

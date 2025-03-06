@@ -14,6 +14,7 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import PlaceBottomSheet from "./PlaceBottomSheet";
 
 import * as Location from "expo-location";
+import { FeatureCollection, GeoJsonObject, GeoJsonTypes } from "geojson";
 
 export default function App() {
     const listBottomSheetRef = useRef<BottomSheet>(null);
@@ -29,17 +30,21 @@ export default function App() {
     );
     const [pickedTypes, setpickedTypes] = useState<string[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>("");
-    const [places, setPlaces] = useState<string[]>([
-        "Last Search 1",
-        "Last Search 2",
-        "Last Search 3",
-        "Last Search 4",
-    ]);
+    const [places, setPlaces] = useState<FeatureCollection | null>(null);
 
     // user location
-    const [location, setLocation] = useState<Location.LocationObject | null>(
-        null
-    );
+    const [location, setLocation] = useState<Location.LocationObject>({
+        coords: {
+            accuracy: 0,
+            altitude: 0,
+            altitudeAccuracy: 0,
+            heading: 0,
+            latitude: 51.1657,
+            longitude: 10.4515,
+            speed: 0,
+        },
+        timestamp: 0,
+    });
 
     useEffect(() => {
         async function getCurrentLocation() {
@@ -65,6 +70,7 @@ export default function App() {
                 longitudeDelta: 0.1,
             });
         }
+        console.log(location);
     }, [location]);
 
     const [center, setCenter] = useState<Region>({
@@ -118,17 +124,41 @@ export default function App() {
     };
 
     const handlePlaceSearch = async () => {
+        // new promise type feature collection
+
+        // new Promise<FeatureCollection>((resolve, reject) => {
+        //     const response = fetch(
+        //         `https://nominatim.openstreetmap.org/search?format=geojson&viewbox=${
+        //             location.coords.longitude - 0.1
+        //         },${location.coords.latitude - 0.1},${
+        //             location.coords.longitude + 0.1
+        //         },${
+        //             location.coords.latitude + 0.1
+        //         }&addressdetails=0&namedetails=0&q=${searchQuery}`
+        //     );
+        //     resolve(response.json);
+        // })
+        //     .then((data) => {
+        //         setPlaces(data);
+        //         console.log("Location search results:", data);
+        //     })
+        //     .catch((error) => {
+        //         console.error("Location search failed:", error);
+        //     });
+
         try {
             const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}`
+                `https://nominatim.openstreetmap.org/search?format=geojson&viewbox=${
+                    location.coords.longitude - 0.1
+                },${location.coords.latitude - 0.1},${
+                    location.coords.longitude + 0.1
+                },${
+                    location.coords.latitude + 0.1
+                }&addressdetails=0&namedetails=0&q=${searchQuery}`
             );
             const data = await response.json();
-            // filter by addresstype: "city"
 
-            const placesNames = data;
-            // (place: any) => place.addresstype === "city"
-            // );
-            setPlaces(placesNames.map((place: any) => place.display_name));
+            setPlaces(data);
             console.log("Location search results:", data);
         } catch (error) {
             console.error("Location search failed:", error);
@@ -155,10 +185,6 @@ export default function App() {
             setFilteredEvents(result);
         }
     }, [pickedTypes, searchQuery]);
-
-    const onListItemClick = (region: Region): void => {
-        setCenter(region);
-    };
 
     const openTypesBottomSheet = () => {
         setOpenedFilter("Type");
@@ -221,7 +247,7 @@ export default function App() {
 
     return (
         <>
-            {/* <SearchBar
+            <SearchBar
                 onSearch={(query) => console.log("Search query", query)}
                 openTypesBottomSheet={openTypesBottomSheet}
                 openPlaceBottomSheet={openPlaceBottomSheet}
@@ -233,7 +259,7 @@ export default function App() {
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 events={eventData as EventFeatureCollection}
-            /> */}
+            />
 
             {/* TODO find another way to dismiss the keyboard than scrollview */}
             <ScrollView horizontal={true} style={styles.container}>
@@ -243,10 +269,10 @@ export default function App() {
                     location={location}
                 />
 
-                {/* <ListBottomSheet
+                <ListBottomSheet
                     ref={listBottomSheetRef}
                     events={filteredEvents as EventFeatureCollection}
-                    onListItemClick={onListItemClick}
+                    setCenter={setCenter}
                     snapToIndex={(index) =>
                         listBottomSheetRef.current?.snapToIndex(index)
                     }
@@ -255,14 +281,10 @@ export default function App() {
                 <TypesBottomSheet
                     ref={typesBottomSheetRef}
                     eventTypes={filteredEventTypes}
-                    onListItemClick={onListItemClick}
-                    // openedFilter={openedFilter}
-                    // setOpenedFilter={setOpenedFilter}
                     snapToIndex={(index) =>
                         listBottomSheetRef.current?.snapToIndex(index)
                     }
                     pickedTypes={pickedTypes}
-                    // setpickedTypes={setpickedTypes}
                     handleAcceptTypes={handleAcceptTypes}
                     handleCancelTypes={handleCancelTypes}
                 />
@@ -272,10 +294,11 @@ export default function App() {
                     handleAcceptPlace={handleAcceptPlace}
                     handleCancelPlace={handleCancelPlace}
                     places={places}
+                    setCenter={setCenter}
                     // snapToIndex={(index) =>
                     //     placeBottomSheetRef.current?.snapToIndex(index)
                     // }
-                /> */}
+                />
             </ScrollView>
         </>
     );

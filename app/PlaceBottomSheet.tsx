@@ -18,25 +18,20 @@ import BottomSheet, {
     BottomSheetBackdrop,
     BottomSheetFlatList,
 } from "@gorhom/bottom-sheet";
+import type { Region } from "react-native-maps";
+import { FeatureCollection } from "geojson";
 
 interface BottomSheetProps {
-    // events: EventFeatureCollection;
-    // onListItemClick: (region: Region) => void;
-    // isSearchOpen: boolean;
-    // setIsSearchOpen: (isOpen: boolean) => void;
-    // snapToIndex: (index: number) => void;
-    // pickedTypes: string[];
-    // setpickedTypes: (types: string[]) => void;
+    setCenter: (region: Region) => void;
     handleCancelPlace: () => void;
     handleAcceptPlace: (place: string[]) => void;
-    places: string[];
+    places: FeatureCollection | null;
 }
 
 type Ref = BottomSheet;
 
 const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // hooks
-    const [picks, setPicks] = useState<string[]>([]);
 
     // variables
     const snapPoints = useMemo(() => ["85%"], []);
@@ -54,23 +49,10 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
     const renderPlaceCard = ({ item }: { item: string }) => (
         <TouchableOpacity
-            style={[
-                styles.cardContainer,
-                {
-                    backgroundColor: picks.includes(item)
-                        ? "lightblue"
-                        : "white",
-                },
-            ]}
+            style={[styles.cardContainer]}
             onPress={() => {
                 // props.setIsSearchOpen(false);
-                // ref.current?.snapToIndex(0);
                 console.log("Filter card pressed");
-                if (picks.includes(item)) {
-                    setPicks(picks.filter((filter) => filter !== item));
-                } else {
-                    setPicks([...picks, item]);
-                }
             }}
         >
             {/* Event Type Indicator */}
@@ -102,19 +84,20 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     // change to cancel and close
                     onPress={() => {
                         props.handleCancelPlace();
-                        // setPicks(props.pickedTypes);
                     }}
                 />
                 <Text style={styles.header}>Choose Place</Text>
                 <Button
                     title="Accept"
                     // change to accept and close
-                    onPress={() => props.handleAcceptPlace(picks)}
+                    // onPress={() => props.handleAcceptPlace(picks)}
                 />
             </View>
             <View style={styles.container}>
                 <BottomSheetFlatList
-                    data={props.places}
+                    data={props.places?.features.map(
+                        (feature) => feature.properties?.name
+                    )}
                     keyExtractor={(item) => item}
                     renderItem={renderPlaceCard}
                 />

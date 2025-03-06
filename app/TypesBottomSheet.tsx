@@ -23,12 +23,8 @@ import type { Region } from "react-native-maps";
 
 interface BottomSheetProps {
     eventTypes: string[];
-    onListItemClick: (region: Region) => void;
     snapToIndex: (index: number) => void;
     pickedTypes: string[];
-    // setpickedTypes: (types: string[]) => void;
-    // openedFilter: string | null;
-    // setOpenedFilter: (filter: "Type" | "Place" | "Date" | null) => void;
     handleCancelTypes: () => void;
     handleAcceptTypes: (types: string[]) => void;
 }
