@@ -25,6 +25,7 @@ type SearchBarProps = {
     openTypesBottomSheet: () => void;
     openPlaceBottomSheet: () => void;
     openListBottomSheet: () => void;
+    openDateBottomSheet: () => void;
     openedFilter: string | null;
     activeFilters: "Type" | "Date" | null;
     // filteredEvents: EventFeatureCollection;
@@ -78,6 +79,8 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                         props.openTypesBottomSheet();
                     } else if (type === "Place") {
                         props.openPlaceBottomSheet();
+                    } else if (type === "Date") {
+                        props.openDateBottomSheet();
                     }
                     inputRef.current?.blur();
                     inputRef.current?.clear();
@@ -97,29 +100,29 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
         }
     }, [props.openedFilter]);
 
-    // const DatePicker = useCallback(
-    //     () => (
-    //         <View style={styles.dateContainer}>
-    //             <Text>From:</Text>
-    //             <TextInput
-    //                 style={styles.dateInput}
-    //                 placeholder="Start Date"
-    //                 value={startDate || ""}
-    //                 onChangeText={setStartDate}
-    //                 onFocus={() => setPickedFilter("Date")}
-    //             />
-    //             <Text>To:</Text>
-    //             <TextInput
-    //                 style={styles.dateInput}
-    //                 placeholder="End Date"
-    //                 value={endDate || ""}
-    //                 onChangeText={setEndDate}
-    //                 onFocus={() => setPickedFilter("Date")}
-    //             />
-    //         </View>
-    //     ),
-    //     [startDate, endDate]
-    // );
+    const DatePicker = useCallback(
+        () => (
+            <View style={styles.dateContainer}>
+                <Text>From:</Text>
+                <TextInput
+                    style={styles.dateInput}
+                    placeholder="Start Date"
+                    value={startDate || ""}
+                    onChangeText={setStartDate}
+                    // onFocus={() => setPickedFilter("Date")}
+                />
+                <Text>To:</Text>
+                <TextInput
+                    style={styles.dateInput}
+                    placeholder="End Date"
+                    value={endDate || ""}
+                    onChangeText={setEndDate}
+                    // onFocus={() => setPickedFilter("Date")}
+                />
+            </View>
+        ),
+        [startDate, endDate]
+    );
 
     const handleQuerySearch = useCallback(
         debounce((input) => {
@@ -131,34 +134,36 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
     return (
         <View style={styles.container}>
             <View style={styles.searchContainer}>
-                <TextInput
-                    ref={inputRef}
-                    style={styles.input}
-                    placeholder={
-                        //depending on the picked filter, the placeholder will change
-                        props.openedFilter === "Type"
-                            ? "Find event types..."
-                            : props.openedFilter === "Place"
-                            ? "Find location..."
-                            : props.openedFilter === "Date"
-                            ? "Find date..."
-                            : "Find events..."
-                    }
-                    placeholderTextColor={"#666"}
-                    // value={searchQuery}
-                    onChangeText={(input) => {
-                        handleQuerySearch(input);
-                        // debounce(() => props.setSearchQuery(input), 5);
-                        // props.setSearchQuery(input);
-                    }}
-                    // onSubmitEditing={handleSearch}
-                    onFocus={() => {
-                        // props.onOpen();
-                        setIsSearchOpen(true);
-                        props.openListBottomSheet();
-                    }}
-                    // onBlur={props.onClose}
-                />
+                {props.openedFilter !== "Date" && (
+                    <TextInput
+                        ref={inputRef}
+                        style={styles.input}
+                        placeholder={
+                            //depending on the picked filter, the placeholder will change
+                            props.openedFilter === "Type"
+                                ? "Find event types..."
+                                : props.openedFilter === "Place"
+                                ? "Find location..."
+                                : "Find events..."
+                        }
+                        placeholderTextColor={"#666"}
+                        // value={searchQuery}
+                        onChangeText={(input) => {
+                            handleQuerySearch(input);
+                            // debounce(() => props.setSearchQuery(input), 5);
+                            // props.setSearchQuery(input);
+                        }}
+                        // onSubmitEditing={handleSearch}
+                        onFocus={() => {
+                            // props.onOpen();
+                            setIsSearchOpen(true);
+                            props.openListBottomSheet();
+                        }}
+                        // onBlur={props.onClose}
+                    />
+                )}
+                {/* if opened filter = date, show date picker */}
+                {props.openedFilter === "Date" && <DatePicker />}
             </View>
 
             <View style={styles.filterContainer}>
@@ -251,15 +256,13 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 10,
-        marginBottom: 10,
     },
     dateInput: {
         flex: 1,
         height: 40,
-        borderColor: "#ddd",
-        borderWidth: 1,
-        borderRadius: 8,
         paddingHorizontal: 10,
+        // backgroundColor: "#f0f0f0",
+        borderRadius: 20,
     },
     resultItem: {
         padding: 15,

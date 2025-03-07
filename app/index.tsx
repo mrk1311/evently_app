@@ -12,6 +12,7 @@ import TypesBottomSheet from "./TypesBottomSheet";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import BottomSheet from "@gorhom/bottom-sheet";
 import PlaceBottomSheet from "./PlaceBottomSheet";
+import DateBottomSheet from "./DateBottomSheet";
 
 import * as Location from "expo-location";
 import { FeatureCollection, GeoJsonObject, GeoJsonTypes } from "geojson";
@@ -20,6 +21,7 @@ export default function App() {
     const listBottomSheetRef = useRef<BottomSheet>(null);
     const typesBottomSheetRef = useRef<BottomSheet>(null);
     const placeBottomSheetRef = useRef<BottomSheet>(null);
+    const dateBottomSheetRef = useRef<BottomSheet>(null);
     const [filteredEvents, setFilteredEvents] =
         useState<EventFeatureCollection>(eventData as EventFeatureCollection);
     const [openedFilter, setOpenedFilter] = useState<
@@ -190,11 +192,19 @@ export default function App() {
         setOpenedFilter("Type");
         typesBottomSheetRef.current?.snapToIndex(0);
         placeBottomSheetRef.current?.close();
+        dateBottomSheetRef.current?.close();
     };
     const openPlaceBottomSheet = () => {
         setOpenedFilter("Place");
         placeBottomSheetRef.current?.snapToIndex(0);
         typesBottomSheetRef.current?.close();
+        dateBottomSheetRef.current?.close();
+    };
+    const openDateBottomSheet = () => {
+        setOpenedFilter("Date");
+        dateBottomSheetRef.current?.snapToIndex(1);
+        typesBottomSheetRef.current?.close();
+        placeBottomSheetRef.current?.close();
     };
 
     const handleAcceptTypes = (types: string[]) => {
@@ -252,6 +262,7 @@ export default function App() {
                 openTypesBottomSheet={openTypesBottomSheet}
                 openPlaceBottomSheet={openPlaceBottomSheet}
                 openListBottomSheet={openListBottomSheet}
+                openDateBottomSheet={openDateBottomSheet}
                 openedFilter={openedFilter}
                 activeFilters={activeFilters}
                 // filteredEvents={filteredEvents}
@@ -297,6 +308,13 @@ export default function App() {
                     setCenter={setCenter}
                     // snapToIndex={(index) =>
                     //     placeBottomSheetRef.current?.snapToIndex(index)
+                    // }
+                />
+
+                <DateBottomSheet
+                    ref={dateBottomSheetRef}
+                    // snapToIndex={(index) =>
+                    //     listBottomSheetRef.current?.snapToIndex(index)
                     // }
                 />
             </ScrollView>
