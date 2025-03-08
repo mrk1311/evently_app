@@ -239,6 +239,16 @@ export default function App() {
         placeBottomSheetRef.current?.close();
     };
 
+    const handleAcceptDates = () => {
+        dateBottomSheetRef.current?.close();
+        handleCloseFilter();
+    };
+
+    const handleCancelDates = () => {
+        dateBottomSheetRef.current?.close();
+        handleCloseFilter();
+    };
+
     const openListBottomSheet = () => {
         if (openedFilter === null) {
             listBottomSheetRef.current?.snapToIndex(1);
@@ -313,6 +323,8 @@ export default function App() {
 
                 <DateBottomSheet
                     ref={dateBottomSheetRef}
+                    handleAcceptDates={handleAcceptDates}
+                    handleCancelDates={handleCancelDates}
                     // snapToIndex={(index) =>
                     //     listBottomSheetRef.current?.snapToIndex(index)
                     // }

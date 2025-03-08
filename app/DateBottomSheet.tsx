@@ -1,6 +1,6 @@
 // create a bottomsheet with a list of dates of events to show for example "a week from now" "a month from now"
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import BottomSheet, {
     BottomSheetBackdrop,
@@ -11,8 +11,8 @@ import type { Region } from "react-native-maps";
 
 interface BottomSheetProps {
     // snapToIndex: (index: number) => void;
-    // handleCancelDates: () => void;
-    // handleAcceptDates: (dates: string[]) => void;
+    handleCancelDates: () => void;
+    handleAcceptDates: () => void;
 }
 
 type Ref = BottomSheet;
@@ -23,7 +23,7 @@ const DateBottomSheet = React.forwardRef<Ref, BottomSheetProps>(
         const [picks, setPicks] = useState<string[]>([]);
 
         // variables
-        const snapPoints = ["85%"];
+        const snapPoints = useMemo(() => ["85%"], []);
 
         const renderBackdrop = (props: any) => (
             <BottomSheetBackdrop
@@ -33,18 +33,10 @@ const DateBottomSheet = React.forwardRef<Ref, BottomSheetProps>(
             />
         );
 
-        const handleSelectClearAll = () => {
-            if (picks.length === 3) {
-                setPicks([]);
-            } else {
-                setPicks(["Today", "This Week", "This Month"]);
-            }
-        };
-
         return (
             <BottomSheet
                 ref={ref}
-                index={0}
+                index={-1}
                 snapPoints={snapPoints}
                 backdropComponent={renderBackdrop}
             >
@@ -52,16 +44,16 @@ const DateBottomSheet = React.forwardRef<Ref, BottomSheetProps>(
                     <View style={styles.header}>
                         <TouchableOpacity
                             style={styles.clearAllButton}
-                            onPress={handleSelectClearAll}
+                            onPress={props.handleCancelDates}
                         >
-                            <Text style={styles.clearAllText}>Clear All</Text>
+                            <Text style={styles.clearAllText}>Cancel</Text>
                         </TouchableOpacity>
                         <Text style={styles.headerText}>Select Dates</Text>
                         <TouchableOpacity
                             style={styles.doneButton}
-                            // onPress={() => props.handleAcceptDates(picks)}
+                            onPress={() => props.handleAcceptDates}
                         >
-                            <Text style={styles.doneText}>Done</Text>
+                            <Text style={styles.doneText}>Accept</Text>
                         </TouchableOpacity>
                     </View>
                     <BottomSheetFlatList

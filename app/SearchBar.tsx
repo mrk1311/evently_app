@@ -19,6 +19,8 @@ import {
 // import { parseISO, isValid, isWithinInterval } from "date-fns";
 import type { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import { debounce } from "lodash";
+import DateTimePicker from "@react-native-community/datetimepicker";
+// import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 type SearchBarProps = {
     onSearch: (lat: number, lon: number) => void;
@@ -40,6 +42,8 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
     const [startDate, setStartDate] = useState<string | null>(null);
     const [endDate, setEndDate] = useState<string | null>(null);
     const inputRef = useRef<TextInput>(null);
+    const [date, setDate] = useState(new Date());
+    const [datePickerOpen, setDatePickerOpen] = useState(false);
 
     const handleDateSearch = useCallback(() => {
         if (!startDate || !endDate) return;
@@ -100,7 +104,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
         }
     }, [props.openedFilter]);
 
-    const DatePicker = useCallback(
+    const DateInputField = useCallback(
         () => (
             <View style={styles.dateContainer}>
                 <Text>From:</Text>
@@ -110,6 +114,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                     value={startDate || ""}
                     onChangeText={setStartDate}
                     // onFocus={() => setPickedFilter("Date")}
+                    // onPress={openDateInputField}
                 />
                 <Text>To:</Text>
                 <TextInput
@@ -163,7 +168,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                     />
                 )}
                 {/* if opened filter = date, show date picker */}
-                {props.openedFilter === "Date" && <DatePicker />}
+                {props.openedFilter === "Date" && <DateInputField />}
             </View>
 
             <View style={styles.filterContainer}>
@@ -171,6 +176,28 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                 <FilterButton type="Place" />
                 <FilterButton type="Date" />
             </View>
+            <DateTimePicker
+                value={date}
+                mode={"date"}
+                onChange={(event, selectedDate) => {
+                    const currentDate = selectedDate || date;
+                    setDatePickerOpen(false);
+                    setDate(currentDate);
+                }}
+            />
+
+            {/* <DateTimePicker
+                modal={true}
+                open={datePickerOpen}
+                date={date}
+                    onConfirm={(date) =>
+                    setOpen(false)
+                    setDate(date)
+                }}
+                onCancel={() => {
+                    setOpen(false)
+                }}
+            /> */}
         </View>
     );
 };
