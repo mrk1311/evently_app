@@ -23,7 +23,6 @@ import type { Region } from "react-native-maps";
 
 interface BottomSheetProps {
     eventTypes: string[];
-    snapToIndex: (index: number) => void;
     pickedTypes: string[];
     handleCancelTypes: () => void;
     handleAcceptTypes: (types: string[]) => void;
@@ -143,57 +142,27 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 });
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    contentContainer: {
-        // backgroundColor: "white",
-    },
     horizontalContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
         padding: 8,
     },
-
     buttonsContainer: {
-        flexDirection: "row",
+        borderBottomWidth: 1,
+        borderTopWidth: 1,
+        borderColor: "#eeeeee",
         justifyContent: "center",
-        gap: 16,
         margin: 8,
     },
-    itemContainer: {
-        padding: 6,
-        margin: 6,
-        backgroundColor: "#eee",
-    },
     typeIndicator: {
-        width: 12,
-        height: 12,
+        // width: 12,
+        // height: 12,
         borderRadius: 6,
-        marginRight: 12,
-    },
-    textContainer: {
-        flex: 1,
-    },
-    eventTitle: {
-        fontSize: 16,
-        fontWeight: "600",
-        color: "#333333",
-    },
-    eventSubtitle: {
-        fontSize: 14,
-        color: "#666666",
-        marginTop: 4,
-    },
-    eventDate: {
-        fontSize: 12,
-        color: "#999999",
-        marginTop: 4,
+        // marginRight: 12,
     },
     header: {
         fontSize: 20,
         fontWeight: "700",
-        marginBottom: 16,
         color: "#333333",
         textAlign: "center",
         padding: 8,
@@ -208,33 +177,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     cardTitle: {
-        fontSize: 16,
-        fontWeight: "600",
         color: "#333333",
-    },
-    metaContainer: {
-        flexDirection: "row",
-        marginTop: 4,
-    },
-    cardSubtitle: {
-        fontSize: 14,
-        color: "#666666",
-    },
-    cardDate: {
-        fontSize: 12,
-        color: "#999999",
-        marginLeft: 8,
-    },
-    cardDescription: {
-        fontSize: 14,
-        color: "#666666",
-        marginTop: 8,
-    },
-    cardImage: {
-        width: 80,
-        height: 80,
-        borderRadius: 8,
-        marginLeft: 16,
     },
 });
 

@@ -126,28 +126,6 @@ export default function App() {
     };
 
     const handlePlaceSearch = async () => {
-        // new promise type feature collection
-
-        // new Promise<FeatureCollection>((resolve, reject) => {
-        //     const response = fetch(
-        //         `https://nominatim.openstreetmap.org/search?format=geojson&viewbox=${
-        //             location.coords.longitude - 0.1
-        //         },${location.coords.latitude - 0.1},${
-        //             location.coords.longitude + 0.1
-        //         },${
-        //             location.coords.latitude + 0.1
-        //         }&addressdetails=0&namedetails=0&q=${searchQuery}`
-        //     );
-        //     resolve(response.json);
-        // })
-        //     .then((data) => {
-        //         setPlaces(data);
-        //         console.log("Location search results:", data);
-        //     })
-        //     .catch((error) => {
-        //         console.error("Location search failed:", error);
-        //     });
-
         try {
             const response = await fetch(
                 `https://nominatim.openstreetmap.org/search?format=geojson&viewbox=${
@@ -202,7 +180,7 @@ export default function App() {
     };
     const openDateBottomSheet = () => {
         setOpenedFilter("Date");
-        dateBottomSheetRef.current?.snapToIndex(1);
+        dateBottomSheetRef.current?.snapToIndex(0);
         typesBottomSheetRef.current?.close();
         placeBottomSheetRef.current?.close();
     };
@@ -302,9 +280,6 @@ export default function App() {
                 <TypesBottomSheet
                     ref={typesBottomSheetRef}
                     eventTypes={filteredEventTypes}
-                    snapToIndex={(index) =>
-                        listBottomSheetRef.current?.snapToIndex(index)
-                    }
                     pickedTypes={pickedTypes}
                     handleAcceptTypes={handleAcceptTypes}
                     handleCancelTypes={handleCancelTypes}
@@ -316,18 +291,12 @@ export default function App() {
                     handleCancelPlace={handleCancelPlace}
                     places={places}
                     setCenter={setCenter}
-                    // snapToIndex={(index) =>
-                    //     placeBottomSheetRef.current?.snapToIndex(index)
-                    // }
                 />
 
                 <DateBottomSheet
                     ref={dateBottomSheetRef}
                     handleAcceptDates={handleAcceptDates}
                     handleCancelDates={handleCancelDates}
-                    // snapToIndex={(index) =>
-                    //     listBottomSheetRef.current?.snapToIndex(index)
-                    // }
                 />
             </ScrollView>
         </>

@@ -20,7 +20,6 @@ import {
 import type { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import { debounce } from "lodash";
 import DateTimePicker from "@react-native-community/datetimepicker";
-// import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 type SearchBarProps = {
     onSearch: (lat: number, lon: number) => void;
@@ -108,21 +107,26 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
         () => (
             <View style={styles.dateContainer}>
                 <Text>From:</Text>
-                <TextInput
+                <DateTimePicker
                     style={styles.dateInput}
-                    placeholder="Start Date"
-                    value={startDate || ""}
-                    onChangeText={setStartDate}
-                    // onFocus={() => setPickedFilter("Date")}
-                    // onPress={openDateInputField}
+                    value={date}
+                    mode={"date"}
+                    onChange={(event, selectedDate) => {
+                        const currentDate = selectedDate || date;
+                        setDatePickerOpen(false);
+                        setDate(currentDate);
+                    }}
                 />
                 <Text>To:</Text>
-                <TextInput
+                <DateTimePicker
                     style={styles.dateInput}
-                    placeholder="End Date"
-                    value={endDate || ""}
-                    onChangeText={setEndDate}
-                    // onFocus={() => setPickedFilter("Date")}
+                    value={date}
+                    mode={"date"}
+                    onChange={(event, selectedDate) => {
+                        const currentDate = selectedDate || date;
+                        setDatePickerOpen(false);
+                        setDate(currentDate);
+                    }}
                 />
             </View>
         ),
@@ -140,32 +144,34 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
         <View style={styles.container}>
             <View style={styles.searchContainer}>
                 {props.openedFilter !== "Date" && (
-                    <TextInput
-                        ref={inputRef}
-                        style={styles.input}
-                        placeholder={
-                            //depending on the picked filter, the placeholder will change
-                            props.openedFilter === "Type"
-                                ? "Find event types..."
-                                : props.openedFilter === "Place"
-                                ? "Find location..."
-                                : "Find events..."
-                        }
-                        placeholderTextColor={"#666"}
-                        // value={searchQuery}
-                        onChangeText={(input) => {
-                            handleQuerySearch(input);
-                            // debounce(() => props.setSearchQuery(input), 5);
-                            // props.setSearchQuery(input);
-                        }}
-                        // onSubmitEditing={handleSearch}
-                        onFocus={() => {
-                            // props.onOpen();
-                            setIsSearchOpen(true);
-                            props.openListBottomSheet();
-                        }}
-                        // onBlur={props.onClose}
-                    />
+                    <View style={styles.dateContainer}>
+                        <TextInput
+                            ref={inputRef}
+                            style={styles.input}
+                            placeholder={
+                                //depending on the picked filter, the placeholder will change
+                                props.openedFilter === "Type"
+                                    ? "Find event types..."
+                                    : props.openedFilter === "Place"
+                                    ? "Find location..."
+                                    : "Find events..."
+                            }
+                            placeholderTextColor={"#666"}
+                            // value={searchQuery}
+                            onChangeText={(input) => {
+                                handleQuerySearch(input);
+                                // debounce(() => props.setSearchQuery(input), 5);
+                                // props.setSearchQuery(input);
+                            }}
+                            // onSubmitEditing={handleSearch}
+                            onFocus={() => {
+                                // props.onOpen();
+                                setIsSearchOpen(true);
+                                props.openListBottomSheet();
+                            }}
+                            // onBlur={props.onClose}
+                        />
+                    </View>
                 )}
                 {/* if opened filter = date, show date picker */}
                 {props.openedFilter === "Date" && <DateInputField />}
@@ -176,28 +182,6 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                 <FilterButton type="Place" />
                 <FilterButton type="Date" />
             </View>
-            <DateTimePicker
-                value={date}
-                mode={"date"}
-                onChange={(event, selectedDate) => {
-                    const currentDate = selectedDate || date;
-                    setDatePickerOpen(false);
-                    setDate(currentDate);
-                }}
-            />
-
-            {/* <DateTimePicker
-                modal={true}
-                open={datePickerOpen}
-                date={date}
-                    onConfirm={(date) =>
-                    setOpen(false)
-                    setDate(date)
-                }}
-                onCancel={() => {
-                    setOpen(false)
-                }}
-            /> */}
         </View>
     );
 };
@@ -244,63 +228,28 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         zIndex: 1000,
     },
-    closeButton: {
-        position: "absolute",
-        right: 10,
-        top: 10,
-        zIndex: 1,
-    },
-    closeButtonText: {
-        fontSize: 20,
-        color: "#666",
-    },
     input: {
         height: 40,
         paddingHorizontal: 10,
-    },
-    typeSelector: {
-        maxHeight: 200,
-    },
-    typeButtons: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 10,
     },
     typeControlButton: {
         padding: 8,
         backgroundColor: "#f0f0f0",
         borderRadius: 8,
     },
-    typeItem: {
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#eee",
-    },
-    selectedType: {
-        backgroundColor: "#e3f2fd",
-    },
     dateContainer: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 10,
+
+        // gap: 10,
     },
     dateInput: {
+        position: "relative",
+        right: 30,
         flex: 1,
         height: 40,
-        paddingHorizontal: 10,
         // backgroundColor: "#f0f0f0",
-        borderRadius: 20,
-    },
-    resultItem: {
-        padding: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: "#eee",
-    },
-    searchButton: {
-        padding: 10,
-        backgroundColor: "#2196F3",
-        borderRadius: 8,
-        alignItems: "center",
+        paddingHorizontal: 10,
     },
 });
 
