@@ -33,12 +33,18 @@ type MapProps = {
     data: EventFeatureCollection;
     center: Region;
     location: Location.LocationObject | null;
+    openEventDetailsBottomSheet: (event: EventFeature) => void;
 };
 
 const { width, height } = Dimensions.get("window");
 const MAP_DIMENSIONS = { width, height };
 
-const ClusteredMap: React.FC<MapProps> = ({ data, center, location }) => {
+const ClusteredMap: React.FC<MapProps> = ({
+    data,
+    center,
+    location,
+    openEventDetailsBottomSheet,
+}) => {
     const mapRef = React.useRef<MapView>(null);
 
     const [region, setRegion] = useState<Region>(center);
@@ -54,6 +60,7 @@ const ClusteredMap: React.FC<MapProps> = ({ data, center, location }) => {
             mapRef.current?.animateToRegion(toRegion, 500);
         } else {
             console.log("Point pressed", point);
+            openEventDetailsBottomSheet(point);
         }
     };
 

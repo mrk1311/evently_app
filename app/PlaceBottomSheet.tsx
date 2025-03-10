@@ -47,12 +47,18 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         []
     );
 
-    const renderPlaceCard = ({ item }: { item: string }) => (
+    const renderPlaceCard = ({
+        item,
+        index,
+    }: {
+        item: string;
+        index: number;
+    }) => (
         <TouchableOpacity
             style={[styles.cardContainer]}
             onPress={() => {
                 // props.setIsSearchOpen(false);
-                console.log("Filter card pressed");
+                console.log("place picked", item);
             }}
         >
             {/* Event Type Indicator */}
@@ -98,7 +104,7 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     data={props.places?.features.map(
                         (feature) => feature.properties?.name
                     )}
-                    keyExtractor={(item) => item}
+                    keyExtractor={props.places?.features[0].properties?.id}
                     renderItem={renderPlaceCard}
                 />
             </View>

@@ -13,6 +13,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import BottomSheet from "@gorhom/bottom-sheet";
 import PlaceBottomSheet from "./PlaceBottomSheet";
 import DateBottomSheet from "./DateBottomSheet";
+import EventDetailsBottomSheet from "./EventDetailsBottomSheet";
 
 import * as Location from "expo-location";
 import { FeatureCollection, GeoJsonObject, GeoJsonTypes } from "geojson";
@@ -22,6 +23,7 @@ export default function App() {
     const typesBottomSheetRef = useRef<BottomSheet>(null);
     const placeBottomSheetRef = useRef<BottomSheet>(null);
     const dateBottomSheetRef = useRef<BottomSheet>(null);
+    const EventDetailsBottomSheetRef = useRef<BottomSheet>(null);
     const [filteredEvents, setFilteredEvents] =
         useState<EventFeatureCollection>(eventData as EventFeatureCollection);
     const [openedFilter, setOpenedFilter] = useState<
@@ -33,6 +35,7 @@ export default function App() {
     const [pickedTypes, setpickedTypes] = useState<string[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [places, setPlaces] = useState<FeatureCollection | null>(null);
+    const [openEvent, setOpenEvent] = useState<EventFeature | null>(null);
 
     // user location
     const [location, setLocation] = useState<Location.LocationObject>({
@@ -134,12 +137,12 @@ export default function App() {
                     location.coords.longitude + 0.1
                 },${
                     location.coords.latitude + 0.1
-                }&addressdetails=0&namedetails=0&q=${searchQuery}`
+                }&addressdetails=0&namedetails=0&extratags=0&featureType=city&q=${searchQuery}`
             );
             const data = await response.json();
 
             setPlaces(data);
-            console.log("Location search results:", data);
+            console.log("Location search results:", data.features);
         } catch (error) {
             console.error("Location search failed:", error);
         }
@@ -227,6 +230,11 @@ export default function App() {
         handleCloseFilter();
     };
 
+    const handleCancelDetails = () => {
+        EventDetailsBottomSheetRef.current?.close();
+        setOpenEvent(null);
+    };
+
     const openListBottomSheet = () => {
         if (openedFilter === null) {
             listBottomSheetRef.current?.snapToIndex(1);
@@ -266,6 +274,10 @@ export default function App() {
                     data={filteredEvents as EventFeatureCollection}
                     center={center}
                     location={location}
+                    openEventDetailsBottomSheet={(event) => {
+                        setOpenEvent(event);
+                        EventDetailsBottomSheetRef.current?.snapToIndex(0);
+                    }}
                 />
 
                 <ListBottomSheet
@@ -297,6 +309,12 @@ export default function App() {
                     ref={dateBottomSheetRef}
                     handleAcceptDates={handleAcceptDates}
                     handleCancelDates={handleCancelDates}
+                />
+
+                <EventDetailsBottomSheet
+                    ref={EventDetailsBottomSheetRef}
+                    event={openEvent}
+                    handleCancelDetails={handleCancelDetails}
                 />
             </ScrollView>
         </>
