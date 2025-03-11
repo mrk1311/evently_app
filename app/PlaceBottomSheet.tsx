@@ -19,13 +19,14 @@ import BottomSheet, {
     BottomSheetFlatList,
 } from "@gorhom/bottom-sheet";
 import type { Region } from "react-native-maps";
-import { FeatureCollection } from "geojson";
+import { Feature, FeatureCollection, GeoJsonObject } from "geojson";
 
 interface BottomSheetProps {
     setCenter: (region: Region) => void;
     handleCancelPlace: () => void;
-    handleAcceptPlace: (place: string[]) => void;
+    handleAcceptPlace: (place: Feature) => void;
     places: FeatureCollection | null;
+    setPlaces: (places: FeatureCollection | null) => void;
 }
 
 type Ref = BottomSheet;
@@ -34,6 +35,7 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // hooks
 
     // variables
+    const [lastSearched, setLastSearched] = useState<Feature[] | null>(null);
     const snapPoints = useMemo(() => ["85%"], []);
 
     const renderBackdrop = useCallback(
@@ -47,29 +49,30 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         []
     );
 
-    const renderPlaceCard = ({
-        item,
-        index,
-    }: {
-        item: string;
-        index: number;
-    }) => (
+    const PlaceCard = ({ place }: { place: Feature }) => (
         <TouchableOpacity
             style={[styles.cardContainer]}
             onPress={() => {
                 // props.setIsSearchOpen(false);
-                console.log("place picked", item);
+                console.log("place picked", place);
+                // add to last searched
+
+                setLastSearched((prev) => {
+                    if (prev === null) {
+                        return [place];
+                    } else {
+                        return [place, ...prev];
+                    }
+                });
+
+                props.handleAcceptPlace(place);
+                props.setPlaces(null);
             }}
         >
-            {/* Event Type Indicator */}
-            <View
-                style={[
-                    styles.typeIndicator,
-                    // { backgroundColor: item.properties.color },
-                ]}
-            />
             <View style={styles.cardContent}>
-                <Text style={styles.cardTitle}>{item}</Text>
+                <Text style={styles.cardTitle}>
+                    {place.properties?.display_name}
+                </Text>
             </View>
         </TouchableOpacity>
     );
@@ -90,6 +93,7 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     // change to cancel and close
                     onPress={() => {
                         props.handleCancelPlace();
+                        props.setPlaces(null);
                     }}
                 />
                 <Text style={styles.header}>Choose Place</Text>
@@ -100,13 +104,39 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 />
             </View>
             <View style={styles.container}>
-                <BottomSheetFlatList
+                {/* display last searched items when not searching*/}
+                {props.places === null ? (
+                    <>
+                        <Text style={styles.subHeader}>Last searched:</Text>
+                        {lastSearched === null ? (
+                            <Text>No places found</Text>
+                        ) : (
+                            lastSearched.map((place) => (
+                                <PlaceCard
+                                    place={place}
+                                    key={place.properties?.place_id}
+                                />
+                            ))
+                        )}
+                    </>
+                ) : (
+                    props.places?.features.map((place) => {
+                        return (
+                            <PlaceCard
+                                place={place}
+                                key={place.properties?.place_id}
+                            />
+                        );
+                    })
+                )}
+
+                {/* <BottomSheetFlatList
                     data={props.places?.features.map(
                         (feature) => feature.properties?.name
                     )}
                     keyExtractor={props.places?.features[0].properties?.id}
                     renderItem={renderPlaceCard}
-                />
+                /> */}
             </View>
         </BottomSheet>
     );
@@ -168,6 +198,14 @@ const styles = StyleSheet.create({
         textAlign: "center",
         padding: 8,
     },
+    subHeader: {
+        fontSize: 16,
+        fontWeight: "700",
+        marginBottom: 16,
+        color: "#333333",
+        textAlign: "left",
+        paddingHorizontal: 16,
+    },
     cardContainer: {
         flexDirection: "row",
         padding: 16,
@@ -179,7 +217,6 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         fontSize: 16,
-        fontWeight: "600",
         color: "#333333",
     },
     metaContainer: {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import MapView from "react-native-maps";
-import { StyleSheet, View, Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions, Keyboard } from "react-native";
 import { Clusterer, isPointCluster } from "react-native-clusterer";
 import type { Region } from "react-native-maps";
 import type { Feature, Point, FeatureCollection } from "geojson";
@@ -52,6 +52,8 @@ const ClusteredMap: React.FC<MapProps> = ({
     const handleRegionChange = (newRegion: Region) => {
         console.log(newRegion);
         setRegion(newRegion);
+        // dissmiss the keyboard when the map is moved
+        Keyboard.dismiss();
     };
 
     const _handlePointPress = (point: IFeature) => {

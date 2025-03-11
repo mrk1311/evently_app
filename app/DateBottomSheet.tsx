@@ -54,6 +54,7 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                         onPress={() => props.handleAcceptDates}
                     />
                 </View>
+
                 <BottomSheetFlatList
                     data={["Today", "This Week", "This Month"]}
                     keyExtractor={(item) => item}

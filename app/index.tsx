@@ -16,7 +16,14 @@ import DateBottomSheet from "./DateBottomSheet";
 import EventDetailsBottomSheet from "./EventDetailsBottomSheet";
 
 import * as Location from "expo-location";
-import { FeatureCollection, GeoJsonObject, GeoJsonTypes } from "geojson";
+import {
+    Feature,
+    FeatureCollection,
+    GeoJsonObject,
+    GeoJsonTypes,
+    Point,
+} from "geojson";
+import { set } from "lodash";
 
 export default function App() {
     const listBottomSheetRef = useRef<BottomSheet>(null);
@@ -210,17 +217,26 @@ export default function App() {
         typesBottomSheetRef.current?.close();
     };
 
-    const handleAcceptPlace = (place: string[]) => {
+    const handleAcceptPlace = (place: Feature) => {
+        const point = place.geometry as Point;
         placeBottomSheetRef.current?.close();
         handleCloseFilter();
+        setCenter({
+            latitude: point.coordinates[1],
+            longitude: point.coordinates[0],
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
+        });
     };
 
     const handleCancelPlace = () => {
+        // setPlaces(null);
         handleCloseFilter();
         placeBottomSheetRef.current?.close();
     };
 
     const handleAcceptDates = () => {
+        // setPlaces(null);
         dateBottomSheetRef.current?.close();
         handleCloseFilter();
     };
@@ -269,54 +285,55 @@ export default function App() {
             />
 
             {/* TODO find another way to dismiss the keyboard than scrollview */}
-            <ScrollView horizontal={true} style={styles.container}>
-                <ClusteredMap
-                    data={filteredEvents as EventFeatureCollection}
-                    center={center}
-                    location={location}
-                    openEventDetailsBottomSheet={(event) => {
-                        setOpenEvent(event);
-                        EventDetailsBottomSheetRef.current?.snapToIndex(0);
-                    }}
-                />
+            {/* <ScrollView horizontal={true} style={styles.container}> */}
+            <ClusteredMap
+                data={filteredEvents as EventFeatureCollection}
+                center={center}
+                location={location}
+                openEventDetailsBottomSheet={(event) => {
+                    setOpenEvent(event);
+                    EventDetailsBottomSheetRef.current?.snapToIndex(0);
+                }}
+            />
 
-                <ListBottomSheet
-                    ref={listBottomSheetRef}
-                    events={filteredEvents as EventFeatureCollection}
-                    setCenter={setCenter}
-                    snapToIndex={(index) =>
-                        listBottomSheetRef.current?.snapToIndex(index)
-                    }
-                />
+            <ListBottomSheet
+                ref={listBottomSheetRef}
+                events={filteredEvents as EventFeatureCollection}
+                setCenter={setCenter}
+                snapToIndex={(index) =>
+                    listBottomSheetRef.current?.snapToIndex(index)
+                }
+            />
 
-                <TypesBottomSheet
-                    ref={typesBottomSheetRef}
-                    eventTypes={filteredEventTypes}
-                    pickedTypes={pickedTypes}
-                    handleAcceptTypes={handleAcceptTypes}
-                    handleCancelTypes={handleCancelTypes}
-                />
+            <TypesBottomSheet
+                ref={typesBottomSheetRef}
+                eventTypes={filteredEventTypes}
+                pickedTypes={pickedTypes}
+                handleAcceptTypes={handleAcceptTypes}
+                handleCancelTypes={handleCancelTypes}
+            />
 
-                <PlaceBottomSheet
-                    ref={placeBottomSheetRef}
-                    handleAcceptPlace={handleAcceptPlace}
-                    handleCancelPlace={handleCancelPlace}
-                    places={places}
-                    setCenter={setCenter}
-                />
+            <PlaceBottomSheet
+                ref={placeBottomSheetRef}
+                handleAcceptPlace={handleAcceptPlace}
+                handleCancelPlace={handleCancelPlace}
+                places={places}
+                setPlaces={setPlaces}
+                setCenter={setCenter}
+            />
 
-                <DateBottomSheet
-                    ref={dateBottomSheetRef}
-                    handleAcceptDates={handleAcceptDates}
-                    handleCancelDates={handleCancelDates}
-                />
+            <DateBottomSheet
+                ref={dateBottomSheetRef}
+                handleAcceptDates={handleAcceptDates}
+                handleCancelDates={handleCancelDates}
+            />
 
-                <EventDetailsBottomSheet
-                    ref={EventDetailsBottomSheetRef}
-                    event={openEvent}
-                    handleCancelDetails={handleCancelDetails}
-                />
-            </ScrollView>
+            <EventDetailsBottomSheet
+                ref={EventDetailsBottomSheetRef}
+                event={openEvent}
+                handleCancelDetails={handleCancelDetails}
+            />
+            {/* </ScrollView> */}
         </>
     );
 }

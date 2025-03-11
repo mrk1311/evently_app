@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 20,
         paddingLeft: 10,
+        paddingRight: 10,
         zIndex: 1000,
     },
     input: {
@@ -240,16 +241,15 @@ const styles = StyleSheet.create({
     dateContainer: {
         flexDirection: "row",
         alignItems: "center",
-
-        // gap: 10,
+        // paddingLeft: 20,
+        gap: 10,
     },
     dateInput: {
         position: "relative",
-        right: 30,
+        right: 20,
         flex: 1,
         height: 40,
         // backgroundColor: "#f0f0f0",
-        paddingHorizontal: 10,
     },
 });
 

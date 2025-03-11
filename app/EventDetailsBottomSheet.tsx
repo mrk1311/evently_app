@@ -35,7 +35,7 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
         // hooks
 
         // variables
-        const snapPoints = useMemo(() => ["85%"], []);
+        const snapPoints = useMemo(() => ["30%", "85%"], []);
 
         const renderBackdrop = useCallback(
             (props: any) => (
@@ -55,8 +55,8 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                 snapPoints={snapPoints}
                 enableDynamicSizing={false}
                 backdropComponent={renderBackdrop}
-                enableContentPanningGesture={true}
-                enablePanDownToClose={false}
+                // enableContentPanningGesture={true}
+                enablePanDownToClose={true}
             >
                 <View style={styles.container}>
                     <View style={styles.header}>

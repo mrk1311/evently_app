@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo } from "react";
-import { Text, StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import { Marker as MapsMarker, Callout } from "react-native-maps";
 
 import type { supercluster } from "react-native-clusterer";
@@ -41,16 +41,16 @@ const EventMarker: FunctionComponent<Props> = memo(
             >
                 {item.properties?.cluster ? (
                     // Render Cluster
-                    <View style={styles.clusterMarker}>
+                    <TouchableOpacity style={styles.clusterMarker}>
                         <Text style={styles.clusterMarkerText}>
                             {item.properties.point_count}
                         </Text>
-                    </View>
+                    </TouchableOpacity>
                 ) : (
                     // Else, create a custom marker for the event
                     // a marker and add a always visible callout to it
                     <>
-                        <View style={styles.markerContainer}>
+                        <TouchableOpacity style={styles.markerContainer}>
                             <View style={styles.markerTitlePopup}>
                                 <Text style={styles.markerTitle}>
                                     {item.properties.name}
@@ -72,14 +72,7 @@ const EventMarker: FunctionComponent<Props> = memo(
                                         .toUpperCase()}
                                 </Text>
                             </View>
-
-                            {/* <Callout tooltip>
-                            <View style={styles.calloutContainer}>
-                                <Text>{item.properties.title}</Text>
-                                <Text>{item.properties.description}</Text>
-                            </View>
-                        </Callout> */}
-                        </View>
+                        </TouchableOpacity>
                     </>
                 )}
             </MapsMarker>
