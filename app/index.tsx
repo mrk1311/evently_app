@@ -33,6 +33,9 @@ export default function App() {
     const EventDetailsBottomSheetRef = useRef<BottomSheet>(null);
     const [filteredEvents, setFilteredEvents] =
         useState<EventFeatureCollection>(eventData as EventFeatureCollection);
+    const [sortedEvents, setSortedEvents] = useState<EventFeatureCollection>(
+        eventData as EventFeatureCollection
+    );
     const [openedFilter, setOpenedFilter] = useState<
         "Type" | "Place" | "Date" | null
     >(null);
@@ -176,6 +179,37 @@ export default function App() {
         }
     }, [pickedTypes, searchQuery]);
 
+    // sort the events based on map center asynchroniously
+
+    const sortEventsByDistance = (region: Region) => {
+        const sortedEvents = eventData.features.sort((a, b) => {
+            const aPoint = a.geometry as Point;
+            const bPoint = b.geometry as Point;
+
+            const aDistance = Math.sqrt(
+                Math.pow(region.latitude - aPoint.coordinates[1], 2) +
+                    Math.pow(region.longitude - aPoint.coordinates[0], 2)
+            );
+            const bDistance = Math.sqrt(
+                Math.pow(region.latitude - bPoint.coordinates[1], 2) +
+                    Math.pow(region.longitude - bPoint.coordinates[0], 2)
+            );
+
+            return aDistance - bDistance;
+        });
+
+        new Promise<void>((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, 1000);
+        }).then(() => {
+            setSortedEvents({
+                type: "FeatureCollection",
+                features: sortedEvents as EventFeature[], // Ensure the sorted features are cast to EventFeature[]
+            });
+        });
+    };
+
     const openTypesBottomSheet = () => {
         setOpenedFilter("Type");
         typesBottomSheetRef.current?.snapToIndex(0);
@@ -294,15 +328,21 @@ export default function App() {
                     setOpenEvent(event);
                     EventDetailsBottomSheetRef.current?.snapToIndex(0);
                 }}
+                sortEventsByDistance={sortEventsByDistance}
             />
 
             <ListBottomSheet
                 ref={listBottomSheetRef}
-                events={filteredEvents as EventFeatureCollection}
+                events={sortedEvents as EventFeatureCollection}
                 setCenter={setCenter}
                 snapToIndex={(index) =>
                     listBottomSheetRef.current?.snapToIndex(index)
                 }
+                openEventDetailsBottomSheet={(event) => {
+                    console.log("Opening event details", event);
+                    setOpenEvent(event);
+                    EventDetailsBottomSheetRef.current?.snapToIndex(0);
+                }}
             />
 
             <TypesBottomSheet

@@ -34,6 +34,7 @@ type MapProps = {
     center: Region;
     location: Location.LocationObject | null;
     openEventDetailsBottomSheet: (event: EventFeature) => void;
+    sortEventsByDistance: (region: Region) => void;
 };
 
 const { width, height } = Dimensions.get("window");
@@ -44,14 +45,15 @@ const ClusteredMap: React.FC<MapProps> = ({
     center,
     location,
     openEventDetailsBottomSheet,
+    sortEventsByDistance,
 }) => {
     const mapRef = React.useRef<MapView>(null);
 
     const [region, setRegion] = useState<Region>(center);
 
     const handleRegionChange = (newRegion: Region) => {
-        console.log(newRegion);
         setRegion(newRegion);
+        sortEventsByDistance(newRegion);
         // dissmiss the keyboard when the map is moved
         Keyboard.dismiss();
     };
@@ -68,6 +70,7 @@ const ClusteredMap: React.FC<MapProps> = ({
 
     useEffect(() => {
         mapRef.current?.animateToRegion(center, 500);
+        console.log("Center changed", center);
     }, [center]);
 
     return (

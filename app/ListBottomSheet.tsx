@@ -14,6 +14,7 @@ interface BottomSheetProps {
     events: EventFeatureCollection;
     setCenter: (region: Region) => void;
     snapToIndex: (index: number) => void;
+    openEventDetailsBottomSheet: (event: EventFeature) => void;
 }
 
 const coordinatesToRegion = (coordinates: number[]) => ({
@@ -33,6 +34,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         <TouchableOpacity
             style={styles.cardContainer}
             onPress={() => {
+                props.openEventDetailsBottomSheet(item);
                 props.setCenter(coordinatesToRegion(item.geometry.coordinates));
                 props.snapToIndex(0);
             }}

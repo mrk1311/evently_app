@@ -61,7 +61,29 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     if (prev === null) {
                         return [place];
                     } else {
-                        return [place, ...prev];
+                        // check if the place is already in the list
+                        // if it is, move it to the top
+                        if (
+                            prev.find(
+                                (p) =>
+                                    p.properties?.place_id ===
+                                    place.properties?.place_id
+                            )
+                        ) {
+                            return [
+                                place,
+                                ...prev.filter(
+                                    (p) =>
+                                        p.properties?.place_id !==
+                                        place.properties?.place_id
+                                ),
+                            ];
+                            // check if the list is full
+                        } else if (prev.length >= 10) {
+                            return [place, ...prev.slice(0, 9)];
+                        } else {
+                            return [place, ...prev];
+                        }
                     }
                 });
 
