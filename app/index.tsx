@@ -61,6 +61,7 @@ export default function App() {
         timestamp: 0,
     });
 
+    // get user location
     useEffect(() => {
         async function getCurrentLocation() {
             let { status } = await Location.requestForegroundPermissionsAsync();

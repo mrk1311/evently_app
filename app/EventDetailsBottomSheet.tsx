@@ -59,19 +59,33 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                 enablePanDownToClose={true}
             >
                 <View style={styles.container}>
-                    <View style={styles.header}>
-                        <Button
+                    {/* <View style={styles.header}> */}
+                    {/* <Button
                             title="Cancel"
                             onPress={props.handleCancelDetails}
-                        />
-                        <Text style={styles.headerText}>
-                            {props.event?.properties.name}
-                        </Text>
-                        <Button title="Website" onPress={() => {}} />
-                    </View>
+                        /> */}
+                    <Text style={styles.headerText}>
+                        {props.event?.properties.name}
+                    </Text>
+                    {/* <Button title="Website" onPress={() => {}} /> */}
+                    {/* </View> */}
+                    <Text style={styles.type}>
+                        {props.event?.properties.type}
+                    </Text>
                     <Text style={styles.description}>
                         {props.event?.properties.description}
                     </Text>
+                    <Text style={styles.description}>
+                        {"date: " + props.event?.properties.date}
+                    </Text>
+                    <Text style={styles.description}>
+                        {props.event?.properties.link}
+                    </Text>
+                    <Image
+                        source={{ uri: props.event?.properties.photo }}
+                        style={{ width: 200, height: 200 }}
+                        resizeMode="cover"
+                    />
                 </View>
             </BottomSheet>
         );
@@ -88,13 +102,22 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 20,
+        marginBottom: 8,
     },
     headerText: {
         fontSize: 20,
+        marginBottom: 8,
+        fontWeight: "bold",
+        textAlign: "center",
+    },
+    type: {
+        fontSize: 18,
+        textAlign: "center",
+        marginBottom: 16,
     },
     description: {
         fontSize: 16,
+        marginBottom: 8,
     },
 });
 
