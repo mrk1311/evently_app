@@ -36,6 +36,8 @@ type SearchBarProps = {
     events: EventFeatureCollection;
 };
 
+// TODO memoize the function to prevent re-rendering
+
 const SearchBar: React.FC<SearchBarProps> = (props) => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [startDate, setStartDate] = useState<string | null>(null);
@@ -58,8 +60,6 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
         // setFilteredEvents(filtered);
         // handleCloseSearch();
     }, [startDate, endDate, props.events]);
-
-    console.log("acitve filters", props.activeFilters);
 
     const FilterButton: React.FC<{ type: "Type" | "Place" | "Date" }> = ({
         type,

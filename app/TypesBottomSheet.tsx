@@ -57,8 +57,6 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         }
     };
 
-    console.log("TypesBottomSheet picks", picks);
-
     const renderFilterCard = ({ item }: { item: string }) => (
         <TouchableOpacity
             style={[

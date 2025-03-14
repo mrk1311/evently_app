@@ -78,6 +78,7 @@ const EventMarker: FunctionComponent<Props> = memo(
             </MapsMarker>
         );
     },
+
     (prevProps, nextProps) =>
         prevProps.item.properties?.cluster_id ===
             nextProps.item.properties?.cluster_id &&

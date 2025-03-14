@@ -8,6 +8,7 @@ import EventMarker from "./EventMarker";
 import type { supercluster } from "react-native-clusterer";
 
 import * as Location from "expo-location";
+import debounce from "lodash/debounce";
 
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
 
@@ -34,7 +35,7 @@ type MapProps = {
     center: Region;
     location: Location.LocationObject | null;
     openEventDetailsBottomSheet: (event: EventFeature) => void;
-    sortEventsByDistance: (region: Region) => void;
+    onRegionChangeComplete?: (region: Region) => void;
 };
 
 const { width, height } = Dimensions.get("window");
@@ -43,9 +44,8 @@ const MAP_DIMENSIONS = { width, height };
 const ClusteredMap: React.FC<MapProps> = ({
     data,
     center,
-    location,
     openEventDetailsBottomSheet,
-    sortEventsByDistance,
+    onRegionChangeComplete,
 }) => {
     const mapRef = React.useRef<MapView>(null);
 
@@ -53,7 +53,7 @@ const ClusteredMap: React.FC<MapProps> = ({
 
     const handleRegionChange = (newRegion: Region) => {
         setRegion(newRegion);
-        sortEventsByDistance(newRegion);
+        onRegionChangeComplete?.(newRegion);
         // dissmiss the keyboard when the map is moved
         Keyboard.dismiss();
     };
@@ -87,6 +87,12 @@ const ClusteredMap: React.FC<MapProps> = ({
                 showsBuildings={true}
                 rotateEnabled={false}
                 pitchEnabled={false}
+                // toolbarEnabled={false}
+                // loadingEnabled={true}
+                // moveOnMarkerPress={true}
+                // onPanDrag={() => Keyboard.dismiss()}
+                // cacheEnabled={true}
+                // renderToHardwareTextureAndroid={true}
             >
                 <Clusterer
                     data={data.features}

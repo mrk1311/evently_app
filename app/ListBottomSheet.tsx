@@ -89,16 +89,6 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 <Text style={styles.header}>
                     Events: {props.events.features.length}
                 </Text>
-
-                {/* {
-                    <TouchableOpacity
-                        onPress={() => {
-                            props.snapToIndex(0);
-                        }}
-                    >
-                        <Ionicons name="chevron-down" size={24} color="black" />
-                    </TouchableOpacity>
-                } */}
             </View>
             <BottomSheetFlatList
                 data={props.events.features as EventFeature[]}

@@ -23,9 +23,9 @@ import {
     GeoJsonTypes,
     Point,
 } from "geojson";
-import { set } from "lodash";
 
 export default function App() {
+    const throttle = require("lodash/throttle");
     const listBottomSheetRef = useRef<BottomSheet>(null);
     const typesBottomSheetRef = useRef<BottomSheet>(null);
     const placeBottomSheetRef = useRef<BottomSheet>(null);
@@ -33,9 +33,6 @@ export default function App() {
     const EventDetailsBottomSheetRef = useRef<BottomSheet>(null);
     const [filteredEvents, setFilteredEvents] =
         useState<EventFeatureCollection>(eventData as EventFeatureCollection);
-    const [sortedEvents, setSortedEvents] = useState<EventFeatureCollection>(
-        eventData as EventFeatureCollection
-    );
     const [openedFilter, setOpenedFilter] = useState<
         "Type" | "Place" | "Date" | null
     >(null);
@@ -46,6 +43,15 @@ export default function App() {
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [places, setPlaces] = useState<FeatureCollection | null>(null);
     const [openEvent, setOpenEvent] = useState<EventFeature | null>(null);
+    const [controlledCenter, setControlledCenter] = useState<Region>({
+        latitude: 51.1657,
+        longitude: 10.4515,
+        latitudeDelta: 30,
+        longitudeDelta: 30,
+    });
+
+    const [mapViewCenter, setMapViewCenter] =
+        useState<Region>(controlledCenter);
 
     // user location
     const [location, setLocation] = useState<Location.LocationObject>({
@@ -76,10 +82,10 @@ export default function App() {
 
         getCurrentLocation();
     }, []);
-
+    // center map on user location
     useEffect(() => {
         if (location) {
-            setCenter({
+            setControlledCenter({
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,
                 latitudeDelta: 0.1,
@@ -88,14 +94,6 @@ export default function App() {
         }
         console.log(location);
     }, [location]);
-
-    const [center, setCenter] = useState<Region>({
-        // Center on Europe
-        latitude: 51.1657,
-        longitude: 10.4515,
-        latitudeDelta: 30,
-        longitudeDelta: 30,
-    });
 
     const uniqueEventTypes = useMemo(
         () =>
@@ -124,6 +122,66 @@ export default function App() {
             features: filteredFeatures as EventFeature[], // Ensure the filtered features are cast to EventFeature[]
         };
     };
+
+    const haversine = (
+        lat1: number,
+        lon1: number,
+        lat2: number,
+        lon2: number
+    ) => {
+        const R = 6371; // Earth radius in km
+        const dLat = ((lat2 - lat1) * Math.PI) / 180;
+        const dLon = ((lon2 - lon1) * Math.PI) / 180;
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos((lat1 * Math.PI) / 180) *
+                Math.cos((lat2 * Math.PI) / 180) *
+                Math.sin(dLon / 2) *
+                Math.sin(dLon / 2);
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    };
+
+    const handleRegionChangeComplete = useMemo(
+        () =>
+            throttle((region: Region) => {
+                setMapViewCenter(region);
+            }, 500),
+        []
+    );
+
+    const sortedEvents = useMemo(() => {
+        const features = filteredEvents.features
+            .map((feature) => {
+                // Ensure we're working with Point geometry
+                if (feature.geometry.type === "Point") {
+                    const [lon, lat] = feature.geometry.coordinates;
+                    return {
+                        ...feature,
+                        properties: {
+                            ...feature.properties,
+                            distance: haversine(
+                                lat,
+                                lon,
+                                mapViewCenter.latitude,
+                                mapViewCenter.longitude
+                            ),
+                        },
+                    };
+                }
+                return feature;
+            })
+            .filter((feature) => feature.geometry.type === "Point") // Filter out non-point features
+            .sort(
+                (a, b) =>
+                    (a.properties?.distance || 0) -
+                    (b.properties?.distance || 0)
+            );
+
+        return {
+            type: "FeatureCollection",
+            features: features,
+        } as EventFeatureCollection;
+    }, [filteredEvents, mapViewCenter]);
 
     const filterBySearch = (
         array: EventFeatureCollection
@@ -180,37 +238,6 @@ export default function App() {
         }
     }, [pickedTypes, searchQuery]);
 
-    // sort the events based on map center asynchroniously
-
-    const sortEventsByDistance = (region: Region) => {
-        const sortedEvents = eventData.features.sort((a, b) => {
-            const aPoint = a.geometry as Point;
-            const bPoint = b.geometry as Point;
-
-            const aDistance = Math.sqrt(
-                Math.pow(region.latitude - aPoint.coordinates[1], 2) +
-                    Math.pow(region.longitude - aPoint.coordinates[0], 2)
-            );
-            const bDistance = Math.sqrt(
-                Math.pow(region.latitude - bPoint.coordinates[1], 2) +
-                    Math.pow(region.longitude - bPoint.coordinates[0], 2)
-            );
-
-            return aDistance - bDistance;
-        });
-
-        new Promise<void>((resolve) => {
-            setTimeout(() => {
-                resolve();
-            }, 1000);
-        }).then(() => {
-            setSortedEvents({
-                type: "FeatureCollection",
-                features: sortedEvents as EventFeature[], // Ensure the sorted features are cast to EventFeature[]
-            });
-        });
-    };
-
     const openTypesBottomSheet = () => {
         setOpenedFilter("Type");
         typesBottomSheetRef.current?.snapToIndex(0);
@@ -245,7 +272,6 @@ export default function App() {
         typesBottomSheetRef.current?.close();
         setFilteredEventTypes(uniqueEventTypes);
     };
-
     const handleCancelTypes = () => {
         setFilteredEventTypes(uniqueEventTypes);
         handleCloseFilter();
@@ -253,17 +279,21 @@ export default function App() {
     };
 
     const handleAcceptPlace = (place: Feature) => {
-        const point = place.geometry as Point;
-        placeBottomSheetRef.current?.close();
-        handleCloseFilter();
-        setCenter({
-            latitude: point.coordinates[1],
-            longitude: point.coordinates[0],
-            latitudeDelta: 0.1,
-            longitudeDelta: 0.1,
-        });
+        // type guard to ensure the place is a point
+        if (place.geometry.type === "Point") {
+            const coordinates = (place.geometry as Point).coordinates;
+            placeBottomSheetRef.current?.close();
+            // handleCloseFilter();
+            setControlledCenter({
+                latitude: coordinates[1],
+                longitude: coordinates[0],
+                latitudeDelta: 0.1,
+                longitudeDelta: 0.1,
+            });
+        } else {
+            console.error("Place is not a point");
+        }
     };
-
     const handleCancelPlace = () => {
         // setPlaces(null);
         handleCloseFilter();
@@ -297,11 +327,6 @@ export default function App() {
         setSearchQuery("");
     };
 
-    // const closeListBottomSheet = () => {
-    //     bottomSheetRef.current?.close();
-    //     console.log("Closing list bottom sheet");
-    // };
-
     return (
         <>
             <SearchBar
@@ -323,19 +348,19 @@ export default function App() {
             {/* <ScrollView horizontal={true} style={styles.container}> */}
             <ClusteredMap
                 data={filteredEvents as EventFeatureCollection}
-                center={center}
+                center={controlledCenter}
                 location={location}
                 openEventDetailsBottomSheet={(event) => {
                     setOpenEvent(event);
                     EventDetailsBottomSheetRef.current?.snapToIndex(0);
                 }}
-                sortEventsByDistance={sortEventsByDistance}
+                onRegionChangeComplete={handleRegionChangeComplete}
             />
 
             <ListBottomSheet
                 ref={listBottomSheetRef}
                 events={sortedEvents as EventFeatureCollection}
-                setCenter={setCenter}
+                setCenter={setControlledCenter}
                 snapToIndex={(index) =>
                     listBottomSheetRef.current?.snapToIndex(index)
                 }
@@ -360,7 +385,7 @@ export default function App() {
                 handleCancelPlace={handleCancelPlace}
                 places={places}
                 setPlaces={setPlaces}
-                setCenter={setCenter}
+                setCenter={setControlledCenter}
             />
 
             <DateBottomSheet
