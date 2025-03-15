@@ -7,6 +7,7 @@ import React, {
     useRef,
     useState,
     forwardRef,
+    memo,
 } from "react";
 import {
     View,
@@ -121,4 +122,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default EventDetailsBottomSheet;
+export default memo(EventDetailsBottomSheet);

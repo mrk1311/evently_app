@@ -1,4 +1,4 @@
-import React, { useState, useMemo, forwardRef } from "react";
+import React, { useState, useMemo, forwardRef, memo, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
 import BottomSheet, {
     BottomSheetBackdrop,
@@ -22,12 +22,33 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // variables
     const snapPoints = useMemo(() => ["85%"], []);
 
-    const renderBackdrop = (props: any) => (
-        <BottomSheetBackdrop
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            {...props}
-        />
+    const renderBackdrop = useCallback(
+        (props: any) => (
+            <BottomSheetBackdrop
+                appearsOnIndex={0}
+                disappearsOnIndex={-1}
+                {...props}
+            />
+        ),
+        []
+    );
+
+    const renderItem = useCallback(
+        ({ item }: { item: string }) => (
+            <TouchableOpacity
+                style={styles.cardContainer}
+                onPress={() => {
+                    setPicks((prevPicks) =>
+                        prevPicks.includes(item)
+                            ? prevPicks.filter((pick) => pick !== item)
+                            : [...prevPicks, item]
+                    );
+                }}
+            >
+                <Text style={styles.cardText}>{item}</Text>
+            </TouchableOpacity>
+        ),
+        [] // No dependencies needed due to functional update
     );
 
     return (
@@ -58,29 +79,14 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 <BottomSheetFlatList
                     data={["Today", "This Week", "This Month"]}
                     keyExtractor={(item) => item}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity
-                            style={styles.cardContainer}
-                            onPress={() => {
-                                if (picks.includes(item)) {
-                                    setPicks(
-                                        picks.filter((pick) => pick !== item)
-                                    );
-                                } else {
-                                    setPicks([...picks, item]);
-                                }
-                            }}
-                        >
-                            <Text style={styles.cardText}>{item}</Text>
-                        </TouchableOpacity>
-                    )}
+                    renderItem={renderItem}
                 />
             </View>
         </BottomSheet>
     );
 });
 
-export default DateBottomSheet;
+export default memo(DateBottomSheet);
 
 const styles = StyleSheet.create({
     container: {

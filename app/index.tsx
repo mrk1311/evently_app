@@ -344,8 +344,6 @@ export default function App() {
                 events={eventData as EventFeatureCollection}
             />
 
-            {/* TODO find another way to dismiss the keyboard than scrollview */}
-            {/* <ScrollView horizontal={true} style={styles.container}> */}
             <ClusteredMap
                 data={filteredEvents as EventFeatureCollection}
                 center={controlledCenter}
@@ -357,7 +355,7 @@ export default function App() {
                 onRegionChangeComplete={handleRegionChangeComplete}
             />
 
-            <ListBottomSheet
+            {/* <ListBottomSheet
                 ref={listBottomSheetRef}
                 events={sortedEvents as EventFeatureCollection}
                 setCenter={setControlledCenter}
@@ -369,24 +367,24 @@ export default function App() {
                     setOpenEvent(event);
                     EventDetailsBottomSheetRef.current?.snapToIndex(0);
                 }}
-            />
+            /> */}
 
-            <TypesBottomSheet
+            {/* <TypesBottomSheet
                 ref={typesBottomSheetRef}
                 eventTypes={filteredEventTypes}
                 pickedTypes={pickedTypes}
                 handleAcceptTypes={handleAcceptTypes}
                 handleCancelTypes={handleCancelTypes}
-            />
+            /> */}
 
-            <PlaceBottomSheet
+            {/* <PlaceBottomSheet
                 ref={placeBottomSheetRef}
                 handleAcceptPlace={handleAcceptPlace}
                 handleCancelPlace={handleCancelPlace}
                 places={places}
                 setPlaces={setPlaces}
                 setCenter={setControlledCenter}
-            />
+            /> */}
 
             <DateBottomSheet
                 ref={dateBottomSheetRef}
@@ -394,12 +392,11 @@ export default function App() {
                 handleCancelDates={handleCancelDates}
             />
 
-            <EventDetailsBottomSheet
+            {/* <EventDetailsBottomSheet
                 ref={EventDetailsBottomSheetRef}
                 event={openEvent}
                 handleCancelDetails={handleCancelDetails}
-            />
-            {/* </ScrollView> */}
+            /> */}
         </>
     );
 }

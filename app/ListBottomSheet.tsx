@@ -4,6 +4,7 @@ import React, {
     useMemo,
     useRef,
     forwardRef,
+    memo,
 } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
@@ -30,52 +31,59 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // variables
     const snapPoints = useMemo(() => ["15%", "85%"], []);
 
-    const renderEventCard = ({ item }: { item: EventFeature }) => (
-        <TouchableOpacity
-            style={styles.cardContainer}
-            onPress={() => {
-                props.openEventDetailsBottomSheet(item);
-                props.setCenter(coordinatesToRegion(item.geometry.coordinates));
-                props.snapToIndex(0);
-            }}
-        >
-            {/* Event Type Indicator NOT WORKING*/}
-            <View
-                style={[
-                    styles.typeIndicator,
-                    // { backgroundColor: getMarkerColor(item.properties.type) },
-                ]}
-            />
+    const renderEventCard = useCallback(
+        ({ item }: { item: EventFeature }) => (
+            <TouchableOpacity
+                style={styles.cardContainer}
+                onPress={() => {
+                    props.openEventDetailsBottomSheet(item);
+                    props.setCenter(
+                        coordinatesToRegion(item.geometry.coordinates)
+                    );
+                    props.snapToIndex(0);
+                }}
+            >
+                {/* Event Type Indicator NOT WORKING*/}
+                <View
+                    style={[
+                        styles.typeIndicator,
+                        // { backgroundColor: getMarkerColor(item.properties.type) },
+                    ]}
+                />
 
-            {/* Main Content */}
-            <View style={styles.cardContent}>
-                <Text style={styles.cardTitle}>{item.properties.name}</Text>
-                <View style={styles.metaContainer}>
-                    <Text style={styles.cardSubtitle}>
-                        {item.properties.type.toUpperCase()}
-                    </Text>
-                    <Text style={styles.cardDate}>
-                        {new Date(item.properties.date).toLocaleDateString()}
+                {/* Main Content */}
+                <View style={styles.cardContent}>
+                    <Text style={styles.cardTitle}>{item.properties.name}</Text>
+                    <View style={styles.metaContainer}>
+                        <Text style={styles.cardSubtitle}>
+                            {item.properties.type.toUpperCase()}
+                        </Text>
+                        <Text style={styles.cardDate}>
+                            {new Date(
+                                item.properties.date
+                            ).toLocaleDateString()}
+                        </Text>
+                    </View>
+                    <Text
+                        style={styles.cardDescription}
+                        numberOfLines={2}
+                        ellipsizeMode="tail"
+                    >
+                        {item.properties.description}
                     </Text>
                 </View>
-                <Text
-                    style={styles.cardDescription}
-                    numberOfLines={2}
-                    ellipsizeMode="tail"
-                >
-                    {item.properties.description}
-                </Text>
-            </View>
 
-            {/* Event Image */}
-            {item.properties.photo && (
-                <Image
-                    source={{ uri: item.properties.photo }}
-                    style={styles.cardImage}
-                    resizeMode="cover"
-                />
-            )}
-        </TouchableOpacity>
+                {/* Event Image */}
+                {item.properties.photo && (
+                    <Image
+                        source={{ uri: item.properties.photo }}
+                        style={styles.cardImage}
+                        resizeMode="cover"
+                    />
+                )}
+            </TouchableOpacity>
+        ),
+        []
     );
 
     return (
@@ -194,4 +202,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ListBottomSheet;
+export default memo(ListBottomSheet);
