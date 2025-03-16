@@ -202,4 +202,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default memo(ListBottomSheet);
+export default ListBottomSheet;

@@ -28,8 +28,8 @@ const EventMarker: FunctionComponent<Props> = memo(
         return (
             <MapsMarker
                 key={
-                    item.properties?.cluster_id ??
-                    `point-${item.properties?.id}`
+                    // make sure the key is unique for each marker nad it does not change
+                    item.properties?.cluster_id || item.properties?.id
                 }
                 coordinate={{
                     latitude: item.geometry.coordinates[1],
@@ -37,7 +37,7 @@ const EventMarker: FunctionComponent<Props> = memo(
                 }}
                 tracksViewChanges={false}
                 onPress={() => onPress(item)}
-                useLegacyPinView={true}
+                // useLegacyPinView={true}
             >
                 {item.properties?.cluster ? (
                     // Render Cluster

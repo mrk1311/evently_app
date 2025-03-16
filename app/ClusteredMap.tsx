@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import MapView from "react-native-maps";
 import { StyleSheet, View, Dimensions, Keyboard } from "react-native";
 import { Clusterer, isPointCluster } from "react-native-clusterer";
@@ -9,6 +9,7 @@ import type { supercluster } from "react-native-clusterer";
 
 import * as Location from "expo-location";
 import debounce from "lodash/debounce";
+import { set, throttle } from "lodash";
 
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
 
@@ -35,7 +36,7 @@ type MapProps = {
     center: Region;
     location: Location.LocationObject | null;
     openEventDetailsBottomSheet: (event: EventFeature) => void;
-    onRegionChangeComplete?: (region: Region) => void;
+    onRegionChangeComplete: (region: Region) => void;
 };
 
 const { width, height } = Dimensions.get("window");
@@ -51,11 +52,24 @@ const ClusteredMap: React.FC<MapProps> = ({
 
     const [region, setRegion] = useState<Region>(center);
 
+    const onRegionChange = useCallback(
+        debounce(
+            (region: Region) => {
+                console.log("debounced region change", region);
+                onRegionChangeComplete(region);
+            },
+            1000,
+            { trailing: true, leading: false }
+        ),
+        []
+    );
+
+    useEffect(() => {
+        onRegionChange(region);
+    }, [region]);
+
     const handleRegionChange = (newRegion: Region) => {
         setRegion(newRegion);
-        onRegionChangeComplete?.(newRegion);
-        // dissmiss the keyboard when the map is moved
-        Keyboard.dismiss();
     };
 
     const _handlePointPress = (point: IFeature) => {
@@ -79,6 +93,7 @@ const ClusteredMap: React.FC<MapProps> = ({
                 ref={mapRef}
                 style={styles.map}
                 region={region}
+                // onRegionChange={handleRegionChange}
                 onRegionChangeComplete={handleRegionChange}
                 showsCompass={false}
                 showsUserLocation={true}
@@ -87,12 +102,7 @@ const ClusteredMap: React.FC<MapProps> = ({
                 showsBuildings={true}
                 rotateEnabled={false}
                 pitchEnabled={false}
-                // toolbarEnabled={false}
-                // loadingEnabled={true}
-                // moveOnMarkerPress={true}
-                // onPanDrag={() => Keyboard.dismiss()}
-                // cacheEnabled={true}
-                // renderToHardwareTextureAndroid={true}
+                onPanDrag={() => Keyboard.dismiss()}
             >
                 <Clusterer
                     data={data.features}
