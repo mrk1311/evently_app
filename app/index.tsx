@@ -23,9 +23,11 @@ import {
     GeoJsonTypes,
     Point,
 } from "geojson";
+import throttle from "lodash/throttle";
+import { isWithinInterval, parseISO, Interval } from "date-fns";
+import { filter } from "lodash";
 
 export default function App() {
-    const throttle = require("lodash/throttle");
     const listBottomSheetRef = useRef<BottomSheet>(null);
     const typesBottomSheetRef = useRef<BottomSheet>(null);
     const placeBottomSheetRef = useRef<BottomSheet>(null);
@@ -49,6 +51,10 @@ export default function App() {
         latitudeDelta: 30,
         longitudeDelta: 30,
     });
+    // set today as the default start date
+    const [startDate, setStartDate] = useState<Date>(new Date());
+    const [endDate, setEndDate] = useState<Date>(new Date());
+    const [dateInterval, setDateInterval] = useState<Interval | null>(null);
 
     const [mapViewCenter, setMapViewCenter] =
         useState<Region>(controlledCenter);
@@ -123,6 +129,24 @@ export default function App() {
         };
     };
 
+    const filterByDate = (
+        array: EventFeatureCollection
+    ): EventFeatureCollection => {
+        if (!startDate || !endDate) return array;
+        const filteredFeatures = array.features.filter((event) => {
+            const eventDate = parseISO(event.properties?.date);
+            return isWithinInterval(eventDate, {
+                start: parseISO(startDate.toISOString()), // Convert startDate to ISO string
+                end: parseISO(endDate.toISOString()), // Convert endDate to ISO string
+            });
+        });
+        return {
+            type: "FeatureCollection",
+            features: filteredFeatures as EventFeature[], // Ensure the filtered features are cast to EventFeature[]
+        };
+    };
+
+    // Haversine formula to calculate distance between two points
     const haversine = (
         lat1: number,
         lon1: number,
@@ -141,6 +165,7 @@ export default function App() {
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     };
 
+    // throttle the region change event to prevent too many updates
     const handleRegionChangeComplete = useMemo(
         () =>
             throttle((region: Region) => {
@@ -149,6 +174,7 @@ export default function App() {
         []
     );
 
+    // sort events by distance from the center of the map
     const sortedEvents = useMemo(() => {
         const features = filteredEvents.features
             .map((feature) => {
@@ -217,6 +243,8 @@ export default function App() {
         }
     };
 
+    const handleDateSearch = () => {};
+
     // filter events by all the filters, also handle the search query for events, types and places
     useEffect(() => {
         if (openedFilter === "Type") {
@@ -230,13 +258,16 @@ export default function App() {
         } else if (openedFilter === "Place") {
             // search for place only after user stops typing
             handlePlaceSearch();
+        } else if (openedFilter === "Date") {
+            // handle date search
+            handleDateSearch();
         } else if (openedFilter === null) {
             let result = eventData as EventFeatureCollection;
             result = filterByType(result);
             result = filterBySearch(result);
             setFilteredEvents(result);
         }
-    }, [pickedTypes, searchQuery]);
+    }, [pickedTypes, searchQuery, dateInterval]);
 
     const openTypesBottomSheet = () => {
         setOpenedFilter("Type");
@@ -301,7 +332,16 @@ export default function App() {
     };
 
     const handleAcceptDates = () => {
-        // setPlaces(null);
+        if (startDate && endDate) {
+            setDateInterval({
+                start: parseISO(startDate.toISOString()), // Convert startDate to ISO string
+                end: parseISO(endDate.toISOString()), // Convert endDate to ISO string
+            });
+            setActiveFilters("Date");
+        } else {
+            setDateInterval(null);
+            setActiveFilters(null);
+        }
         dateBottomSheetRef.current?.close();
         handleCloseFilter();
     };
@@ -337,8 +377,10 @@ export default function App() {
                 openDateBottomSheet={openDateBottomSheet}
                 openedFilter={openedFilter}
                 activeFilters={activeFilters}
-                // filteredEvents={filteredEvents}
-                // setFilteredEvents={setFilteredEvents}
+                startDate={startDate}
+                endDate={endDate}
+                setStartDate={setStartDate}
+                setEndDate={setEndDate}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 events={eventData as EventFeatureCollection}

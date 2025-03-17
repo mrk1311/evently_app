@@ -18,8 +18,9 @@ import {
 } from "react-native";
 // import { parseISO, isValid, isWithinInterval } from "date-fns";
 import type { EventFeature, EventFeatureCollection } from "./ClusteredMap";
-import { debounce } from "lodash";
+import { debounce, set } from "lodash";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { isWithinInterval, parseISO } from "date-fns";
 
 type SearchBarProps = {
     onSearch: (lat: number, lon: number) => void;
@@ -29,8 +30,10 @@ type SearchBarProps = {
     openDateBottomSheet: () => void;
     openedFilter: string | null;
     activeFilters: "Type" | "Date" | null;
-    // filteredEvents: EventFeatureCollection;
-    // setFilteredEvents: (events: EventFeatureCollection) => void;
+    startDate: Date;
+    endDate: Date;
+    setStartDate: (date: Date) => void;
+    setEndDate: (date: Date) => void;
     searchQuery: string;
     setSearchQuery: (query: string) => void;
     events: EventFeatureCollection;
@@ -40,26 +43,7 @@ type SearchBarProps = {
 
 const SearchBar: React.FC<SearchBarProps> = (props) => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [startDate, setStartDate] = useState<string | null>(null);
-    const [endDate, setEndDate] = useState<string | null>(null);
     const inputRef = useRef<TextInput>(null);
-    const [date, setDate] = useState(new Date());
-    const [datePickerOpen, setDatePickerOpen] = useState(false);
-
-    const handleDateSearch = useCallback(() => {
-        if (!startDate || !endDate) return;
-
-        // const filtered = events.features.filter((event) => {
-        //     const eventDate = parseISO(event.properties.date);
-        //     return isWithinInterval(eventDate, {
-        //         start: parseISO(startDate),
-        //         end: parseISO(endDate),
-        //     });
-        // });
-
-        // setFilteredEvents(filtered);
-        // handleCloseSearch();
-    }, [startDate, endDate, props.events]);
 
     const FilterButton: React.FC<{ type: "Type" | "Place" | "Date" }> = ({
         type,
@@ -109,28 +93,30 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                 <Text>From:</Text>
                 <DateTimePicker
                     style={styles.dateInput}
-                    value={date}
+                    value={props.startDate}
                     mode={"date"}
                     onChange={(event, selectedDate) => {
-                        const currentDate = selectedDate || date;
-                        setDatePickerOpen(false);
-                        setDate(currentDate);
+                        const currentDate = selectedDate || props.startDate;
+                        // setDatePickerOpen(false);
+                        // setDate(currentDate);
+                        props.setStartDate(currentDate);
                     }}
                 />
                 <Text>To:</Text>
                 <DateTimePicker
                     style={styles.dateInput}
-                    value={date}
+                    value={props.endDate}
                     mode={"date"}
                     onChange={(event, selectedDate) => {
-                        const currentDate = selectedDate || date;
-                        setDatePickerOpen(false);
-                        setDate(currentDate);
+                        const currentDate = selectedDate || props.endDate;
+                        // setDatePickerOpen(false);
+                        // setDate(currentDate);
+                        props.setEndDate(currentDate);
                     }}
                 />
             </View>
         ),
-        [startDate, endDate]
+        [props.startDate, props.endDate]
     );
 
     const handleQuerySearch = useCallback(
