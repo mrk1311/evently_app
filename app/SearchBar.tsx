@@ -29,7 +29,7 @@ type SearchBarProps = {
     openListBottomSheet: () => void;
     openDateBottomSheet: () => void;
     openedFilter: string | null;
-    activeFilters: "Type" | "Date" | null;
+    activeFilters: string[];
     startDate: Date;
     endDate: Date;
     setStartDate: (date: Date) => void;
@@ -55,7 +55,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
             <TouchableOpacity
                 style={[
                     styles.filterButton,
-                    props.activeFilters === type && styles.activeFilter,
+                    props.activeFilters.includes(type) && styles.activeFilter,
                     props.openedFilter === type && styles.selectedFilter,
                 ]}
                 onPress={() => {

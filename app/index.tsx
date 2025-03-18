@@ -35,12 +35,21 @@ export default function App() {
     const EventDetailsBottomSheetRef = useRef<BottomSheet>(null);
     const [filteredEvents, setFilteredEvents] =
         useState<EventFeatureCollection>(eventData as EventFeatureCollection);
+    const uniqueEventTypes = useMemo(
+        () =>
+            Array.from(
+                new Set(
+                    eventData.features.map((event) => event.properties?.type)
+                )
+            ),
+        [eventData.features]
+    );
+    const [filteredEventTypes, setFilteredEventTypes] =
+        useState<string[]>(uniqueEventTypes);
     const [openedFilter, setOpenedFilter] = useState<
         "Type" | "Place" | "Date" | null
     >(null);
-    const [activeFilters, setActiveFilters] = useState<"Type" | "Date" | null>(
-        null
-    );
+    const [activeFilters, setActiveFilters] = useState<string[]>([]);
     const [pickedTypes, setpickedTypes] = useState<string[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [places, setPlaces] = useState<FeatureCollection | null>(null);
@@ -51,11 +60,11 @@ export default function App() {
         latitudeDelta: 30,
         longitudeDelta: 30,
     });
-    // set today as the default start date
     const [startDate, setStartDate] = useState<Date>(new Date());
-    const [endDate, setEndDate] = useState<Date>(new Date());
+    const [endDate, setEndDate] = useState<Date>(
+        new Date(new Date().setDate(new Date().getDate() + 365))
+    );
     const [dateInterval, setDateInterval] = useState<Interval | null>(null);
-
     const [mapViewCenter, setMapViewCenter] =
         useState<Region>(controlledCenter);
 
@@ -101,19 +110,6 @@ export default function App() {
         console.log(location);
     }, [location]);
 
-    const uniqueEventTypes = useMemo(
-        () =>
-            Array.from(
-                new Set(
-                    eventData.features.map((event) => event.properties?.type)
-                )
-            ),
-        [eventData.features]
-    );
-
-    const [filteredEventTypes, setFilteredEventTypes] =
-        useState<string[]>(uniqueEventTypes);
-
     const filterByType = (
         array: EventFeatureCollection
     ): EventFeatureCollection => {
@@ -136,8 +132,8 @@ export default function App() {
         const filteredFeatures = array.features.filter((event) => {
             const eventDate = parseISO(event.properties?.date);
             return isWithinInterval(eventDate, {
-                start: parseISO(startDate.toISOString()), // Convert startDate to ISO string
-                end: parseISO(endDate.toISOString()), // Convert endDate to ISO string
+                start: startDate, // Convert startDate to ISO string
+                end: endDate, // Convert endDate to ISO string
             });
         });
         return {
@@ -258,13 +254,11 @@ export default function App() {
         } else if (openedFilter === "Place") {
             // search for place only after user stops typing
             handlePlaceSearch();
-        } else if (openedFilter === "Date") {
-            // handle date search
-            handleDateSearch();
         } else if (openedFilter === null) {
             let result = eventData as EventFeatureCollection;
             result = filterByType(result);
             result = filterBySearch(result);
+            result = filterByDate(result);
             setFilteredEvents(result);
         }
     }, [pickedTypes, searchQuery, dateInterval]);
@@ -297,8 +291,10 @@ export default function App() {
 
         // set active filters to change their color in the search bar
         if (types.length === 0 || types.length === uniqueEventTypes.length) {
-            setActiveFilters(null);
-        } else setActiveFilters("Type");
+            setActiveFilters(
+                activeFilters.filter((filter) => filter !== "Type")
+            );
+        } else setActiveFilters([...activeFilters, "Type"]);
 
         typesBottomSheetRef.current?.close();
         setFilteredEventTypes(uniqueEventTypes);
@@ -337,11 +333,13 @@ export default function App() {
                 start: parseISO(startDate.toISOString()), // Convert startDate to ISO string
                 end: parseISO(endDate.toISOString()), // Convert endDate to ISO string
             });
-            setActiveFilters("Date");
+            // add date to active filters array
+            setActiveFilters([...activeFilters, "Date"]);
         } else {
             setDateInterval(null);
-            setActiveFilters(null);
+            setActiveFilters([]);
         }
+        console.log("Date interval", dateInterval);
         dateBottomSheetRef.current?.close();
         handleCloseFilter();
     };
@@ -432,6 +430,8 @@ export default function App() {
                 ref={dateBottomSheetRef}
                 handleAcceptDates={handleAcceptDates}
                 handleCancelDates={handleCancelDates}
+                setStartDate={setStartDate}
+                setEndDate={setEndDate}
             />
 
             <EventDetailsBottomSheet

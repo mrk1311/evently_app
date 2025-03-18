@@ -11,6 +11,8 @@ interface BottomSheetProps {
     // snapToIndex: (index: number) => void;
     handleCancelDates: () => void;
     handleAcceptDates: () => void;
+    setStartDate: (date: Date) => void;
+    setEndDate: (date: Date) => void;
 }
 
 type Ref = BottomSheet;
@@ -38,11 +40,41 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             <TouchableOpacity
                 style={styles.cardContainer}
                 onPress={() => {
-                    setPicks((prevPicks) =>
-                        prevPicks.includes(item)
-                            ? prevPicks.filter((pick) => pick !== item)
-                            : [...prevPicks, item]
-                    );
+                    if (item === "Today") {
+                        props.setStartDate(new Date());
+                        props.setEndDate(new Date());
+                        props.handleAcceptDates();
+                    } else if (item === "This Week") {
+                        const today = new Date();
+                        const startOfWeek = new Date(
+                            today.getFullYear(),
+                            today.getMonth(),
+                            today.getDate() - today.getDay()
+                        );
+                        const endOfWeek = new Date(
+                            startOfWeek.getFullYear(),
+                            startOfWeek.getMonth(),
+                            startOfWeek.getDate() + 6
+                        );
+                        props.setStartDate(startOfWeek);
+                        props.setEndDate(endOfWeek);
+                        props.handleAcceptDates();
+                    } else if (item === "This Month") {
+                        const today = new Date();
+                        const startOfMonth = new Date(
+                            today.getFullYear(),
+                            today.getMonth(),
+                            1
+                        );
+                        const endOfMonth = new Date(
+                            today.getFullYear(),
+                            today.getMonth() + 1,
+                            0
+                        );
+                        props.setStartDate(startOfMonth);
+                        props.setEndDate(endOfMonth);
+                        props.handleAcceptDates();
+                    }
                 }}
             >
                 <Text style={styles.cardText}>{item}</Text>
@@ -72,7 +104,7 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     <Button
                         title="Accept"
                         // style={styles.doneButton}
-                        onPress={() => props.handleAcceptDates}
+                        onPress={props.handleAcceptDates}
                     />
                 </View>
 
