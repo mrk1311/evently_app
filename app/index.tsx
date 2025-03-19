@@ -317,6 +317,7 @@ export default function App() {
                 latitudeDelta: 0.1,
                 longitudeDelta: 0.1,
             });
+            handleCloseFilter();
         } else {
             console.error("Place is not a point");
         }
