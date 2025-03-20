@@ -27,9 +27,35 @@ const coordinatesToRegion = (coordinates: number[]) => ({
 
 type Ref = BottomSheet;
 
-const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
+const ListBottomSheet: React.FC<BottomSheetProps> = (props, ref) => {
     // variables
     const snapPoints = useMemo(() => ["15%", "85%"], []);
+
+    const sortedBy = "Date";
+
+    const SortButton = (
+        <TouchableOpacity
+            style={{ marginRight: 16 }}
+            onPress={() => {
+                console.log("Sort button pressed");
+            }}
+        >
+            <Text>Sort By + {sortedBy}</Text>
+        </TouchableOpacity>
+    );
+
+    const getMarkerColor = (type: string) => {
+        switch (type) {
+            case "concert":
+                return "#FF0000";
+            case "festival":
+                return "#00FF00";
+            case "conference":
+                return "#0000FF";
+            default:
+                return "#000000";
+        }
+    };
 
     const renderEventCard = useCallback(
         ({ item }: { item: EventFeature }) => (
@@ -47,7 +73,11 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 <View
                     style={[
                         styles.typeIndicator,
-                        // { backgroundColor: getMarkerColor(item.properties.type) },
+                        {
+                            backgroundColor: getMarkerColor(
+                                item.properties.type
+                            ),
+                        },
                     ]}
                 />
 
@@ -106,7 +136,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             />
         </BottomSheet>
     );
-});
+};
 
 const styles = StyleSheet.create({
     container: {
