@@ -27,34 +27,33 @@ const coordinatesToRegion = (coordinates: number[]) => ({
 
 type Ref = BottomSheet;
 
-const ListBottomSheet: React.FC<BottomSheetProps> = (props, ref) => {
+const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // variables
     const snapPoints = useMemo(() => ["15%", "85%"], []);
 
-    const sortedBy = "Date";
+    const sortedBy = "Map Center";
 
     const SortButton = (
         <TouchableOpacity
-            style={{ marginRight: 16 }}
+            style={styles.sortButton}
             onPress={() => {
                 console.log("Sort button pressed");
             }}
         >
-            <Text>Sort By + {sortedBy}</Text>
+            <Text>Sorted By: {sortedBy}</Text>
         </TouchableOpacity>
     );
 
     const getMarkerColor = (type: string) => {
-        switch (type) {
-            case "concert":
-                return "#FF0000";
-            case "festival":
-                return "#00FF00";
-            case "conference":
-                return "#0000FF";
-            default:
-                return "#000000";
-        }
+        const colors: { [key: string]: string } = {
+            music: "#FF4081",
+            sport: "#7C4DFF",
+            conference: "#00BCD4",
+            art: "#FF9800",
+            theatre: "#4CAF50",
+            festival: "#9C27B0",
+        };
+        return colors[type] || "#2196F3";
     };
 
     const renderEventCard = useCallback(
@@ -69,7 +68,16 @@ const ListBottomSheet: React.FC<BottomSheetProps> = (props, ref) => {
                     props.snapToIndex(0);
                 }}
             >
-                {/* Event Type Indicator NOT WORKING*/}
+                {/* Event Image */}
+                {item.properties.photo && (
+                    <Image
+                        source={{ uri: item.properties.photo }}
+                        style={styles.cardImagePlaceholder}
+                        resizeMode="cover"
+                    />
+                )}
+
+                {/* Event Type Indicator */}
                 <View
                     style={[
                         styles.typeIndicator,
@@ -80,7 +88,6 @@ const ListBottomSheet: React.FC<BottomSheetProps> = (props, ref) => {
                         },
                     ]}
                 />
-
                 {/* Main Content */}
                 <View style={styles.cardContent}>
                     <Text style={styles.cardTitle}>{item.properties.name}</Text>
@@ -102,15 +109,6 @@ const ListBottomSheet: React.FC<BottomSheetProps> = (props, ref) => {
                         {item.properties.description}
                     </Text>
                 </View>
-
-                {/* Event Image */}
-                {item.properties.photo && (
-                    <Image
-                        source={{ uri: item.properties.photo }}
-                        style={styles.cardImage}
-                        resizeMode="cover"
-                    />
-                )}
             </TouchableOpacity>
         ),
         []
@@ -127,6 +125,7 @@ const ListBottomSheet: React.FC<BottomSheetProps> = (props, ref) => {
                 <Text style={styles.header}>
                     Events: {props.events.features.length}
                 </Text>
+                {SortButton}
             </View>
             <BottomSheetFlatList
                 data={props.events.features as EventFeature[]}
@@ -136,7 +135,7 @@ const ListBottomSheet: React.FC<BottomSheetProps> = (props, ref) => {
             />
         </BottomSheet>
     );
-};
+});
 
 const styles = StyleSheet.create({
     container: {
@@ -160,9 +159,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#eee",
     },
     typeIndicator: {
-        width: 12,
-        height: 12,
-        borderRadius: 6,
+        width: 6,
+        // borderRadius: 6,
         marginRight: 12,
     },
     textContainer: {
@@ -229,6 +227,20 @@ const styles = StyleSheet.create({
         height: 80,
         borderRadius: 8,
         marginLeft: 16,
+    },
+    cardImagePlaceholder: {
+        width: 80,
+        height: 80,
+        borderRadius: 8,
+        marginLeft: 8,
+        marginRight: 8,
+        backgroundColor: "#eeeeee",
+    },
+    sortButton: {
+        padding: 8,
+        borderRadius: 8,
+        backgroundColor: "#eeeeee",
+        height: 30,
     },
 });
 

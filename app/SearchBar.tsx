@@ -217,6 +217,7 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 40,
+        width: "100%",
         paddingHorizontal: 10,
     },
     typeControlButton: {

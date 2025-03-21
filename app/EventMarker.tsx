@@ -1,10 +1,37 @@
-import React, { FunctionComponent, memo } from "react";
+import React, { FunctionComponent, memo, useCallback } from "react";
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import { Marker as MapsMarker, Callout } from "react-native-maps";
 
 import type { supercluster } from "react-native-clusterer";
+import { get } from "lodash";
+
+import { FontAwesome } from "@expo/vector-icons";
 
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
+
+type FontAwesomeIconName =
+    | "music"
+    | "futbol-o"
+    | "graduation-cap"
+    | "paint-brush"
+    | "ticket"
+    | "flag"
+    | "search"
+    | "repeat"
+    | "anchor"
+    | "bold"
+    | "link"
+    | "at"
+    | "image"
+    | "filter"
+    | "map"
+    | "sort"
+    | "key"
+    | "question"
+    | "theater-masks";
+
+// | ... // Add other valid icon names as needed
+// | undefined;
 
 interface Props {
     item: IFeature;
@@ -22,6 +49,18 @@ const getMarkerColor = (type: string) => {
     };
     return colors[type] || "#2196F3";
 };
+
+async function getMarkerIcon(type: string): Promise<FontAwesomeIconName> {
+    const icons: { [key: string]: FontAwesomeIconName } = {
+        music: "music",
+        sport: "futbol-o",
+        conference: "graduation-cap",
+        art: "paint-brush",
+        theatre: "theater-masks",
+        festival: "flag",
+    };
+    return icons[type] || "search";
+}
 
 const EventMarker: FunctionComponent<Props> = memo(
     ({ item, onPress }) => {
@@ -66,6 +105,11 @@ const EventMarker: FunctionComponent<Props> = memo(
                                     },
                                 ]}
                             >
+                                {/* <FontAwesome
+                                    name={getMarkerIcon(item.properties.type)}
+                                    size={20}
+                                    color="#fff"
+                                /> */}
                                 <Text style={styles.clusterMarkerText}>
                                     {item.properties.type
                                         .charAt(0)
