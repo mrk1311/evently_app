@@ -108,6 +108,9 @@ const ClusteredMap: React.FC<MapProps> = ({
                     data={data.features}
                     region={region}
                     mapDimensions={MAP_DIMENSIONS}
+                    options={{
+                        radius: 30,
+                    }}
                     renderItem={(item) => {
                         return (
                             <EventMarker

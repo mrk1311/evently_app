@@ -1,37 +1,14 @@
 import React, { FunctionComponent, memo, useCallback } from "react";
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
-import { Marker as MapsMarker, Callout } from "react-native-maps";
+import { Marker as MapsMarker, Marker } from "react-native-maps";
 
 import type { supercluster } from "react-native-clusterer";
 import { get } from "lodash";
 
-import { FontAwesome } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
-
-type FontAwesomeIconName =
-    | "music"
-    | "futbol-o"
-    | "graduation-cap"
-    | "paint-brush"
-    | "ticket"
-    | "flag"
-    | "search"
-    | "repeat"
-    | "anchor"
-    | "bold"
-    | "link"
-    | "at"
-    | "image"
-    | "filter"
-    | "map"
-    | "sort"
-    | "key"
-    | "question"
-    | "theater-masks";
-
-// | ... // Add other valid icon names as needed
-// | undefined;
 
 interface Props {
     item: IFeature;
@@ -50,33 +27,49 @@ const getMarkerColor = (type: string) => {
     return colors[type] || "#2196F3";
 };
 
-async function getMarkerIcon(type: string): Promise<FontAwesomeIconName> {
-    const icons: { [key: string]: FontAwesomeIconName } = {
-        music: "music",
-        sport: "futbol-o",
-        conference: "graduation-cap",
-        art: "paint-brush",
-        theatre: "theater-masks",
-        festival: "flag",
+type iconName =
+    | "music-note"
+    | "sports-basketball"
+    | "school"
+    | "palette"
+    | "theater-comedy"
+    | "festival"
+    | "question-mark";
+
+const getMarkerIcon = (type: string): iconName => {
+    const icons: { [key: string]: iconName } = {
+        music: "music-note",
+        sport: "sports-basketball",
+        conference: "school",
+        art: "palette",
+        theatre: "theater-comedy",
+        festival: "festival",
     };
-    return icons[type] || "search";
-}
+    return icons[type] || "question-mark";
+};
+
+const MarkerIcon = useCallback(({ type }: { type: string }) => {
+    return (
+        <MaterialIcons
+            name={getMarkerIcon(type)}
+            size={20}
+            color="#fff"
+            // style={styles.markerIcon}
+        />
+    );
+}, []);
 
 const EventMarker: FunctionComponent<Props> = memo(
     ({ item, onPress }) => {
         return (
             <MapsMarker
-                key={
-                    // make sure the key is unique for each marker nad it does not change
-                    item.properties?.cluster_id || item.properties?.id
-                }
+                key={item.properties?.cluster_id || item.properties?.id}
                 coordinate={{
                     latitude: item.geometry.coordinates[1],
                     longitude: item.geometry.coordinates[0],
                 }}
                 tracksViewChanges={false}
                 onPress={() => onPress(item)}
-                // useLegacyPinView={true}
             >
                 {item.properties?.cluster ? (
                     // Render Cluster
@@ -105,16 +98,20 @@ const EventMarker: FunctionComponent<Props> = memo(
                                     },
                                 ]}
                             >
+                                {/* <MaterialIcons
+                                    name={getMarkerIcon(item.properties.type)}
+                                    size={20}
+                                    color="#fff"
+                                /> */}
+                                <MarkerIcon type={item.properties.type} />
                                 {/* <FontAwesome
                                     name={getMarkerIcon(item.properties.type)}
                                     size={20}
                                     color="#fff"
                                 /> */}
-                                <Text style={styles.clusterMarkerText}>
-                                    {item.properties.type
-                                        .charAt(0)
-                                        .toUpperCase()}
-                                </Text>
+                                {/* <Text style={styles.clusterMarkerText}>
+                                    {getMarkerIcon(item.properties.type)}
+                                </Text> */}
                             </View>
                         </TouchableOpacity>
                     </>
