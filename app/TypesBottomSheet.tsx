@@ -20,6 +20,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
+import getMarkerColor from "./functions/getMarkerColor";
 
 interface BottomSheetProps {
     eventTypes: string[];
@@ -59,14 +60,7 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
     const renderFilterCard = ({ item }: { item: string }) => (
         <TouchableOpacity
-            style={[
-                styles.cardContainer,
-                {
-                    backgroundColor: picks.includes(item)
-                        ? "lightblue"
-                        : "white",
-                },
-            ]}
+            style={[styles.cardContainer]}
             onPress={() => {
                 // props.setIsSearchOpen(false);
                 console.log("Filter card pressed");
@@ -81,12 +75,16 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             <View
                 style={[
                     styles.typeIndicator,
-                    // { backgroundColor: item.properties.color },
+                    {
+                        backgroundColor: picks.includes(item)
+                            ? getMarkerColor(item)
+                            : "white",
+
+                        borderColor: getMarkerColor(item),
+                    },
                 ]}
             />
-            <View style={styles.cardContent}>
-                <Text style={styles.cardTitle}>{item}</Text>
-            </View>
+            <Text style={styles.cardTitle}>{item}</Text>
         </TouchableOpacity>
     );
 
@@ -153,10 +151,11 @@ const styles = StyleSheet.create({
         margin: 8,
     },
     typeIndicator: {
-        // width: 12,
-        // height: 12,
+        width: 24,
+        height: 24,
         borderRadius: 6,
-        // marginRight: 12,
+        marginRight: 12,
+        borderWidth: 2,
     },
     header: {
         fontSize: 20,
@@ -170,9 +169,8 @@ const styles = StyleSheet.create({
         padding: 16,
         borderBottomWidth: 1,
         borderBottomColor: "#eeeeee",
-    },
-    cardContent: {
-        flex: 1,
+        justifyContent: "flex-start",
+        alignItems: "center",
     },
     cardTitle: {
         color: "#333333",

@@ -10,6 +10,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
+import getMarkerColor from "./functions/getMarkerColor";
 
 interface BottomSheetProps {
     events: EventFeatureCollection;
@@ -43,18 +44,6 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             <Text>Sorted By: {sortedBy}</Text>
         </TouchableOpacity>
     );
-
-    const getMarkerColor = (type: string) => {
-        const colors: { [key: string]: string } = {
-            music: "#FF4081",
-            sport: "#7C4DFF",
-            conference: "#00BCD4",
-            art: "#FF9800",
-            theatre: "#4CAF50",
-            festival: "#9C27B0",
-        };
-        return colors[type] || "#2196F3";
-    };
 
     const renderEventCard = useCallback(
         ({ item }: { item: EventFeature }) => (
