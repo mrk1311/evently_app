@@ -23,6 +23,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
+import getMarkerColor from "./functions/getMarkerColor";
 
 interface BottomSheetProps {
     event: EventFeature | null;
@@ -34,6 +35,15 @@ type Ref = BottomSheet;
 const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
     (props, ref) => {
         // hooks
+        const [typeColor, setTypeColor] = useState<string | null>(null);
+
+        useEffect(() => {
+            if (props.event?.properties.type === undefined) {
+                console.log("dupa");
+            } else {
+                setTypeColor(getMarkerColor(props.event.properties.type));
+            }
+        }, [props.event]);
 
         // variables
         const snapPoints = useMemo(() => ["30%", "85%"], []);
@@ -60,33 +70,57 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                 enablePanDownToClose={true}
             >
                 <View style={styles.container}>
-                    {/* <View style={styles.header}> */}
-                    {/* <Button
-                            title="Cancel"
+                    <View style={styles.header}>
+                        {/* <Button
+                            title="map"
                             onPress={props.handleCancelDetails}
                         /> */}
-                    <Text style={styles.headerText}>
-                        {props.event?.properties.name}
-                    </Text>
-                    {/* <Button title="Website" onPress={() => {}} /> */}
-                    {/* </View> */}
-                    <Text style={styles.type}>
-                        {props.event?.properties.type}
-                    </Text>
+                        <Text style={styles.headerText}>
+                            {props.event?.properties.name}
+                        </Text>
+                        <Button title="Buy tickets" onPress={() => {}} />
+                    </View>
+                    {/* Event Type Indicator */}
+                    <View
+                        style={[
+                            styles.typeIndicator,
+                            {
+                                backgroundColor:
+                                    typeColor === null ? "black" : typeColor,
+                            },
+                        ]}
+                    />
+                    <View style={styles.horizontalContainer}>
+                        {/* Event Image */}
+                        {props.event?.properties.photo && (
+                            <Image
+                                source={{ uri: props.event?.properties.photo }}
+                                style={styles.cardImagePlaceholder}
+                                resizeMode="cover"
+                            />
+                        )}
+                        <View style={styles.descriptionContainer}>
+                            <Text style={styles.description}>
+                                {"Type: " + props.event?.properties.type}
+                            </Text>
+
+                            <Text style={styles.description}>
+                                {"date: " + props.event?.properties.date}
+                            </Text>
+                            {/* <Text style={styles.description}>
+                                {props.event?.properties.link}
+                            </Text> */}
+                            <Image
+                                source={{ uri: props.event?.properties.photo }}
+                                style={{ width: 200, height: 200 }}
+                                resizeMode="cover"
+                            />
+                        </View>
+                    </View>
+                    <Text style={styles.headerText}>Description</Text>
                     <Text style={styles.description}>
                         {props.event?.properties.description}
                     </Text>
-                    <Text style={styles.description}>
-                        {"date: " + props.event?.properties.date}
-                    </Text>
-                    <Text style={styles.description}>
-                        {props.event?.properties.link}
-                    </Text>
-                    <Image
-                        source={{ uri: props.event?.properties.photo }}
-                        style={{ width: 200, height: 200 }}
-                        resizeMode="cover"
-                    />
                 </View>
             </BottomSheet>
         );
@@ -102,14 +136,13 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center",
         marginBottom: 8,
     },
     headerText: {
         fontSize: 20,
-        marginBottom: 8,
+        margin: 8,
         fontWeight: "bold",
-        textAlign: "center",
+        textAlign: "left",
     },
     type: {
         fontSize: 18,
@@ -118,7 +151,37 @@ const styles = StyleSheet.create({
     },
     description: {
         fontSize: 16,
-        marginBottom: 8,
+        margin: 8,
+    },
+    typeIndicator: {
+        // width: 6,
+        height: 6,
+        // borderRadius: 6,
+        // marginBottom: 12,
+        // backgroundColor: "black",
+    },
+    cardImage: {
+        // width: 80,
+        // height: 80,
+        borderRadius: 8,
+        // marginLeft: 16,
+    },
+    cardImagePlaceholder: {
+        width: "50%",
+        height: "100%",
+        borderRadius: 8,
+        // marginLeft: 8,
+        // marginRight: 8,
+        backgroundColor: "#eeeeee",
+    },
+    horizontalContainer: {
+        flexDirection: "row",
+        marginTop: 8,
+        marginBottom: 16,
+    },
+    descriptionContainer: {
+        alignContent: "center",
+        padding: 10,
     },
 });
 
