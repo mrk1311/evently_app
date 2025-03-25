@@ -239,8 +239,6 @@ export default function App() {
         }
     };
 
-    const handleDateSearch = () => {};
-
     // filter events by all the filters, also handle the search query for events, types and places
     useEffect(() => {
         if (openedFilter === "Type") {
@@ -268,18 +266,21 @@ export default function App() {
         typesBottomSheetRef.current?.snapToIndex(0);
         placeBottomSheetRef.current?.close();
         dateBottomSheetRef.current?.close();
+        EventDetailsBottomSheetRef.current?.close();
     };
     const openPlaceBottomSheet = () => {
         setOpenedFilter("Place");
         placeBottomSheetRef.current?.snapToIndex(0);
         typesBottomSheetRef.current?.close();
         dateBottomSheetRef.current?.close();
+        EventDetailsBottomSheetRef.current?.close();
     };
     const openDateBottomSheet = () => {
         setOpenedFilter("Date");
         dateBottomSheetRef.current?.snapToIndex(0);
         typesBottomSheetRef.current?.close();
         placeBottomSheetRef.current?.close();
+        EventDetailsBottomSheetRef.current?.close();
     };
 
     const handleAcceptTypes = (types: string[]) => {

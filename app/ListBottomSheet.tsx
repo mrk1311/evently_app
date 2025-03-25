@@ -5,12 +5,14 @@ import React, {
     useRef,
     forwardRef,
     memo,
+    useState,
 } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
 import getMarkerColor from "./functions/getMarkerColor";
+import DropDownPicker from "react-native-dropdown-picker";
 
 interface BottomSheetProps {
     events: EventFeatureCollection;
@@ -32,18 +34,24 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // variables
     const snapPoints = useMemo(() => ["15%", "85%"], []);
 
-    const sortedBy = "Map Center";
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+    const [items, setItems] = useState([
+        { label: "Apple", value: "apple" },
+        { label: "Banana", value: "banana" },
+        { label: "Pear", value: "pear" },
+    ]);
 
-    const SortButton = (
-        <TouchableOpacity
-            style={styles.sortButton}
-            onPress={() => {
-                console.log("Sort button pressed");
-            }}
-        >
-            <Text>Sorted By: {sortedBy}</Text>
-        </TouchableOpacity>
-    );
+    // const SortButton = (
+    //     <TouchableOpacity
+    //         style={styles.sortButton}
+    //         onPress={() => {
+    //             console.log("Sort button pressed");
+    //         }}
+    //     >
+    //         <Text>Sorted By: {sortedBy}</Text>
+    //     </TouchableOpacity>
+    // );
 
     const renderEventCard = useCallback(
         ({ item }: { item: EventFeature }) => (
@@ -114,7 +122,25 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 <Text style={styles.header}>
                     Events: {props.events.features.length}
                 </Text>
-                {SortButton}
+                <View style={styles.pickerContainer}>
+                    <DropDownPicker
+                        open={open}
+                        value={value}
+                        items={items}
+                        setOpen={setOpen}
+                        setValue={setValue}
+                        setItems={setItems}
+                        placeholder={"Choose a fruit."}
+                        style={styles.sortButton}
+                        containerStyle={styles.sortButtonContainer}
+                        containerProps={{
+                            style: {
+                                height: open === true ? 180 : null,
+                                backgroundColor: "#fff",
+                            },
+                        }}
+                    />
+                </View>
             </View>
             <BottomSheetFlatList
                 data={props.events.features as EventFeature[]}
@@ -134,6 +160,7 @@ const styles = StyleSheet.create({
     horizontalContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
+        gap: "120%",
         paddingLeft: 38,
         paddingRight: 38,
         borderBottomWidth: 1,
@@ -141,6 +168,7 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         backgroundColor: "white",
+        zIndex: 5000,
     },
     itemContainer: {
         padding: 6,
@@ -187,6 +215,7 @@ const styles = StyleSheet.create({
     },
     cardContent: {
         flex: 1,
+        zIndex: 5000,
     },
     cardTitle: {
         fontSize: 16,
@@ -229,7 +258,15 @@ const styles = StyleSheet.create({
         padding: 8,
         borderRadius: 8,
         backgroundColor: "#eeeeee",
-        height: 30,
+        // height: 30,
+        width: 150,
+        alignContent: "flex-end",
+    },
+    sortButtonContainer: {
+        width: 150,
+    },
+    pickerContainer: {
+        zIndex: 100,
     },
 });
 
