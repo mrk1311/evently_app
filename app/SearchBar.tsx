@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
         position: "relative",
         top: -20,
         flexDirection: "row",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         backgroundColor: "white",
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,

@@ -36,11 +36,11 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
-    const [items, setItems] = useState([
-        { label: "Apple", value: "apple" },
-        { label: "Banana", value: "banana" },
-        { label: "Pear", value: "pear" },
-    ]);
+    const sortByOptions: { label: string; value: string }[] = [
+        { label: "Sort by: Map Center", value: "mapCenter" },
+        { label: "Sort by: User Location", value: "userLocation" },
+        { label: "Sort by: Date", value: "date" },
+    ];
 
     // const SortButton = (
     //     <TouchableOpacity
@@ -122,15 +122,16 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 <Text style={styles.header}>
                     Events: {props.events.features.length}
                 </Text>
+
                 <View style={styles.pickerContainer}>
                     <DropDownPicker
                         open={open}
                         value={value}
-                        items={items}
+                        items={sortByOptions}
                         setOpen={setOpen}
                         setValue={setValue}
-                        setItems={setItems}
-                        placeholder={"Choose a fruit."}
+                        // setItems={setItems}
+                        placeholder={sortByOptions[0].label}
                         style={styles.sortButton}
                         containerStyle={styles.sortButtonContainer}
                         containerProps={{
@@ -139,6 +140,8 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                                 backgroundColor: "#fff",
                             },
                         }}
+                        onPress={() => props.snapToIndex(1)}
+                        dropDownDirection="BOTTOM"
                     />
                 </View>
             </View>
@@ -160,11 +163,13 @@ const styles = StyleSheet.create({
     horizontalContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
-        gap: "120%",
+        alignItems: "center",
+        gap: "70%",
         paddingLeft: 38,
         paddingRight: 38,
         borderBottomWidth: 1,
         borderBottomColor: "#eeeeee",
+        paddingBottom: 5,
     },
     contentContainer: {
         backgroundColor: "white",
@@ -202,8 +207,8 @@ const styles = StyleSheet.create({
         // width: "30%",
         fontSize: 20,
         fontWeight: "700",
-        marginBottom: 16,
-        marginTop: 8,
+        // marginBottom: 16,
+        // marginTop: 8,
         color: "#333333",
         textAlign: "left",
     },
@@ -259,11 +264,13 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         backgroundColor: "#eeeeee",
         // height: 30,
-        width: 150,
+        width: 180,
+
         alignContent: "flex-end",
     },
     sortButtonContainer: {
         width: 150,
+        height: 30,
     },
     pickerContainer: {
         zIndex: 100,
