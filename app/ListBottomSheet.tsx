@@ -7,12 +7,25 @@ import React, {
     memo,
     useState,
 } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+    View,
+    Text,
+    Image,
+    StyleSheet,
+    TouchableOpacity,
+    ViewProps,
+} from "react-native";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
 import getMarkerColor from "./functions/getMarkerColor";
 import DropDownPicker from "react-native-dropdown-picker";
+import {
+    Menu,
+    MenuOptions,
+    MenuOption,
+    MenuTrigger,
+} from "react-native-popup-menu";
 
 interface BottomSheetProps {
     events: EventFeatureCollection;
@@ -52,6 +65,13 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     //         <Text>Sorted By: {sortedBy}</Text>
     //     </TouchableOpacity>
     // );
+
+    const MyDropdownInputContainer = ({
+        open,
+        children,
+    }: ViewProps & { open?: boolean }) => (
+        <View style={{ ...(open && { zIndex: 1 }) }}>{children}</View>
+    );
 
     const renderEventCard = useCallback(
         ({ item }: { item: EventFeature }) => (
@@ -122,8 +142,21 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 <Text style={styles.header}>
                     Events: {props.events.features.length}
                 </Text>
-
-                <View style={styles.pickerContainer}>
+                {/* 
+                <MyDropdownInputContainer open={open}>
+                    <DropDownPicker
+                        // ...
+                        // multiple={false}
+                        items={sortByOptions}
+                        value={value}
+                        setValue={setValue}
+                        open={open}
+                        setOpen={setOpen}
+                        zIndex={open ? 1 : 0}
+                        zIndexInverse={open ? 1 : 0}
+                    />
+                </MyDropdownInputContainer> */}
+                {/* <View style={styles.pickerContainer}>
                     <DropDownPicker
                         open={open}
                         value={value}
@@ -131,19 +164,66 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                         setOpen={setOpen}
                         setValue={setValue}
                         // setItems={setItems}
-                        placeholder={sortByOptions[0].label}
-                        style={styles.sortButton}
-                        containerStyle={styles.sortButtonContainer}
-                        containerProps={{
-                            style: {
-                                height: open === true ? 180 : null,
-                                backgroundColor: "#fff",
-                            },
-                        }}
-                        onPress={() => props.snapToIndex(1)}
-                        dropDownDirection="BOTTOM"
+                        // placeholder={sortByOptions[0].label}
+                        // style={styles.sortButton}
+                        // containerStyle={styles.sortButtonContainer}
+                        // containerProps={{
+                        //     style: {
+                        //         height: open === true ? 180 : null,
+                        //         backgroundColor: "#fff",
+                        //     },
+                        // }}
+                        // onPress={() => props.snapToIndex(1)}
+                        // dropDownDirection="BOTTOM"
                     />
-                </View>
+                </View> */}
+                {/* <DropDownPicker
+                    containerProps={{
+                        style: {
+                            height: open === true ? 220 : null,
+                            backgroundColor: "#fff",
+                        },
+                    }}
+                    schema={{
+                        label: "title",
+                        value: "status",
+                    }}
+                    placeholder="Select status"
+                    // searchable={true}
+                    open={open}
+                    value={value}
+                    items={sortByOptions}
+                    setOpen={setOpen}
+                    setValue={setValue}
+                    // setItems={setItems}
+                    theme="LIGHT"
+                    listMode="SCROLLVIEW"
+                    showArrowIcon={true}
+                    showTickIcon={true}
+                    //     TickIconComponent={({style}) =>  <AntDesign
+                    //     style={{ marginRight: 5 }}
+                    //     color="green"
+                    //     name="check"
+                    //     size={20}
+                    //   />}
+                    itemSeparator={true}
+                    itemSeparatorStyle={{
+                        backgroundColor: "#e5e5e5",
+                    }}
+                /> */}
+                <Menu>
+                    <MenuTrigger text="Sort by: " />
+                    <MenuOptions>
+                        <MenuOption
+                            onSelect={() => alert("Sort by map center")}
+                            text="Sort by map center"
+                        />
+                        <MenuOption
+                            onSelect={() => alert("Sort by user location")}
+                            text="Sort by user location"
+                        />
+                    </MenuOptions>
+                </Menu>
             </View>
             <BottomSheetFlatList
                 data={props.events.features as EventFeature[]}
@@ -170,6 +250,8 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#eeeeee",
         paddingBottom: 5,
+        // maxHeight: 15,
+        overflow: "visible",
     },
     contentContainer: {
         backgroundColor: "white",
@@ -259,22 +341,22 @@ const styles = StyleSheet.create({
         marginRight: 8,
         backgroundColor: "#eeeeee",
     },
-    sortButton: {
-        padding: 8,
-        borderRadius: 8,
-        backgroundColor: "#eeeeee",
-        // height: 30,
-        width: 180,
+    // sortButton: {
+    //     padding: 8,
+    //     borderRadius: 8,
+    //     backgroundColor: "#eeeeee",
+    //     // height: 30,
+    //     width: 180,
 
-        alignContent: "flex-end",
-    },
-    sortButtonContainer: {
-        width: 150,
-        height: 30,
-    },
-    pickerContainer: {
-        zIndex: 100,
-    },
+    //     alignContent: "flex-end",
+    // },
+    // sortButtonContainer: {
+    //     width: 150,
+    //     height: 30,
+    // },
+    // pickerContainer: {
+    //     zIndex: 100,
+    // },
 });
 
 export default ListBottomSheet;
