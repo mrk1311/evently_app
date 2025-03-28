@@ -19,7 +19,7 @@ import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
 import getMarkerColor from "./functions/getMarkerColor";
-import DropDownPicker from "react-native-dropdown-picker";
+// import DropDownPicker from "react-native-dropdown-picker";
 import {
     Menu,
     MenuOptions,
@@ -50,9 +50,9 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const sortByOptions: { label: string; value: string }[] = [
-        { label: "Sort by: Map Center", value: "mapCenter" },
-        { label: "Sort by: User Location", value: "userLocation" },
-        { label: "Sort by: Date", value: "date" },
+        { label: "Map Center", value: "mapCenter" },
+        { label: "User Location", value: "userLocation" },
+        { label: "Date", value: "date" },
     ];
 
     // const SortButton = (
@@ -142,78 +142,13 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 <Text style={styles.header}>
                     Events: {props.events.features.length}
                 </Text>
-                {/* 
-                <MyDropdownInputContainer open={open}>
-                    <DropDownPicker
-                        // ...
-                        // multiple={false}
-                        items={sortByOptions}
-                        value={value}
-                        setValue={setValue}
-                        open={open}
-                        setOpen={setOpen}
-                        zIndex={open ? 1 : 0}
-                        zIndexInverse={open ? 1 : 0}
-                    />
-                </MyDropdownInputContainer> */}
-                {/* <View style={styles.pickerContainer}>
-                    <DropDownPicker
-                        open={open}
-                        value={value}
-                        items={sortByOptions}
-                        setOpen={setOpen}
-                        setValue={setValue}
-                        // setItems={setItems}
-                        // placeholder={sortByOptions[0].label}
-                        // style={styles.sortButton}
-                        // containerStyle={styles.sortButtonContainer}
-                        // containerProps={{
-                        //     style: {
-                        //         height: open === true ? 180 : null,
-                        //         backgroundColor: "#fff",
-                        //     },
-                        // }}
-                        // onPress={() => props.snapToIndex(1)}
-                        // dropDownDirection="BOTTOM"
-                    />
-                </View> */}
-                {/* <DropDownPicker
-                    containerProps={{
-                        style: {
-                            height: open === true ? 220 : null,
-                            backgroundColor: "#fff",
-                        },
-                    }}
-                    schema={{
-                        label: "title",
-                        value: "status",
-                    }}
-                    placeholder="Select status"
-                    // searchable={true}
-                    open={open}
-                    value={value}
-                    items={sortByOptions}
-                    setOpen={setOpen}
-                    setValue={setValue}
-                    // setItems={setItems}
-                    theme="LIGHT"
-                    listMode="SCROLLVIEW"
-                    showArrowIcon={true}
-                    showTickIcon={true}
-                    //     TickIconComponent={({style}) =>  <AntDesign
-                    //     style={{ marginRight: 5 }}
-                    //     color="green"
-                    //     name="check"
-                    //     size={20}
-                    //   />}
-                    itemSeparator={true}
-                    itemSeparatorStyle={{
-                        backgroundColor: "#e5e5e5",
-                    }}
-                /> */}
+
                 <Menu>
-                    <MenuTrigger text="Sort by: " />
-                    <MenuOptions>
+                    <MenuTrigger
+                        text={"Sort by: " + sortByOptions[1].label}
+                        customStyles={triggerStyles}
+                    />
+                    <MenuOptions customStyles={optionsStyles}>
                         <MenuOption
                             onSelect={() => alert("Sort by map center")}
                             text="Sort by map center"
@@ -221,6 +156,10 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                         <MenuOption
                             onSelect={() => alert("Sort by user location")}
                             text="Sort by user location"
+                        />
+                        <MenuOption
+                            onSelect={() => alert("Sort by Date")}
+                            text="Sort by Date"
                         />
                     </MenuOptions>
                 </Menu>
@@ -235,6 +174,61 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     );
 });
 
+const triggerStyles = {
+    triggerText: {
+        color: "#333",
+        // textAlign: "center",
+        padding: 8,
+        borderRadius: 15,
+    },
+    triggerOuterWrapper: {
+        backgroundColor: "#e0e0e0",
+        // padding: 8,
+        flex: 1,
+        // width: 140,
+        borderRadius: 15,
+    },
+    // triggerWrapper: {
+    //     // textAlign: "center",
+    //     // backgroundColor: "blue",
+    //     // alignItems: "center",
+    //     // justifyContent: "center",
+    //     // flex: 1,
+    // },
+    triggerTouchable: {
+        textAlign: "center",
+        underlayColor: "#8eb3ed",
+        borderRadius: 15,
+        activeOpacity: 70,
+        style: {
+            flex: 1,
+        },
+    },
+};
+
+const optionsStyles = {
+    optionsContainer: {
+        backgroundColor: "transparent",
+        padding: 5,
+        paddingTop: 30,
+    },
+    optionsWrapper: {
+        backgroundColor: "#e0e0e0",
+        borderRadius: 15,
+    },
+    optionWrapper: {
+        // backgroundColor: "yellow",
+        margin: 5,
+    },
+    optionTouchable: {
+        underlayColor: "#8eb3ed",
+        activeOpacity: 70,
+    },
+    optionText: {
+        color: "#333",
+    },
+};
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -246,11 +240,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: "70%",
         paddingLeft: 38,
-        paddingRight: 38,
+        paddingRight: 10,
         borderBottomWidth: 1,
         borderBottomColor: "#eeeeee",
-        paddingBottom: 5,
-        // maxHeight: 15,
+        paddingBottom: 10,
+        margin: 5,
+        height: 41,
         overflow: "visible",
     },
     contentContainer: {
@@ -341,22 +336,6 @@ const styles = StyleSheet.create({
         marginRight: 8,
         backgroundColor: "#eeeeee",
     },
-    // sortButton: {
-    //     padding: 8,
-    //     borderRadius: 8,
-    //     backgroundColor: "#eeeeee",
-    //     // height: 30,
-    //     width: 180,
-
-    //     alignContent: "flex-end",
-    // },
-    // sortButtonContainer: {
-    //     width: 150,
-    //     height: 30,
-    // },
-    // pickerContainer: {
-    //     zIndex: 100,
-    // },
 });
 
 export default ListBottomSheet;
