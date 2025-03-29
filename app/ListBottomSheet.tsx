@@ -32,6 +32,9 @@ interface BottomSheetProps {
     setCenter: (region: Region) => void;
     snapToIndex: (index: number) => void;
     openEventDetailsBottomSheet: (event: EventFeature) => void;
+    // sortByOptions: { label: string; value: string }[];
+    pickedSortByOption: string;
+    setPickedSortByOption: (sortByOption: string) => void;
 }
 
 const coordinatesToRegion = (coordinates: number[]) => ({
@@ -54,17 +57,6 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         { label: "User Location", value: "userLocation" },
         { label: "Date", value: "date" },
     ];
-
-    // const SortButton = (
-    //     <TouchableOpacity
-    //         style={styles.sortButton}
-    //         onPress={() => {
-    //             console.log("Sort button pressed");
-    //         }}
-    //     >
-    //         <Text>Sorted By: {sortedBy}</Text>
-    //     </TouchableOpacity>
-    // );
 
     const MyDropdownInputContainer = ({
         open,
@@ -145,21 +137,25 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
                 <Menu>
                     <MenuTrigger
-                        text={"Sort by: " + sortByOptions[1].label}
+                        text={"Sort by: " + props.pickedSortByOption}
                         customStyles={triggerStyles}
                     />
                     <MenuOptions customStyles={optionsStyles}>
                         <MenuOption
-                            onSelect={() => alert("Sort by map center")}
-                            text="Sort by map center"
+                            onSelect={() =>
+                                props.setPickedSortByOption("Map Center")
+                            }
+                            text="Map Center"
                         />
                         <MenuOption
-                            onSelect={() => alert("Sort by user location")}
-                            text="Sort by user location"
+                            onSelect={() =>
+                                props.setPickedSortByOption("User Location")
+                            }
+                            text="User Location"
                         />
                         <MenuOption
-                            onSelect={() => alert("Sort by Date")}
-                            text="Sort by Date"
+                            onSelect={() => props.setPickedSortByOption("Date")}
+                            text="Date"
                         />
                     </MenuOptions>
                 </Menu>
@@ -209,12 +205,14 @@ const triggerStyles = {
 const optionsStyles = {
     optionsContainer: {
         backgroundColor: "transparent",
-        padding: 5,
-        paddingTop: 30,
+        // padding: 5,
+        marginTop: 30,
+        marginLeft: 70,
     },
     optionsWrapper: {
         backgroundColor: "#e0e0e0",
         borderRadius: 15,
+        width: 120,
     },
     optionWrapper: {
         // backgroundColor: "yellow",

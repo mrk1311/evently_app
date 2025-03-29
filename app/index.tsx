@@ -25,7 +25,7 @@ import {
 } from "geojson";
 import throttle from "lodash/throttle";
 import { isWithinInterval, parseISO, Interval } from "date-fns";
-import { filter } from "lodash";
+import { filter, pick } from "lodash";
 
 export default function App() {
     const listBottomSheetRef = useRef<BottomSheet>(null);
@@ -67,6 +67,9 @@ export default function App() {
     const [dateInterval, setDateInterval] = useState<Interval | null>(null);
     const [mapViewCenter, setMapViewCenter] =
         useState<Region>(controlledCenter);
+
+    const [pickedSortByOption, setPickedSortByOption] =
+        useState<string>("Map Center");
 
     // user location
     const [location, setLocation] = useState<Location.LocationObject>({
@@ -172,38 +175,67 @@ export default function App() {
 
     // sort events by distance from the center of the map
     const sortedEvents = useMemo(() => {
-        const features = filteredEvents.features
-            .map((feature) => {
-                // Ensure we're working with Point geometry
-                if (feature.geometry.type === "Point") {
-                    const [lon, lat] = feature.geometry.coordinates;
-                    return {
-                        ...feature,
-                        properties: {
-                            ...feature.properties,
-                            distance: haversine(
-                                lat,
-                                lon,
-                                mapViewCenter.latitude,
-                                mapViewCenter.longitude
-                            ),
-                        },
-                    };
+        var features = null;
+        if (pickedSortByOption === "Date") {
+            console.log("sorting by date");
+            features = filteredEvents.features.sort((a, b) => {
+                const dateA = new Date(a.properties?.date).valueOf();
+                const dateB = new Date(b.properties?.date).valueOf();
+                if (dateA > dateB) {
+                    return 1;
                 }
-                return feature;
-            })
-            .filter((feature) => feature.geometry.type === "Point") // Filter out non-point features
-            .sort(
-                (a, b) =>
-                    (a.properties?.distance || 0) -
-                    (b.properties?.distance || 0)
-            );
+                return -1;
+            });
+        } else {
+            features = filteredEvents.features
+                .map((feature) => {
+                    // Ensure we're working with Point geometry
+                    if (feature.geometry.type === "Point") {
+                        const [lon, lat] = feature.geometry.coordinates;
+
+                        if (pickedSortByOption === "Map Center") {
+                            return {
+                                ...feature,
+                                properties: {
+                                    ...feature.properties,
+                                    distance: haversine(
+                                        lat,
+                                        lon,
+                                        mapViewCenter.latitude,
+                                        mapViewCenter.longitude
+                                    ),
+                                },
+                            };
+                        } else if (pickedSortByOption === "User Location") {
+                            console.log("sorting by user location");
+                            return {
+                                ...feature,
+                                properties: {
+                                    ...feature.properties,
+                                    distance: haversine(
+                                        lat,
+                                        lon,
+                                        location.coords.latitude,
+                                        location.coords.longitude
+                                    ),
+                                },
+                            };
+                        }
+                    }
+                    return feature;
+                })
+                .sort(
+                    (a, b) =>
+                        (a.properties?.distance || 0) -
+                        (b.properties?.distance || 0)
+                );
+        }
 
         return {
             type: "FeatureCollection",
             features: features,
         } as EventFeatureCollection;
-    }, [filteredEvents, mapViewCenter]);
+    }, [filteredEvents, mapViewCenter, pickedSortByOption, location]);
 
     const filterBySearch = (
         array: EventFeatureCollection
@@ -409,6 +441,8 @@ export default function App() {
                     setOpenEvent(event);
                     EventDetailsBottomSheetRef.current?.snapToIndex(0);
                 }}
+                pickedSortByOption={pickedSortByOption}
+                setPickedSortByOption={setPickedSortByOption}
             />
 
             <TypesBottomSheet
