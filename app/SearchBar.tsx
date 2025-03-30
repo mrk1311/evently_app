@@ -178,7 +178,6 @@ const styles = StyleSheet.create({
         top: 45,
         width: "90%",
         alignSelf: "center",
-        zIndex: 1000,
     },
     filterContainer: {
         position: "relative",

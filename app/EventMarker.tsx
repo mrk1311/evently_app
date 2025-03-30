@@ -1,11 +1,7 @@
 import React, { FunctionComponent, memo, useCallback } from "react";
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
-import { Marker as MapsMarker, Marker } from "react-native-maps";
-
+import { Marker as MapsMarker } from "react-native-maps";
 import type { supercluster } from "react-native-clusterer";
-import { get } from "lodash";
-
-import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
@@ -48,19 +44,18 @@ const getMarkerIcon = (type: string): iconName => {
     return icons[type] || "question-mark";
 };
 
-const MarkerIcon = useCallback(({ type }: { type: string }) => {
-    return (
-        <MaterialIcons
-            name={getMarkerIcon(type)}
-            size={20}
-            color="#fff"
-            // style={styles.markerIcon}
-        />
-    );
-}, []);
-
 const EventMarker: FunctionComponent<Props> = memo(
     ({ item, onPress }) => {
+        const MarkerIcon = useCallback(({ type }: { type: string }) => {
+            return (
+                <MaterialIcons
+                    name={getMarkerIcon(type)}
+                    size={20}
+                    color="#fff"
+                    // style={styles.markerIcon}
+                />
+            );
+        }, []);
         return (
             <MapsMarker
                 key={item.properties?.cluster_id || item.properties?.id}
@@ -98,20 +93,7 @@ const EventMarker: FunctionComponent<Props> = memo(
                                     },
                                 ]}
                             >
-                                {/* <MaterialIcons
-                                    name={getMarkerIcon(item.properties.type)}
-                                    size={20}
-                                    color="#fff"
-                                /> */}
                                 <MarkerIcon type={item.properties.type} />
-                                {/* <FontAwesome
-                                    name={getMarkerIcon(item.properties.type)}
-                                    size={20}
-                                    color="#fff"
-                                /> */}
-                                {/* <Text style={styles.clusterMarkerText}>
-                                    {getMarkerIcon(item.properties.type)}
-                                </Text> */}
                             </View>
                         </TouchableOpacity>
                     </>

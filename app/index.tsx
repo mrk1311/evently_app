@@ -14,6 +14,7 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import PlaceBottomSheet from "./PlaceBottomSheet";
 import DateBottomSheet from "./DateBottomSheet";
 import EventDetailsBottomSheet from "./EventDetailsBottomSheet";
+import ShowUserLocationButton from "./ShowUserLocationButton";
 
 import * as Location from "expo-location";
 import {
@@ -178,14 +179,18 @@ export default function App() {
         var features = null;
         if (pickedSortByOption === "Date") {
             console.log("sorting by date");
-            features = filteredEvents.features.sort((a, b) => {
-                const dateA = new Date(a.properties?.date).valueOf();
-                const dateB = new Date(b.properties?.date).valueOf();
-                if (dateA > dateB) {
-                    return 1;
-                }
-                return -1;
-            });
+            features = filteredEvents.features
+                .map((feature) => {
+                    return feature;
+                })
+                .sort((a, b) => {
+                    const dateA = new Date(a.properties?.date).valueOf();
+                    const dateB = new Date(b.properties?.date).valueOf();
+                    if (dateA > dateB) {
+                        return 1;
+                    }
+                    return -1;
+                });
         } else {
             features = filteredEvents.features
                 .map((feature) => {
@@ -401,23 +406,6 @@ export default function App() {
 
     return (
         <>
-            <SearchBar
-                onSearch={(query) => console.log("Search query", query)}
-                openTypesBottomSheet={openTypesBottomSheet}
-                openPlaceBottomSheet={openPlaceBottomSheet}
-                openListBottomSheet={openListBottomSheet}
-                openDateBottomSheet={openDateBottomSheet}
-                openedFilter={openedFilter}
-                activeFilters={activeFilters}
-                startDate={startDate}
-                endDate={endDate}
-                setStartDate={setStartDate}
-                setEndDate={setEndDate}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                events={eventData as EventFeatureCollection}
-            />
-
             <ClusteredMap
                 data={filteredEvents as EventFeatureCollection}
                 center={controlledCenter}
@@ -428,7 +416,7 @@ export default function App() {
                 }}
                 onRegionChangeComplete={handleRegionChangeComplete}
             />
-
+            <ShowUserLocationButton active={true} setLocation={setLocation} />
             <ListBottomSheet
                 ref={listBottomSheetRef}
                 events={sortedEvents as EventFeatureCollection}
@@ -474,6 +462,22 @@ export default function App() {
                 ref={EventDetailsBottomSheetRef}
                 event={openEvent}
                 handleCancelDetails={handleCancelDetails}
+            />
+            <SearchBar
+                onSearch={(query) => console.log("Search query", query)}
+                openTypesBottomSheet={openTypesBottomSheet}
+                openPlaceBottomSheet={openPlaceBottomSheet}
+                openListBottomSheet={openListBottomSheet}
+                openDateBottomSheet={openDateBottomSheet}
+                openedFilter={openedFilter}
+                activeFilters={activeFilters}
+                startDate={startDate}
+                endDate={endDate}
+                setStartDate={setStartDate}
+                setEndDate={setEndDate}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                events={eventData as EventFeatureCollection}
             />
         </>
     );

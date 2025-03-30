@@ -98,11 +98,12 @@ const ClusteredMap: React.FC<MapProps> = ({
                 showsCompass={false}
                 showsUserLocation={true}
                 showsMyLocationButton={true}
-                showsTraffic={false}
-                showsBuildings={true}
+                // showsTraffic={false}
+                // showsBuildings={true}
                 rotateEnabled={false}
                 pitchEnabled={false}
                 onPanDrag={() => Keyboard.dismiss()}
+                mapPadding={{ top: 20, right: 20, bottom: 100, left: 0 }}
             >
                 <Clusterer
                     data={data.features}
