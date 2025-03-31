@@ -26,7 +26,7 @@ import {
 } from "geojson";
 import throttle from "lodash/throttle";
 import { isWithinInterval, parseISO, Interval } from "date-fns";
-import { filter, pick } from "lodash";
+import { filter, map, pick } from "lodash";
 
 export default function App() {
     const listBottomSheetRef = useRef<BottomSheet>(null);
@@ -61,6 +61,7 @@ export default function App() {
         latitudeDelta: 30,
         longitudeDelta: 30,
     });
+    const [centerOnUser, setCenterOnUser] = useState(true);
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(
         new Date(new Date().setDate(new Date().getDate() + 365))
@@ -110,6 +111,7 @@ export default function App() {
                 latitudeDelta: 0.1,
                 longitudeDelta: 0.1,
             });
+            setCenterOnUser(true);
         }
         console.log(location);
     }, [location]);
@@ -270,9 +272,8 @@ export default function App() {
             const data = await response.json();
 
             setPlaces(data);
-            console.log("Location search results:", data.features);
         } catch (error) {
-            console.error("Location search failed:", error);
+            console.error("Place search failed:", error);
         }
     };
 
@@ -415,8 +416,12 @@ export default function App() {
                     EventDetailsBottomSheetRef.current?.snapToIndex(0);
                 }}
                 onRegionChangeComplete={handleRegionChangeComplete}
+                setCenterOnUser={setCenterOnUser}
             />
-            <ShowUserLocationButton active={true} setLocation={setLocation} />
+            <ShowUserLocationButton
+                active={centerOnUser}
+                setLocation={setLocation}
+            />
             <ListBottomSheet
                 ref={listBottomSheetRef}
                 events={sortedEvents as EventFeatureCollection}

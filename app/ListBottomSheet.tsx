@@ -32,7 +32,6 @@ interface BottomSheetProps {
     setCenter: (region: Region) => void;
     snapToIndex: (index: number) => void;
     openEventDetailsBottomSheet: (event: EventFeature) => void;
-    // sortByOptions: { label: string; value: string }[];
     pickedSortByOption: string;
     setPickedSortByOption: (sortByOption: string) => void;
 }
@@ -50,20 +49,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // variables
     const snapPoints = useMemo(() => ["15%", "85%"], []);
 
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(null);
-    const sortByOptions: { label: string; value: string }[] = [
-        { label: "Map Center", value: "mapCenter" },
-        { label: "User Location", value: "userLocation" },
-        { label: "Date", value: "date" },
-    ];
-
-    const MyDropdownInputContainer = ({
-        open,
-        children,
-    }: ViewProps & { open?: boolean }) => (
-        <View style={{ ...(open && { zIndex: 1 }) }}>{children}</View>
-    );
+    const flatListRef = useRef(null);
 
     const renderEventCard = useCallback(
         ({ item }: { item: EventFeature }) => (
@@ -161,6 +147,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 </Menu>
             </View>
             <BottomSheetFlatList
+                ref={flatListRef}
                 data={props.events.features as EventFeature[]}
                 keyExtractor={(item) => item.properties.id.toString()}
                 renderItem={renderEventCard}

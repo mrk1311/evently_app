@@ -37,6 +37,7 @@ type MapProps = {
     location: Location.LocationObject | null;
     openEventDetailsBottomSheet: (event: EventFeature) => void;
     onRegionChangeComplete: (region: Region) => void;
+    setCenterOnUser: (boolean: boolean) => void;
 };
 
 const { width, height } = Dimensions.get("window");
@@ -47,6 +48,7 @@ const ClusteredMap: React.FC<MapProps> = ({
     center,
     openEventDetailsBottomSheet,
     onRegionChangeComplete,
+    setCenterOnUser,
 }) => {
     const mapRef = React.useRef<MapView>(null);
 
@@ -102,8 +104,11 @@ const ClusteredMap: React.FC<MapProps> = ({
                 // showsBuildings={true}
                 rotateEnabled={false}
                 pitchEnabled={false}
-                onPanDrag={() => Keyboard.dismiss()}
-                mapPadding={{ top: 20, right: 20, bottom: 100, left: 0 }}
+                onPanDrag={() => {
+                    Keyboard.dismiss();
+                    setCenterOnUser(false);
+                }}
+                mapPadding={{ top: 100, right: 0, bottom: 100, left: 0 }}
             >
                 <Clusterer
                     data={data.features}
