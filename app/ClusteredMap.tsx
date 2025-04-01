@@ -95,6 +95,7 @@ const ClusteredMap: React.FC<MapProps> = ({
                 ref={mapRef}
                 style={styles.map}
                 region={region}
+                userInterfaceStyle="dark"
                 // onRegionChange={handleRegionChange}
                 onRegionChangeComplete={handleRegionChange}
                 showsCompass={false}

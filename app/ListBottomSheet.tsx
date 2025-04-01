@@ -15,11 +15,14 @@ import {
     TouchableOpacity,
     ViewProps,
 } from "react-native";
-import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+    BottomSheetFlatList,
+    BottomSheetFlatListMethods,
+} from "@gorhom/bottom-sheet";
 import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
 import getMarkerColor from "./functions/getMarkerColor";
-// import DropDownPicker from "react-native-dropdown-picker";
+import ScrollToTopButton from "./ScrollToTopButton";
 import {
     Menu,
     MenuOptions,
@@ -49,7 +52,21 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // variables
     const snapPoints = useMemo(() => ["15%", "85%"], []);
 
-    const flatListRef = useRef(null);
+    const flatListRef = useRef<BottomSheetFlatListMethods>(null);
+    const [buttonShown, setButtonShown] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+    const listToTop = () => {
+        flatListRef.current?.scrollToIndex({ animated: true, index: 0 });
+    };
+
+    useEffect(() => {
+        if (currentIndex >= 2) {
+            setButtonShown(true);
+        } else {
+            setButtonShown(false);
+        }
+    }, [currentIndex]);
 
     const renderEventCard = useCallback(
         ({ item }: { item: EventFeature }) => (
@@ -140,8 +157,10 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                             text="User Location"
                         />
                         <MenuOption
-                            onSelect={() => props.setPickedSortByOption("Date")}
-                            text="Date"
+                            onSelect={() =>
+                                props.setPickedSortByOption("Date of Event")
+                            }
+                            text="Date of Event"
                         />
                     </MenuOptions>
                 </Menu>
@@ -152,6 +171,20 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 keyExtractor={(item) => item.properties.id.toString()}
                 renderItem={renderEventCard}
                 contentContainerStyle={styles.contentContainer}
+                onScrollEndDrag={(event) => {
+                    const totalHeight =
+                        event.nativeEvent.layoutMeasurement.width;
+                    const yPosition = event.nativeEvent.contentOffset.y;
+                    const newIndex = Math.round(yPosition / totalHeight);
+                    if (newIndex !== currentIndex) {
+                        setCurrentIndex(newIndex);
+                    }
+                }}
+            />
+            <ScrollToTopButton
+                active={buttonShown}
+                listToTop={listToTop}
+                setButtonShown={setButtonShown}
             />
         </BottomSheet>
     );
@@ -163,6 +196,7 @@ const triggerStyles = {
         // textAlign: "center",
         padding: 8,
         borderRadius: 15,
+        width: 145,
     },
     triggerOuterWrapper: {
         backgroundColor: "#e0e0e0",
@@ -171,13 +205,14 @@ const triggerStyles = {
         // width: 140,
         borderRadius: 15,
     },
-    // triggerWrapper: {
-    //     // textAlign: "center",
-    //     // backgroundColor: "blue",
-    //     // alignItems: "center",
-    //     // justifyContent: "center",
-    //     // flex: 1,
-    // },
+    triggerWrapper: {
+        borderRadius: 15,
+        // textAlign: "center",
+        // backgroundColor: "blue",
+        // alignItems: "center",
+        // justifyContent: "center",
+        // flex: 1,
+    },
     triggerTouchable: {
         textAlign: "center",
         underlayColor: "#8eb3ed",

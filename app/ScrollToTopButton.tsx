@@ -5,25 +5,34 @@ import { StyleSheet } from "react-native";
 
 interface Props {
     active: boolean;
+    listToTop: () => void;
+    setButtonShown: (boolean: boolean) => void;
 }
 
-const ShowUserLocationButton: FunctionComponent<Props> = memo(({ active }) => {
-    return (
-        <TouchableOpacity
-            style={styles.button}
-            // onPress={}
-        >
-            <MaterialIcons
-                name={"arrow-upward"}
-                size={20}
-                color="#fff"
-                // style={styles.markerIcon}
-            />
-        </TouchableOpacity>
-    );
-});
+const ScrollToTopButton: FunctionComponent<Props> = memo(
+    ({ active, listToTop, setButtonShown }) => {
+        if (active) {
+            return (
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => {
+                        listToTop();
+                        setButtonShown(false);
+                    }}
+                >
+                    <MaterialIcons
+                        name={"arrow-upward"}
+                        size={20}
+                        color="#fff"
+                        // style={styles.markerIcon}
+                    />
+                </TouchableOpacity>
+            );
+        } else return;
+    }
+);
 
-export default ShowUserLocationButton;
+export default ScrollToTopButton;
 
 const styles = StyleSheet.create({
     button: {
@@ -34,8 +43,8 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         position: "absolute",
-        bottom: 150,
-        right: 20,
+        bottom: 50,
+        right: 30,
         backgroundColor: "#2196F3",
     },
 });
