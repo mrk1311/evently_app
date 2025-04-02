@@ -30,7 +30,7 @@ const ShowUserLocationButton: FunctionComponent<Props> = memo(
                 <MaterialIcons
                     name={active ? "my-location" : "location-searching"}
                     size={20}
-                    color="#fff"
+                    color="#2196F3"
                     // style={styles.markerIcon}
                 />
             </TouchableOpacity>
@@ -45,12 +45,12 @@ const styles = StyleSheet.create({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: 50,
+        borderRadius: 15,
         width: 50,
         height: 50,
         position: "absolute",
         bottom: 150,
         right: 20,
-        backgroundColor: "#2196F3",
+        backgroundColor: "white",
     },
 });

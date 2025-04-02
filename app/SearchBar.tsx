@@ -21,6 +21,7 @@ import type { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import { debounce, set } from "lodash";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { isWithinInterval, parseISO } from "date-fns";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 type SearchBarProps = {
     onSearch: (lat: number, lon: number) => void;
@@ -89,7 +90,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
 
     const DateInputField = useCallback(
         () => (
-            <View style={styles.dateContainer}>
+            <View style={styles.inputContainer}>
                 <Text>From:</Text>
                 <DateTimePicker
                     style={styles.dateInput}
@@ -130,7 +131,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
         <View style={styles.container}>
             <View style={styles.searchContainer}>
                 {props.openedFilter !== "Date" && (
-                    <View style={styles.dateContainer}>
+                    <View style={styles.inputContainer}>
                         <TextInput
                             ref={inputRef}
                             style={styles.input}
@@ -161,6 +162,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                 )}
                 {/* if opened filter = date, show date picker */}
                 {props.openedFilter === "Date" && <DateInputField />}
+                <AntDesign name="user" size={24} color="black" />
             </View>
 
             <View style={styles.filterContainer}>
@@ -212,8 +214,11 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 20,
         paddingLeft: 10,
-        paddingRight: 10,
+        paddingRight: 40,
+        paddingTop: 10,
         zIndex: 1000,
+        display: "flex",
+        flexDirection: "row",
     },
     input: {
         height: 40,
@@ -225,7 +230,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#f0f0f0",
         borderRadius: 8,
     },
-    dateContainer: {
+    inputContainer: {
         flexDirection: "row",
         alignItems: "center",
         // paddingLeft: 20,
