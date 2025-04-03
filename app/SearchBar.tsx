@@ -22,6 +22,7 @@ import { debounce, set } from "lodash";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { isWithinInterval, parseISO } from "date-fns";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { useRouter } from "expo-router";
 
 type SearchBarProps = {
     onSearch: (lat: number, lon: number) => void;
@@ -45,6 +46,7 @@ type SearchBarProps = {
 const SearchBar: React.FC<SearchBarProps> = (props) => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const inputRef = useRef<TextInput>(null);
+    const router = useRouter();
 
     const FilterButton: React.FC<{ type: "Type" | "Place" | "Date" }> = ({
         type,
@@ -91,30 +93,34 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
     const DateInputField = useCallback(
         () => (
             <View style={styles.inputContainer}>
-                <Text>From:</Text>
-                <DateTimePicker
-                    style={styles.dateInput}
-                    value={props.startDate}
-                    mode={"date"}
-                    onChange={(event, selectedDate) => {
-                        const currentDate = selectedDate || props.startDate;
-                        // setDatePickerOpen(false);
-                        // setDate(currentDate);
-                        props.setStartDate(currentDate);
-                    }}
-                />
-                <Text>To:</Text>
-                <DateTimePicker
-                    style={styles.dateInput}
-                    value={props.endDate}
-                    mode={"date"}
-                    onChange={(event, selectedDate) => {
-                        const currentDate = selectedDate || props.endDate;
-                        // setDatePickerOpen(false);
-                        // setDate(currentDate);
-                        props.setEndDate(currentDate);
-                    }}
-                />
+                <View style={styles.dateContainer}>
+                    <Text>From:</Text>
+                    <DateTimePicker
+                        style={styles.dateInput}
+                        value={props.startDate}
+                        mode={"date"}
+                        onChange={(event, selectedDate) => {
+                            const currentDate = selectedDate || props.startDate;
+                            // setDatePickerOpen(false);
+                            // setDate(currentDate);
+                            props.setStartDate(currentDate);
+                        }}
+                    />
+                </View>
+                <View style={styles.dateContainer}>
+                    <Text>To:</Text>
+                    <DateTimePicker
+                        style={styles.dateInput}
+                        value={props.endDate}
+                        mode={"date"}
+                        onChange={(event, selectedDate) => {
+                            const currentDate = selectedDate || props.endDate;
+                            // setDatePickerOpen(false);
+                            // setDate(currentDate);
+                            props.setEndDate(currentDate);
+                        }}
+                    />
+                </View>
             </View>
         ),
         [props.startDate, props.endDate]
@@ -162,7 +168,14 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                 )}
                 {/* if opened filter = date, show date picker */}
                 {props.openedFilter === "Date" && <DateInputField />}
-                <AntDesign name="user" size={24} color="black" />
+                {props.openedFilter === null && (
+                    <TouchableOpacity
+                        style={styles.userIcon}
+                        onPress={() => router.navigate("/userPage")}
+                    >
+                        <AntDesign name="user" size={18} color="#333" />
+                    </TouchableOpacity>
+                )}
             </View>
 
             <View style={styles.filterContainer}>
@@ -213,12 +226,13 @@ const styles = StyleSheet.create({
     searchContainer: {
         backgroundColor: "white",
         borderRadius: 20,
-        paddingLeft: 10,
-        paddingRight: 40,
-        paddingTop: 10,
+        paddingLeft: 5,
+        paddingRight: 5,
         zIndex: 1000,
         display: "flex",
         flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
     input: {
         height: 40,
@@ -233,15 +247,30 @@ const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "space-around",
+        // width: "90%",
+        flex: 1,
         // paddingLeft: 20,
         gap: 10,
     },
     dateInput: {
-        position: "relative",
-        right: 20,
-        flex: 1,
+        display: "flex",
         height: 40,
         // backgroundColor: "#f0f0f0",
+        width: 100,
+    },
+    dateContainer: {
+        flexDirection: "row",
+        gap: 10,
+        alignItems: "center",
+    },
+    userIcon: {
+        backgroundColor: "#e0e0e0",
+        borderRadius: 25,
+        width: 30,
+        height: 30,
+        alignItems: "center",
+        justifyContent: "center",
     },
 });
 
