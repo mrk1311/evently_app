@@ -1,18 +1,32 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Button, SafeAreaView } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function userPage() {
     return (
-        <View style={styles.userPage}>
-            <Text>User Page</Text>
-        </View>
+        <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <MaterialIcons name="chevron-left" size={24} />
+                <Text style={styles.backText}>Back to map</Text>
+            </View>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    userPage: {
+    container: {
+        flex: 1,
+    },
+    header: {
         display: "flex",
-        justifyContent: "center",
+        flexDirection: "row",
+        // justifyContent: "flex-start",
         alignItems: "center",
-        height: "100%",
+        alignContent: "center",
+        height: 50,
+        padding: 10,
+    },
+    backText: {
+        // justifyContent: "center",
+        // alignItems: "center",
     },
 });
