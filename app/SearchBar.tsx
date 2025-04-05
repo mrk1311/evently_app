@@ -1,31 +1,19 @@
-import React, {
-    useState,
-    useRef,
-    useMemo,
-    useEffect,
-    useCallback,
-    act,
-} from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
     View,
     Text,
     TextInput,
     TouchableOpacity,
     StyleSheet,
-    FlatList,
-    ScrollView,
-    Keyboard,
 } from "react-native";
 // import { parseISO, isValid, isWithinInterval } from "date-fns";
-import type { EventFeature, EventFeatureCollection } from "./ClusteredMap";
-import { debounce, set } from "lodash";
+import type { EventFeatureCollection } from "./ClusteredMap";
+import { debounce } from "lodash";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { isWithinInterval, parseISO } from "date-fns";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
 
 type SearchBarProps = {
-    onSearch: (lat: number, lon: number) => void;
     openTypesBottomSheet: () => void;
     openPlaceBottomSheet: () => void;
     openListBottomSheet: () => void;
@@ -83,9 +71,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
 
     // clear search query when closing the search
     useEffect(() => {
-        console.log("opened filter", props.openedFilter);
         if (props.openedFilter === null) {
-            console.log("clearing search query");
             inputRef.current?.clear();
         }
     }, [props.openedFilter]);
@@ -101,8 +87,6 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                         mode={"date"}
                         onChange={(event, selectedDate) => {
                             const currentDate = selectedDate || props.startDate;
-                            // setDatePickerOpen(false);
-                            // setDate(currentDate);
                             props.setStartDate(currentDate);
                         }}
                     />
@@ -115,8 +99,6 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                         mode={"date"}
                         onChange={(event, selectedDate) => {
                             const currentDate = selectedDate || props.endDate;
-                            // setDatePickerOpen(false);
-                            // setDate(currentDate);
                             props.setEndDate(currentDate);
                         }}
                     />
@@ -150,19 +132,13 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                                     : "Find events..."
                             }
                             placeholderTextColor={"#666"}
-                            // value={searchQuery}
                             onChangeText={(input) => {
                                 handleQuerySearch(input);
-                                // debounce(() => props.setSearchQuery(input), 5);
-                                // props.setSearchQuery(input);
                             }}
-                            // onSubmitEditing={handleSearch}
                             onFocus={() => {
-                                // props.onOpen();
                                 setIsSearchOpen(true);
                                 props.openListBottomSheet();
                             }}
-                            // onBlur={props.onClose}
                         />
                     </View>
                 )}
@@ -248,15 +224,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-around",
-        // width: "90%",
         flex: 1,
-        // paddingLeft: 20,
         gap: 10,
     },
     dateInput: {
         display: "flex",
         height: 40,
-        // backgroundColor: "#f0f0f0",
         width: 100,
     },
     dateContainer: {

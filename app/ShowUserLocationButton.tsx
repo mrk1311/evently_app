@@ -31,7 +31,6 @@ const ShowUserLocationButton: FunctionComponent<Props> = memo(
                     name={active ? "my-location" : "location-searching"}
                     size={20}
                     color="#2196F3"
-                    // style={styles.markerIcon}
                 />
             </TouchableOpacity>
         );

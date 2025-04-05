@@ -4,25 +4,13 @@ import React, {
     useCallback,
     useEffect,
     useMemo,
-    useRef,
     useState,
     forwardRef,
     memo,
 } from "react";
-import {
-    View,
-    Text,
-    Image,
-    Button,
-    StyleSheet,
-    TouchableOpacity,
-} from "react-native";
-import BottomSheet, {
-    BottomSheetBackdrop,
-    BottomSheetFlatList,
-} from "@gorhom/bottom-sheet";
-import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
-import type { Region } from "react-native-maps";
+import { View, Text, Image, Button, StyleSheet } from "react-native";
+import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { EventFeature } from "./ClusteredMap";
 import getMarkerColor from "./functions/getMarkerColor";
 
 interface BottomSheetProps {
@@ -39,7 +27,6 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
 
         useEffect(() => {
             if (props.event?.properties.type === undefined) {
-                console.log("dupa");
             } else {
                 setTypeColor(getMarkerColor(props.event.properties.type));
             }
@@ -154,24 +141,15 @@ const styles = StyleSheet.create({
         margin: 8,
     },
     typeIndicator: {
-        // width: 6,
         height: 6,
-        // borderRadius: 6,
-        // marginBottom: 12,
-        // backgroundColor: "black",
     },
     cardImage: {
-        // width: 80,
-        // height: 80,
         borderRadius: 8,
-        // marginLeft: 16,
     },
     cardImagePlaceholder: {
         width: "50%",
         height: "100%",
         borderRadius: 8,
-        // marginLeft: 8,
-        // marginRight: 8,
         backgroundColor: "#eeeeee",
     },
     horizontalContainer: {

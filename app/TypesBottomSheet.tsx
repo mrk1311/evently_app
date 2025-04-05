@@ -18,8 +18,6 @@ import BottomSheet, {
     BottomSheetBackdrop,
     BottomSheetFlatList,
 } from "@gorhom/bottom-sheet";
-import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
-import type { Region } from "react-native-maps";
 import getMarkerColor from "./functions/getMarkerColor";
 
 interface BottomSheetProps {
@@ -62,8 +60,6 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         <TouchableOpacity
             style={[styles.cardContainer]}
             onPress={() => {
-                // props.setIsSearchOpen(false);
-                console.log("Filter card pressed");
                 if (picks.includes(item)) {
                     setPicks(picks.filter((filter) => filter !== item));
                 } else {

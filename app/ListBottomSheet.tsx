@@ -4,17 +4,9 @@ import React, {
     useMemo,
     useRef,
     forwardRef,
-    memo,
     useState,
 } from "react";
-import {
-    View,
-    Text,
-    Image,
-    StyleSheet,
-    TouchableOpacity,
-    ViewProps,
-} from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import BottomSheet, {
     BottomSheetFlatList,
     BottomSheetFlatListMethods,
@@ -193,25 +185,17 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 const triggerStyles = {
     triggerText: {
         color: "#333",
-        // textAlign: "center",
         padding: 8,
         borderRadius: 15,
         width: 145,
     },
     triggerOuterWrapper: {
         backgroundColor: "#e0e0e0",
-        // padding: 8,
         flex: 1,
-        // width: 140,
         borderRadius: 15,
     },
     triggerWrapper: {
         borderRadius: 15,
-        // textAlign: "center",
-        // backgroundColor: "blue",
-        // alignItems: "center",
-        // justifyContent: "center",
-        // flex: 1,
     },
     triggerTouchable: {
         textAlign: "center",
@@ -227,7 +211,6 @@ const triggerStyles = {
 const optionsStyles = {
     optionsContainer: {
         backgroundColor: "transparent",
-        // padding: 5,
         marginTop: 30,
         marginLeft: 70,
     },
@@ -237,7 +220,6 @@ const optionsStyles = {
         width: 120,
     },
     optionWrapper: {
-        // backgroundColor: "yellow",
         margin: 5,
     },
     optionTouchable: {
@@ -279,7 +261,6 @@ const styles = StyleSheet.create({
     },
     typeIndicator: {
         width: 6,
-        // borderRadius: 6,
         marginRight: 12,
     },
     textContainer: {
@@ -301,11 +282,8 @@ const styles = StyleSheet.create({
         marginTop: 4,
     },
     header: {
-        // width: "30%",
         fontSize: 20,
         fontWeight: "700",
-        // marginBottom: 16,
-        // marginTop: 8,
         color: "#333333",
         textAlign: "left",
     },

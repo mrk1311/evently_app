@@ -1,14 +1,11 @@
-import React, { useState, useMemo, forwardRef, memo, useCallback } from "react";
+import React, { useMemo, forwardRef, memo, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
 import BottomSheet, {
     BottomSheetBackdrop,
     BottomSheetFlatList,
 } from "@gorhom/bottom-sheet";
-import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
-import type { Region } from "react-native-maps";
 
 interface BottomSheetProps {
-    // snapToIndex: (index: number) => void;
     handleCancelDates: () => void;
     handleAcceptDates: () => void;
     setStartDate: (date: Date) => void;
@@ -18,9 +15,6 @@ interface BottomSheetProps {
 type Ref = BottomSheet;
 
 const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
-    // hooks
-    const [picks, setPicks] = useState<string[]>([]);
-
     // variables
     const snapPoints = useMemo(() => ["85%"], []);
 
@@ -77,7 +71,7 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     }
                 }}
             >
-                <Text style={styles.cardText}>{item}</Text>
+                <Text>{item}</Text>
             </TouchableOpacity>
         ),
         [] // No dependencies needed due to functional update
@@ -95,17 +89,9 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         >
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Button
-                        // style={styles.clearAllButton}
-                        title="Cancel"
-                        onPress={props.handleCancelDates}
-                    />
+                    <Button title="Cancel" onPress={props.handleCancelDates} />
                     <Text style={styles.headerText}>Select Dates</Text>
-                    <Button
-                        title="Accept"
-                        // style={styles.doneButton}
-                        onPress={props.handleAcceptDates}
-                    />
+                    <Button title="Accept" onPress={props.handleAcceptDates} />
                 </View>
 
                 <BottomSheetFlatList
@@ -150,8 +136,5 @@ const styles = StyleSheet.create({
         padding: 16,
         borderBottomWidth: 1,
         borderBottomColor: "#eeeeee",
-    },
-    cardText: {
-        // fontSize: 16,
     },
 });

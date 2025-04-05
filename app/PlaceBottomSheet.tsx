@@ -1,25 +1,8 @@
-import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-    forwardRef,
-} from "react";
-import {
-    View,
-    Text,
-    Image,
-    Button,
-    StyleSheet,
-    TouchableOpacity,
-} from "react-native";
-import BottomSheet, {
-    BottomSheetBackdrop,
-    BottomSheetFlatList,
-} from "@gorhom/bottom-sheet";
+import React, { useCallback, useMemo, useState, forwardRef } from "react";
+import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
+import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import type { Region } from "react-native-maps";
-import { Feature, FeatureCollection, GeoJsonObject } from "geojson";
+import { Feature, FeatureCollection } from "geojson";
 
 interface BottomSheetProps {
     setCenter: (region: Region) => void;
@@ -53,8 +36,6 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         <TouchableOpacity
             style={[styles.cardContainer]}
             onPress={() => {
-                // props.setIsSearchOpen(false);
-                console.log("place picked", place);
                 // add to last searched
 
                 setLastSearched((prev) => {
@@ -119,11 +100,7 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     }}
                 />
                 <Text style={styles.header}>Choose Place</Text>
-                <Button
-                    title="Accept"
-                    // change to accept and close
-                    // onPress={() => props.handleAcceptPlace(picks)}
-                />
+                <Button title="Accept" />
             </View>
             <View style={styles.container}>
                 {/* display last searched items when not searching*/}
@@ -151,14 +128,6 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                         );
                     })
                 )}
-
-                {/* <BottomSheetFlatList
-                    data={props.places?.features.map(
-                        (feature) => feature.properties?.name
-                    )}
-                    keyExtractor={props.places?.features[0].properties?.id}
-                    renderItem={renderPlaceCard}
-                /> */}
             </View>
         </BottomSheet>
     );
@@ -167,9 +136,6 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    contentContainer: {
-        // backgroundColor: "white",
     },
     horizontalContainer: {
         flexDirection: "row",

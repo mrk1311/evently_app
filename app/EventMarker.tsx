@@ -52,7 +52,6 @@ const EventMarker: FunctionComponent<Props> = memo(
                     name={getMarkerIcon(type)}
                     size={20}
                     color="#fff"
-                    // style={styles.markerIcon}
                 />
             );
         }, []);

@@ -9,7 +9,6 @@ import type { supercluster } from "react-native-clusterer";
 
 import * as Location from "expo-location";
 import debounce from "lodash/debounce";
-import { set, throttle } from "lodash";
 
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
 
@@ -57,7 +56,6 @@ const ClusteredMap: React.FC<MapProps> = ({
     const onRegionChange = useCallback(
         debounce(
             (region: Region) => {
-                console.log("debounced region change", region);
                 onRegionChangeComplete(region);
             },
             1000,
@@ -79,14 +77,12 @@ const ClusteredMap: React.FC<MapProps> = ({
             const toRegion = point.properties.getExpansionRegion();
             mapRef.current?.animateToRegion(toRegion, 500);
         } else {
-            console.log("Point pressed", point);
             openEventDetailsBottomSheet(point);
         }
     };
 
     useEffect(() => {
         mapRef.current?.animateToRegion(center, 500);
-        console.log("Center changed", center);
     }, [center]);
 
     return (
@@ -101,8 +97,6 @@ const ClusteredMap: React.FC<MapProps> = ({
                 showsCompass={false}
                 showsUserLocation={true}
                 showsMyLocationButton={true}
-                // showsTraffic={false}
-                // showsBuildings={true}
                 rotateEnabled={false}
                 pitchEnabled={false}
                 onPanDrag={() => {

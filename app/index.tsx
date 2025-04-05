@@ -2,31 +2,20 @@ import ClusteredMap from "./ClusteredMap";
 import eventData from "../assets/markers.json";
 import type { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import ListBottomSheet from "./ListBottomSheet";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { StyleSheet, Keyboard, ScrollView } from "react-native";
+import { StyleSheet } from "react-native";
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import type { Region } from "react-native-maps";
 import SearchBar from "./SearchBar";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import TypesBottomSheet from "./TypesBottomSheet";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import BottomSheet from "@gorhom/bottom-sheet";
 import PlaceBottomSheet from "./PlaceBottomSheet";
 import DateBottomSheet from "./DateBottomSheet";
 import EventDetailsBottomSheet from "./EventDetailsBottomSheet";
 import ShowUserLocationButton from "./ShowUserLocationButton";
-
 import * as Location from "expo-location";
-import {
-    Feature,
-    FeatureCollection,
-    GeoJsonObject,
-    GeoJsonTypes,
-    Point,
-} from "geojson";
+import { Feature, FeatureCollection, Point } from "geojson";
 import throttle from "lodash/throttle";
 import { isWithinInterval, parseISO, Interval } from "date-fns";
-import { filter, map, pick } from "lodash";
 
 export default function App() {
     const listBottomSheetRef = useRef<BottomSheet>(null);
@@ -113,7 +102,6 @@ export default function App() {
             });
             setCenterOnUser(true);
         }
-        console.log(location);
     }, [location]);
 
     const filterByType = (
@@ -180,7 +168,6 @@ export default function App() {
     const sortedEvents = useMemo(() => {
         var features = null;
         if (pickedSortByOption === "Date") {
-            console.log("sorting by date");
             features = filteredEvents.features
                 .map((feature) => {
                     return feature;
@@ -214,7 +201,6 @@ export default function App() {
                                 },
                             };
                         } else if (pickedSortByOption === "User Location") {
-                            console.log("sorting by user location");
                             return {
                                 ...feature,
                                 properties: {
@@ -379,7 +365,6 @@ export default function App() {
             setDateInterval(null);
             setActiveFilters([]);
         }
-        console.log("Date interval", dateInterval);
         dateBottomSheetRef.current?.close();
         handleCloseFilter();
     };
@@ -430,7 +415,6 @@ export default function App() {
                     listBottomSheetRef.current?.snapToIndex(index)
                 }
                 openEventDetailsBottomSheet={(event) => {
-                    console.log("Opening event details", event);
                     setOpenEvent(event);
                     EventDetailsBottomSheetRef.current?.snapToIndex(0);
                 }}
@@ -469,7 +453,6 @@ export default function App() {
                 handleCancelDetails={handleCancelDetails}
             />
             <SearchBar
-                onSearch={(query) => console.log("Search query", query)}
                 openTypesBottomSheet={openTypesBottomSheet}
                 openPlaceBottomSheet={openPlaceBottomSheet}
                 openListBottomSheet={openListBottomSheet}
