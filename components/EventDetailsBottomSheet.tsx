@@ -11,7 +11,7 @@ import React, {
 import { View, Text, Image, Button, StyleSheet } from "react-native";
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { EventFeature } from "./ClusteredMap";
-import getMarkerColor from "./functions/getMarkerColor";
+import getMarkerColor from "../functions/getMarkerColor";
 
 interface BottomSheetProps {
     event: EventFeature | null;

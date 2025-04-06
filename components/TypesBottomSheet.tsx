@@ -18,7 +18,7 @@ import BottomSheet, {
     BottomSheetBackdrop,
     BottomSheetFlatList,
 } from "@gorhom/bottom-sheet";
-import getMarkerColor from "./functions/getMarkerColor";
+import getMarkerColor from "../functions/getMarkerColor";
 
 interface BottomSheetProps {
     eventTypes: string[];

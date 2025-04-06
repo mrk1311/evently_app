@@ -13,7 +13,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
-import getMarkerColor from "./functions/getMarkerColor";
+import getMarkerColor from "../functions/getMarkerColor";
 import ScrollToTopButton from "./ScrollToTopButton";
 import {
     Menu,

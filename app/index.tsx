@@ -1,17 +1,20 @@
-import ClusteredMap from "./ClusteredMap";
+import ClusteredMap from "../components/ClusteredMap";
 import eventData from "../assets/markers.json";
-import type { EventFeature, EventFeatureCollection } from "./ClusteredMap";
-import ListBottomSheet from "./ListBottomSheet";
+import type {
+    EventFeature,
+    EventFeatureCollection,
+} from "../components/ClusteredMap";
+import ListBottomSheet from "../components/ListBottomSheet";
 import { StyleSheet } from "react-native";
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import type { Region } from "react-native-maps";
-import SearchBar from "./SearchBar";
-import TypesBottomSheet from "./TypesBottomSheet";
+import SearchBar from "../components/SearchBar";
+import TypesBottomSheet from "../components/TypesBottomSheet";
 import BottomSheet from "@gorhom/bottom-sheet";
-import PlaceBottomSheet from "./PlaceBottomSheet";
-import DateBottomSheet from "./DateBottomSheet";
-import EventDetailsBottomSheet from "./EventDetailsBottomSheet";
-import ShowUserLocationButton from "./ShowUserLocationButton";
+import PlaceBottomSheet from "../components/PlaceBottomSheet";
+import DateBottomSheet from "../components/DateBottomSheet";
+import EventDetailsBottomSheet from "../components/EventDetailsBottomSheet";
+import ShowUserLocationButton from "../components/ShowUserLocationButton";
 import * as Location from "expo-location";
 import { Feature, FeatureCollection, Point } from "geojson";
 import throttle from "lodash/throttle";
