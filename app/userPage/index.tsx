@@ -16,7 +16,7 @@ export default function userPage() {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <MaterialIcons name="chevron-left" size={24} />
-                <TouchableOpacity onPress={() => router.back}>
+                <TouchableOpacity onPress={() => router.back()}>
                     <Text style={styles.backText}>Back to map</Text>
                 </TouchableOpacity>
             </View>
@@ -26,6 +26,19 @@ export default function userPage() {
                 </View>
 
                 <Text>Log In / Sign Up</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuItem}>
+                <MaterialIcons name="star" size={36} color="#333" />
+                <Text>Favourite events</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuItem}>
+                <MaterialIcons name="event" size={36} color="#333" />
+                <Text>Add a event</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.menuItem}>
+                <MaterialIcons name="settings" size={36} color="#333" />
+                <Text>Settings</Text>
             </TouchableOpacity>
         </SafeAreaView>
     );
@@ -63,5 +76,12 @@ const styles = StyleSheet.create({
         height: 100,
         alignItems: "center",
         justifyContent: "center",
+    },
+    menuItem: {
+        flexDirection: "row",
+        padding: 20,
+        alignItems: "center",
+        gap: 30,
+        borderBottomWidth: 1,
     },
 });
