@@ -1,5 +1,12 @@
 import React, { useCallback, useMemo, useState, forwardRef } from "react";
-import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
+import {
+    View,
+    Text,
+    Button,
+    StyleSheet,
+    TouchableOpacity,
+    Keyboard,
+} from "react-native";
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import type { Region } from "react-native-maps";
 import { Feature, FeatureCollection } from "geojson";
@@ -37,7 +44,6 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             style={[styles.cardContainer]}
             onPress={() => {
                 // add to last searched
-
                 setLastSearched((prev) => {
                     if (prev === null) {
                         return [place];
@@ -70,6 +76,7 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
                 props.handleAcceptPlace(place);
                 props.setPlaces(null);
+                Keyboard.dismiss();
             }}
         >
             <View style={styles.cardContent}>
@@ -97,6 +104,7 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     onPress={() => {
                         props.handleCancelPlace();
                         props.setPlaces(null);
+                        Keyboard.dismiss();
                     }}
                 />
                 <Text style={styles.header}>Choose Place</Text>

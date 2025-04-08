@@ -5,13 +5,14 @@ import {
     TextInput,
     TouchableOpacity,
     StyleSheet,
+    Button,
 } from "react-native";
-// import { parseISO, isValid, isWithinInterval } from "date-fns";
 import type { EventFeatureCollection } from "./ClusteredMap";
 import { debounce } from "lodash";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
 
 type SearchBarProps = {
     openTypesBottomSheet: () => void;
@@ -29,10 +30,9 @@ type SearchBarProps = {
     events: EventFeatureCollection;
 };
 
-// TODO memoize the function to prevent re-rendering
-
 const SearchBar: React.FC<SearchBarProps> = (props) => {
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [showClearButton, setShowClearButton] = useState(false);
+    // const [text, onChangeText] = useState("");
     const inputRef = useRef<TextInput>(null);
     const router = useRouter();
 
@@ -50,9 +50,6 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                     props.openedFilter === type && styles.selectedFilter,
                 ]}
                 onPress={() => {
-                    // setPickedFilter(type);
-                    // setIsSearchOpen(true);
-                    // onOpen();
                     if (type === "Type") {
                         props.openTypesBottomSheet();
                     } else if (type === "Place") {
@@ -120,9 +117,11 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
             <View style={styles.searchContainer}>
                 {props.openedFilter !== "Date" && (
                     <View style={styles.inputContainer}>
+                        {/* {text !== "" && <Button title="X"></Button>} */}
                         <TextInput
                             ref={inputRef}
                             style={styles.input}
+                            value={props.searchQuery}
                             placeholder={
                                 //depending on the picked filter, the placeholder will change
                                 props.openedFilter === "Type"
@@ -133,10 +132,10 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                             }
                             placeholderTextColor={"#666"}
                             onChangeText={(input) => {
+                                props.setSearchQuery(input);
                                 handleQuerySearch(input);
                             }}
                             onFocus={() => {
-                                setIsSearchOpen(true);
                                 props.openListBottomSheet();
                             }}
                         />
@@ -144,9 +143,14 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                 )}
                 {/* if opened filter = date, show date picker */}
                 {props.openedFilter === "Date" && <DateInputField />}
-                {props.openedFilter === null && (
+                {props.searchQuery !== "" && (
+                    <TouchableOpacity onPress={() => props.setSearchQuery("")}>
+                        <MaterialIcons name="cancel" size={33} color="#333" />
+                    </TouchableOpacity>
+                )}
+                {props.openedFilter === null && props.searchQuery === "" && (
                     <TouchableOpacity
-                        style={styles.userIcon}
+                        style={styles.rightIcon}
                         onPress={() => router.navigate("/userPage")}
                     >
                         <AntDesign name="user" size={18} color="#333" />
@@ -225,7 +229,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-around",
         flex: 1,
-        gap: 10,
+        // gap: 10,
     },
     dateInput: {
         display: "flex",
@@ -237,7 +241,7 @@ const styles = StyleSheet.create({
         gap: 10,
         alignItems: "center",
     },
-    userIcon: {
+    rightIcon: {
         backgroundColor: "#e0e0e0",
         borderRadius: 25,
         width: 30,

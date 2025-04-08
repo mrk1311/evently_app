@@ -14,12 +14,15 @@ export default function userPage() {
     const router = useRouter();
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
+            <TouchableOpacity
+                style={styles.header}
+                onPress={() => router.back()}
+            >
+                {/* <TouchableOpacity onPress={() => router.back()}> */}
                 <MaterialIcons name="chevron-left" size={24} />
-                <TouchableOpacity onPress={() => router.back()}>
-                    <Text style={styles.backText}>Back to map</Text>
-                </TouchableOpacity>
-            </View>
+                <Text style={styles.backText}>Back to map</Text>
+                {/* </TouchableOpacity> */}
+            </TouchableOpacity>
             <TouchableOpacity style={styles.userPreview}>
                 <View style={styles.userIcon}>
                     <AntDesign name="user" size={36} color="#333" />

@@ -107,6 +107,11 @@ export default function App() {
         }
     }, [location]);
 
+    // hide the list bottom sheet when zooming to a place
+    useEffect(() => {
+        listBottomSheetRef.current?.snapToIndex(0);
+    }, [controlledCenter]);
+
     const filterByType = (
         array: EventFeatureCollection
     ): EventFeatureCollection => {

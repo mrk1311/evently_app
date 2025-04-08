@@ -13,6 +13,7 @@ import {
     Button,
     StyleSheet,
     TouchableOpacity,
+    Keyboard,
 } from "react-native";
 import BottomSheet, {
     BottomSheetBackdrop,
@@ -32,7 +33,7 @@ type Ref = BottomSheet;
 // events, onListItemClick, isSearchOpen, setIsSearchOpen
 const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // hooks
-    const [picks, setPicks] = useState<string[]>([]);
+    const [picks, setPicks] = useState<string[]>(props.eventTypes);
 
     // variables
     const snapPoints = useMemo(() => ["85%"], []);
@@ -47,6 +48,10 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         ),
         []
     );
+
+    useEffect(() => {
+        if (picks.length === 0) setPicks(props.eventTypes);
+    }, []);
 
     const handleSelectClearAll = () => {
         if (picks.length === props.eventTypes.length) {
@@ -101,13 +106,17 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     onPress={() => {
                         props.handleCancelTypes();
                         setPicks(props.pickedTypes);
+                        Keyboard.dismiss();
                     }}
                 />
                 <Text style={styles.header}>Choose Types</Text>
                 <Button
                     title="Accept"
                     // change to accept and close
-                    onPress={() => props.handleAcceptTypes(picks)}
+                    onPress={() => {
+                        props.handleAcceptTypes(picks);
+                        Keyboard.dismiss();
+                    }}
                 />
             </View>
 
