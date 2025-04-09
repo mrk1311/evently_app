@@ -31,7 +31,7 @@ export default function userPage() {
                 <Text>Log In / Sign Up</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.menuItem}>
-                <MaterialIcons name="star" size={36} color="#333" />
+                <AntDesign name="heart" size={36} color="#333" />
                 <Text>Favourite events</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.menuItem}>

@@ -21,6 +21,7 @@ import {
     MenuOption,
     MenuTrigger,
 } from "react-native-popup-menu";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 interface BottomSheetProps {
     events: EventFeatureCollection;
@@ -94,7 +95,23 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 />
                 {/* Main Content */}
                 <View style={styles.cardContent}>
-                    <Text style={styles.cardTitle}>{item.properties.name}</Text>
+                    <View style={styles.cardHeader}>
+                        <Text style={styles.cardTitle}>
+                            {item.properties.name}
+                        </Text>
+                        <TouchableOpacity
+                            onPress={() =>
+                                // TODO
+                                console.log(
+                                    "adding" +
+                                        item.properties.name +
+                                        "to local storage"
+                                )
+                            }
+                        >
+                            <AntDesign name="hearto" size={24} color="black" />
+                        </TouchableOpacity>
+                    </View>
                     <View style={styles.metaContainer}>
                         <Text style={styles.cardSubtitle}>
                             {item.properties.type.toUpperCase()}
@@ -292,6 +309,10 @@ const styles = StyleSheet.create({
         padding: 16,
         borderBottomWidth: 1,
         borderBottomColor: "#eeeeee",
+    },
+    cardHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
     },
     cardContent: {
         flex: 1,
