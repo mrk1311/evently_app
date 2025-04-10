@@ -103,9 +103,9 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                             onPress={() =>
                                 // TODO
                                 console.log(
-                                    "adding" +
+                                    "adding " +
                                         item.properties.name +
-                                        "to local storage"
+                                        " to local storage"
                                 )
                             }
                         >

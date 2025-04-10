@@ -10,6 +10,7 @@ import {
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import type { Region } from "react-native-maps";
 import { Feature, FeatureCollection } from "geojson";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface BottomSheetProps {
     setCenter: (region: Region) => void;
@@ -44,35 +45,35 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             style={[styles.cardContainer]}
             onPress={() => {
                 // add to last searched
-                setLastSearched((prev) => {
-                    if (prev === null) {
-                        return [place];
-                    } else {
-                        // check if the place is already in the list
-                        // if it is, move it to the top
-                        if (
-                            prev.find(
-                                (p) =>
-                                    p.properties?.place_id ===
-                                    place.properties?.place_id
-                            )
-                        ) {
-                            return [
-                                place,
-                                ...prev.filter(
-                                    (p) =>
-                                        p.properties?.place_id !==
-                                        place.properties?.place_id
-                                ),
-                            ];
-                            // check if the list is full
-                        } else if (prev.length >= 10) {
-                            return [place, ...prev.slice(0, 9)];
-                        } else {
-                            return [place, ...prev];
-                        }
-                    }
-                });
+                // setLastSearched((prev) => {
+                //     if (prev === null) {
+                //         return [place];
+                //     } else {
+                //         // check if the place is already in the list
+                //         // if it is, move it to the top
+                //         if (
+                //             prev.find(
+                //                 (p) =>
+                //                     p.properties?.place_id ===
+                //                     place.properties?.place_id
+                //             )
+                //         ) {
+                //             return [
+                //                 place,
+                //                 ...prev.filter(
+                //                     (p) =>
+                //                         p.properties?.place_id !==
+                //                         place.properties?.place_id
+                //                 ),
+                //             ];
+                //             // check if the list is full
+                //         } else if (prev.length >= 10) {
+                //             return [place, ...prev.slice(0, 9)];
+                //         } else {
+                //             return [place, ...prev];
+                //         }
+                //     }
+                // });
 
                 props.handleAcceptPlace(place);
                 props.setPlaces(null);
