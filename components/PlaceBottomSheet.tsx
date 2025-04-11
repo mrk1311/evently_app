@@ -10,7 +10,7 @@ import {
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import type { Region } from "react-native-maps";
 import { Feature, FeatureCollection } from "geojson";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MMKVLoader } from "react-native-mmkv-storage";
 
 interface BottomSheetProps {
     setCenter: (region: Region) => void;
