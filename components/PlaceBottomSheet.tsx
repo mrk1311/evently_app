@@ -11,6 +11,7 @@ import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import type { Region } from "react-native-maps";
 import { Feature, FeatureCollection } from "geojson";
 import { MMKVLoader } from "react-native-mmkv-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface BottomSheetProps {
     setCenter: (region: Region) => void;
@@ -39,6 +40,14 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         ),
         []
     );
+
+    const storeData = async (value: string) => {
+        try {
+            await AsyncStorage.setItem("last-searched", value);
+        } catch (e) {
+            // saving error
+        }
+    };
 
     const PlaceCard = ({ place }: { place: Feature }) => (
         <TouchableOpacity
@@ -74,6 +83,8 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 //         }
                 //     }
                 // });
+
+                storeData(place.properties?.place_id);
 
                 props.handleAcceptPlace(place);
                 props.setPlaces(null);
