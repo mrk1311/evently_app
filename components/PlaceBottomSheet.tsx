@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useState, forwardRef } from "react";
+import React, {
+    useCallback,
+    useMemo,
+    useState,
+    forwardRef,
+    useEffect,
+} from "react";
 import {
     View,
     Text,
@@ -41,50 +47,62 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         []
     );
 
-    const storeData = async (value: string) => {
-        try {
-            await AsyncStorage.setItem("last-searched", value);
-        } catch (e) {
-            // saving error
-        }
-    };
+    // Load last searched items on component mount
+    useEffect(() => {
+        const loadLastSearched = async () => {
+            try {
+                const storedItems = await AsyncStorage.getItem("last-searched");
+                if (storedItems !== null) {
+                    const parsedItems: Feature[] = JSON.parse(storedItems);
+                    setLastSearched(parsedItems);
+                }
+            } catch (error) {
+                console.error("Error loading last searched items:", error);
+            }
+        };
+
+        loadLastSearched();
+    }, []);
 
     const PlaceCard = ({ place }: { place: Feature }) => (
         <TouchableOpacity
             style={[styles.cardContainer]}
-            onPress={() => {
-                // add to last searched
-                // setLastSearched((prev) => {
-                //     if (prev === null) {
-                //         return [place];
-                //     } else {
-                //         // check if the place is already in the list
-                //         // if it is, move it to the top
-                //         if (
-                //             prev.find(
-                //                 (p) =>
-                //                     p.properties?.place_id ===
-                //                     place.properties?.place_id
-                //             )
-                //         ) {
-                //             return [
-                //                 place,
-                //                 ...prev.filter(
-                //                     (p) =>
-                //                         p.properties?.place_id !==
-                //                         place.properties?.place_id
-                //                 ),
-                //             ];
-                //             // check if the list is full
-                //         } else if (prev.length >= 10) {
-                //             return [place, ...prev.slice(0, 9)];
-                //         } else {
-                //             return [place, ...prev];
-                //         }
-                //     }
-                // });
+            onPress={async () => {
+                try {
+                    // Retrieve existing items
+                    const storedItems = await AsyncStorage.getItem(
+                        "last-searched"
+                    );
+                    let items: Feature[] = storedItems
+                        ? JSON.parse(storedItems)
+                        : [];
 
-                storeData(place.properties?.place_id);
+                    // Check if the place already exists
+                    const existingIndex = items.findIndex(
+                        (p) =>
+                            p.properties?.place_id ===
+                            place.properties?.place_id
+                    );
+
+                    // Remove if exists to avoid duplicates
+                    if (existingIndex !== -1) {
+                        items.splice(existingIndex, 1);
+                    }
+
+                    // Add the new place to the beginning and limit to 10 items
+                    items = [place, ...items].slice(0, 10);
+
+                    // Save to AsyncStorage
+                    await AsyncStorage.setItem(
+                        "last-searched",
+                        JSON.stringify(items)
+                    );
+
+                    // Update state
+                    setLastSearched(items);
+                } catch (error) {
+                    console.error("Error updating last searched:", error);
+                }
 
                 props.handleAcceptPlace(place);
                 props.setPlaces(null);
