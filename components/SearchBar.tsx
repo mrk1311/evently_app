@@ -31,8 +31,7 @@ type SearchBarProps = {
 };
 
 const SearchBar: React.FC<SearchBarProps> = (props) => {
-    const [showClearButton, setShowClearButton] = useState(false);
-    // const [text, onChangeText] = useState("");
+    const [text, onChangeText] = useState("");
     const inputRef = useRef<TextInput>(null);
     const router = useRouter();
 
@@ -112,16 +111,19 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
         []
     );
 
+    useEffect(() => {
+        handleQuerySearch(text);
+    }, [text]);
+
     return (
         <View style={styles.container}>
             <View style={styles.searchContainer}>
                 {props.openedFilter !== "Date" && (
                     <View style={styles.inputContainer}>
-                        {/* {text !== "" && <Button title="X"></Button>} */}
                         <TextInput
                             ref={inputRef}
                             style={styles.input}
-                            value={props.searchQuery}
+                            value={text}
                             placeholder={
                                 //depending on the picked filter, the placeholder will change
                                 props.openedFilter === "Type"
@@ -131,10 +133,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                                     : "Find events..."
                             }
                             placeholderTextColor={"#666"}
-                            onChangeText={(input) => {
-                                props.setSearchQuery(input);
-                                handleQuerySearch(input);
-                            }}
+                            onChangeText={(input) => onChangeText(input)}
                             onFocus={() => {
                                 props.openListBottomSheet();
                             }}
