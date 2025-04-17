@@ -1,7 +1,7 @@
 // utils/events.ts
 import { EventFeatureCollection } from '@/components/ClusteredMap';
 // import { supabase } from './migrate.mjs/index.js';
-import supabase from './supabase-client'
+import { supabase } from './supabase'
 import { Point } from 'react-native-maps';
 
 type SupabaseEvent = {
