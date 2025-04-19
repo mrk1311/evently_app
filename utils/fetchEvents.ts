@@ -20,16 +20,7 @@ export const fetchEvents = async (): Promise<EventFeatureCollection> => {
   const { data, error } = await supabase
     .from('events')
     .select(`
-      id,
-      title,
-      description,
-      event_time,
-      location,
-      coordinates,
-      photo_url,
-      event_url,
-      type,
-      ST_AsGeoJSON(coordinates) as geometry
+*
     `);
 
   if (error) throw error;
@@ -38,7 +29,7 @@ export const fetchEvents = async (): Promise<EventFeatureCollection> => {
     type: 'FeatureCollection',
     features: data.map((event: SupabaseEvent) => ({
       type: 'Feature',
-      geometry: JSON.parse(event.geometry) as Point,
+      geometry: JSON.parse(event.geometry),
       properties: {
         id: event.id,
         name: event.title,

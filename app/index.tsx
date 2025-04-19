@@ -1,5 +1,5 @@
 import ClusteredMap from "../components/ClusteredMap";
-import eventData from "../assets/markers.json";
+import mockData from "../assets/markers.json";
 import type {
     EventFeature,
     EventFeatureCollection,
@@ -19,8 +19,32 @@ import * as Location from "expo-location";
 import { Feature, FeatureCollection, Point } from "geojson";
 import throttle from "lodash/throttle";
 import { isWithinInterval, parseISO, Interval } from "date-fns";
+import { fetchEvents } from "@/utils/fetchEvents";
 
 export default function App() {
+    const [eventData, setEvents] = useState<EventFeatureCollection>(
+        mockData as EventFeatureCollection
+    );
+
+    useEffect(() => {
+        let isMounted = true; // Flag to track component mount state
+
+        const loadEvents = async () => {
+            try {
+                const data = await fetchEvents(); // Add await here
+                if (isMounted) setEvents(data);
+            } catch (error) {
+                console.error("Error loading events:", error);
+                if (isMounted) setEvents(mockData as EventFeatureCollection);
+            }
+        };
+
+        loadEvents();
+
+        return () => {
+            isMounted = false; // Cleanup if component unmounts
+        };
+    }, []); // Empty dependency array = runs once on mount
     const listBottomSheetRef = useRef<BottomSheet>(null);
     const typesBottomSheetRef = useRef<BottomSheet>(null);
     const placeBottomSheetRef = useRef<BottomSheet>(null);
@@ -32,10 +56,10 @@ export default function App() {
         () =>
             Array.from(
                 new Set(
-                    eventData.features.map((event) => event.properties?.type)
+                    eventData?.features.map((event) => event.properties?.type)
                 )
             ),
-        [eventData.features]
+        [eventData?.features]
     );
     const [filteredEventTypes, setFilteredEventTypes] =
         useState<string[]>(uniqueEventTypes);
