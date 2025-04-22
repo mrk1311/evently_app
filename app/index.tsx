@@ -32,6 +32,7 @@ export default function App() {
         const loadEvents = async () => {
             try {
                 const data = await fetchEvents(); // Add await here
+                console.log("Received data:", JSON.stringify(data, null, 2));
                 if (isMounted) setEvents(data);
             } catch (error) {
                 console.error("Error loading events:", error);

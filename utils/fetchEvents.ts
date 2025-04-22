@@ -23,7 +23,11 @@ export const fetchEvents = async (): Promise<EventFeatureCollection> => {
 *
     `);
 
+    console.log("Supabase raw response:", { data, error }); // 👈 Add this
   if (error) throw error;
+
+
+
 
   return {
     type: 'FeatureCollection',
