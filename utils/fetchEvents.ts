@@ -1,48 +1,54 @@
 // utils/events.ts
-import { EventFeatureCollection } from '@/components/ClusteredMap';
+import { EventFeatureCollection, EventFeature } from '@/components/ClusteredMap';
 // import { supabase } from './migrate.mjs/index.js';
 import { supabase } from './supabase'
 import { Point } from 'react-native-maps';
 
-type SupabaseEvent = {
-  id: number;
-  title: string;
-  description: string;
-  event_time: string;
-  location: string;
-  geometry: string; // GeoJSON string representation
-  photo_url: string;
-  event_url: string;
-  type: string;
-};
 
-export const fetchEvents = async (): Promise<EventFeatureCollection> => {
+// utils/fetchEvents.ts
+// utils/fetchEvents.ts
+export async function fetchEvents(): Promise<EventFeatureCollection> {
   const { data, error } = await supabase
     .from('events')
     .select(`
-*
+      id,
+      title,  
+      type,
+      description,
+      event_time,  
+      coordinates,
+      photo_url, 
+      event_url, 
+      location
     `);
 
-    console.log("Supabase raw response:", { data, error }); // 👈 Add this
   if (error) throw error;
-
-
-
 
   return {
     type: 'FeatureCollection',
-    features: data.map((event: SupabaseEvent) => ({
+    features: data.map(event => ({
       type: 'Feature',
-      geometry: JSON.parse(event.geometry),
+      geometry: {
+        type: 'Point',
+        coordinates: parseCoordinates(event.coordinates)
+      },
       properties: {
         id: event.id,
-        name: event.title,
+        name: event.title,          // map title to name
         type: event.type,
         description: event.description,
-        date: new Date(event.event_time).toISOString(),
+        date: event.event_time,     // map event_time to date
         link: event.event_url,
-        photo: event.photo_url
+        photo: event.photo_url,
+        location: event.location
       }
-    }))
+    })) as EventFeature[]
   };
-};
+}
+
+// Helper to convert PostGIS geometry to coordinates
+function parseCoordinates(geometry: string): [number, number] {
+  const match = geometry.match(/POINT\(([^ ]+) ([^ ]+)\)/);
+  if (!match) throw new Error('Invalid geometry format');
+  return [parseFloat(match[1]), parseFloat(match[2])];
+}

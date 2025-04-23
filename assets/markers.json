@@ -14,7 +14,8 @@
                 "link": "https://londonmusicfestival.com",
                 "photo": "https://example.com/london-music-festival.jpg",
                 "date": "2024-06-15",
-                "id": 1
+                "id": "1",
+                "location": "dupa"
             }
         },
         {
@@ -30,7 +31,8 @@
                 "link": "https://birminghamsportsmeet.com",
                 "photo": "https://example.com/birmingham-sports-meet.jpg",
                 "date": "2024-07-10",
-                "id": 2
+                "id": "2",
+                "location": "dupa"
             }
         },
         {
@@ -46,7 +48,8 @@
                 "link": "https://olsztynscienceconf.com",
                 "photo": "https://example.com/olsztyn-science-conference.jpg",
                 "date": "2024-09-05",
-                "id": 3
+                "id": "3",
+                "location": "dupa"
             }
         }
     ]

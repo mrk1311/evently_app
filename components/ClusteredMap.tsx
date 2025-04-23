@@ -3,7 +3,7 @@ import MapView from "react-native-maps";
 import { StyleSheet, View, Dimensions, Keyboard } from "react-native";
 import { Clusterer, isPointCluster } from "react-native-clusterer";
 import type { Region } from "react-native-maps";
-import type { Feature, Point, FeatureCollection } from "geojson";
+import type { Feature, Point, FeatureCollection, Geometry } from "geojson";
 import EventMarker from "../components/EventMarker";
 import type { supercluster } from "react-native-clusterer";
 
@@ -13,23 +13,19 @@ import debounce from "lodash/debounce";
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
 
 type EventProperties = {
-    id: number;
-    name: string;
+    id: string; // UUID format
+    name: string; // mapped from title
     type: string;
     description: string;
-    date: string;
-    link: string;
-    photo: string;
+    date: string; // mapped from event_time
+    link: string; // mapped from event_url
+    photo: string; // mapped from photo_url
+    location: string;
+    distance?: number;
 };
 
-type EventFeature = Feature<Point> & {
-    properties: EventProperties;
-};
-
-type EventFeatureCollection = FeatureCollection & {
-    features: EventFeature[];
-};
-
+type EventFeature = Feature<Point, EventProperties>;
+type EventFeatureCollection = GeoJSON.FeatureCollection<Point, EventProperties>;
 type MapProps = {
     data: EventFeatureCollection;
     center: Region;
