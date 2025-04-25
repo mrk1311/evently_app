@@ -1,32 +1,33 @@
 // utils/events.ts
 import { EventFeatureCollection, EventFeature } from '@/components/ClusteredMap';
-// import { supabase } from './migrate.mjs/index.js';
-import { supabase } from './supabase'
-import { Point } from 'react-native-maps';
+import { supabase } from './supabase';
 
+interface EventRow {
+  id: string;
+  title: string;
+  type: string;
+  description: string;
+  event_time: string;
+  coordinates: string; // WKT string
+  photo_url: string;
+  event_url: string;
+  location: string;
+}
 
-// utils/fetchEvents.ts
-// utils/fetchEvents.ts
 export async function fetchEvents(): Promise<EventFeatureCollection> {
+  // Query the VIEW instead of the original table
   const { data, error } = await supabase
-    .from('events')
-    .select(`
-      id,
-      title,  
-      type,
-      description,
-      event_time,  
-      coordinates,
-      photo_url, 
-      event_url, 
-      location
-    `);
+    .from('events_with_wkt') // Use the new view
+    .select('*');
 
   if (error) throw error;
 
+  // Type assertion (safe because the view matches EventRow)
+  const events = data as EventRow[];
+
   return {
     type: 'FeatureCollection',
-    features: data.map(event => ({
+    features: events.map(event => ({
       type: 'Feature',
       geometry: {
         type: 'Point',
@@ -34,10 +35,10 @@ export async function fetchEvents(): Promise<EventFeatureCollection> {
       },
       properties: {
         id: event.id,
-        name: event.title,          // map title to name
+        name: event.title,
         type: event.type,
         description: event.description,
-        date: event.event_time,     // map event_time to date
+        date: event.event_time,
         link: event.event_url,
         photo: event.photo_url,
         location: event.location
@@ -46,7 +47,7 @@ export async function fetchEvents(): Promise<EventFeatureCollection> {
   };
 }
 
-// Helper to convert PostGIS geometry to coordinates
+// Helper function remains unchanged
 function parseCoordinates(geometry: string): [number, number] {
   const match = geometry.match(/POINT\(([^ ]+) ([^ ]+)\)/);
   if (!match) throw new Error('Invalid geometry format');
