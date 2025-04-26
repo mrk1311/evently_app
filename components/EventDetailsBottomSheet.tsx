@@ -8,10 +8,18 @@ import React, {
     forwardRef,
     memo,
 } from "react";
-import { View, Text, Image, Button, StyleSheet } from "react-native";
+import {
+    View,
+    Text,
+    Image,
+    Button,
+    StyleSheet,
+    TouchableOpacity,
+} from "react-native";
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { EventFeature } from "./ClusteredMap";
 import getMarkerColor from "../functions/getMarkerColor";
+import { AntDesign } from "@expo/vector-icons";
 
 interface BottomSheetProps {
     event: EventFeature | null;
@@ -65,7 +73,19 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                         <Text style={styles.headerText}>
                             {props.event?.properties.name}
                         </Text>
-                        <Button title="Buy tickets" onPress={() => {}} />
+
+                        <TouchableOpacity
+                            onPress={() =>
+                                // TODO
+                                console.log(
+                                    "adding " +
+                                        props.event?.properties.name +
+                                        " to local storage"
+                                )
+                            }
+                        >
+                            <AntDesign name="hearto" size={24} color="black" />
+                        </TouchableOpacity>
                     </View>
                     {/* Event Type Indicator */}
                     <View
@@ -87,6 +107,7 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                             />
                         )}
                         <View style={styles.descriptionContainer}>
+                            <Button title="Visit website" onPress={() => {}} />
                             <Text style={styles.description}>
                                 {"Type: " + props.event?.properties.type}
                             </Text>
