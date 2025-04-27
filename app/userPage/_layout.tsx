@@ -9,6 +9,10 @@ export default function RootLayout() {
                     headerShown: false,
                 }}
             />
+            <Stack.Screen name="auth" />
+            <Stack.Screen name="favourites" />
+            <Stack.Screen name="add-event" />
+            <Stack.Screen name="settings" />
         </Stack>
     );
 }

@@ -18,28 +18,36 @@ export default function userPage() {
                 style={styles.header}
                 onPress={() => router.back()}
             >
-                {/* <TouchableOpacity onPress={() => router.back()}> */}
                 <MaterialIcons name="chevron-left" size={24} />
                 <Text style={styles.backText}>Back to map</Text>
-                {/* </TouchableOpacity> */}
             </TouchableOpacity>
-            <TouchableOpacity style={styles.userPreview}>
+            <TouchableOpacity
+                style={styles.userPreview}
+                onPress={() => router.navigate("/(user)/auth")}
+            >
                 <View style={styles.userIcon}>
                     <AntDesign name="user" size={36} color="#333" />
                 </View>
-
                 <Text>Log In / Sign Up</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem}>
+            <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => router.navigate("/favourites")}
+            >
                 <AntDesign name="heart" size={36} color="#333" />
                 <Text>Favourite events</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem}>
+            <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => router.navigate("/add-event")}
+            >
                 <MaterialIcons name="event" size={36} color="#333" />
                 <Text>Add a event</Text>
             </TouchableOpacity>
-
-            <TouchableOpacity style={styles.menuItem}>
+            <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => router.navigate("/settings")}
+            >
                 <MaterialIcons name="settings" size={36} color="#333" />
                 <Text>Settings</Text>
             </TouchableOpacity>
