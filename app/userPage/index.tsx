@@ -32,21 +32,21 @@ export default function userPage() {
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
-                onPress={() => router.navigate("/favourites")}
+                onPress={() => router.navigate("/(user)/favourites")}
             >
                 <AntDesign name="heart" size={36} color="#333" />
                 <Text>Favourite events</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
-                onPress={() => router.navigate("/add-event")}
+                onPress={() => router.navigate("/(user)/add-event")}
             >
                 <MaterialIcons name="event" size={36} color="#333" />
                 <Text>Add a event</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
-                onPress={() => router.navigate("/settings")}
+                onPress={() => router.navigate("/(user)/settings")}
             >
                 <MaterialIcons name="settings" size={36} color="#333" />
                 <Text>Settings</Text>
