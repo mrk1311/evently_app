@@ -11,7 +11,7 @@ export default function RootLayout() {
             />
             <Stack.Screen name="(user)/auth" />
             <Stack.Screen name="(user)/favourites" />
-            <Stack.Screen name="(user)/add-event" />
+            <Stack.Screen name="(user)/addEvent" />
             <Stack.Screen name="(user)/settings" />
         </Stack>
     );

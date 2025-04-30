@@ -39,7 +39,7 @@ export default function userPage() {
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
-                onPress={() => router.navigate("./(user)/add-event")}
+                onPress={() => router.navigate("./(user)/addEvent")}
             >
                 <MaterialIcons name="event" size={36} color="#333" />
                 <Text>Add a event</Text>
