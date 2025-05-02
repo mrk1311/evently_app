@@ -10,7 +10,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
 
-export default function userPage() {
+export default function favourites() {
     const router = useRouter();
     return (
         <SafeAreaView style={styles.container}>
@@ -21,9 +21,9 @@ export default function userPage() {
                 <MaterialIcons name="chevron-left" size={24} />
                 <Text style={styles.backText}>Back to map</Text>
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 style={styles.userPreview}
-                onPress={() => router.navigate("/userPage/auth")}
+                onPress={() => router.navigate("/userPage/(user)/auth")}
             >
                 <View style={styles.userIcon}>
                     <AntDesign name="user" size={36} color="#333" />
@@ -32,25 +32,25 @@ export default function userPage() {
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
-                onPress={() => router.navigate("/userPage/favourites")}
+                onPress={() => router.navigate("/userPage/(user)/favourites")}
             >
                 <AntDesign name="heart" size={36} color="#333" />
                 <Text>Favourite events</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
-                onPress={() => router.navigate("/userPage/addEvent")}
+                onPress={() => router.navigate("/userPage/(user)/addEvent")}
             >
                 <MaterialIcons name="event" size={36} color="#333" />
                 <Text>Add a event</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
-                onPress={() => router.navigate("/userPage/settings")}
+                onPress={() => router.navigate("/userPage/(user)/settings")}
             >
                 <MaterialIcons name="settings" size={36} color="#333" />
                 <Text>Settings</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </SafeAreaView>
     );
 }

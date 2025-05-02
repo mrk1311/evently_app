@@ -10,7 +10,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
 
-export default function userPage() {
+export default function addEvent() {
     const router = useRouter();
     return (
         <SafeAreaView style={styles.container}>
