@@ -19,37 +19,7 @@ export default function addEvent() {
                 onPress={() => router.back()}
             >
                 <MaterialIcons name="chevron-left" size={24} />
-                <Text style={styles.backText}>Back to map</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.userPreview}
-                onPress={() => router.navigate("/userPage/auth")}
-            >
-                <View style={styles.userIcon}>
-                    <AntDesign name="user" size={36} color="#333" />
-                </View>
-                <Text>Log In / Sign Up</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => router.navigate("/userPage/favourites")}
-            >
-                <AntDesign name="heart" size={36} color="#333" />
-                <Text>Favourite events</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => router.navigate("/userPage/addEvent")}
-            >
-                <MaterialIcons name="event" size={36} color="#333" />
-                <Text>Add a event</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => router.navigate("/userPage/settings")}
-            >
-                <MaterialIcons name="settings" size={36} color="#333" />
-                <Text>Settings</Text>
+                <Text style={styles.backText}>Back</Text>
             </TouchableOpacity>
         </SafeAreaView>
     );

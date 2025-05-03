@@ -7,16 +7,11 @@ export default function RootLayout() {
         <MenuProvider>
             <GestureHandlerRootView>
                 <Stack
-                // screenOptions={{
-                //     headerShown: false, // Hide the header for all screens
-                // }}
+                    screenOptions={{
+                        headerShown: false, // Hide the header for all screens
+                    }}
                 >
-                    <Stack.Screen
-                        name="index"
-                        options={{
-                            headerShown: false,
-                        }}
-                    />
+                    <Stack.Screen name="index" />
                     <Stack.Screen name="userPage" />
                 </Stack>
             </GestureHandlerRootView>
