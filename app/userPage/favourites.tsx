@@ -9,9 +9,39 @@ import {
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/utils/supabase";
+import {
+    EventFeature,
+    EventFeatureCollection,
+} from "@/components/ClusteredMap";
 
-export default function favourites() {
+export default function favourites(user: any) {
     const router = useRouter();
+
+    const fetchFavourites = async (userId: any) => {
+        const { data, error } = await supabase
+            .from("user_favourites")
+            .select(`*`)
+            .eq("user_id", userId);
+
+        if (error) {
+            console.error("Error fetching favorites:", error);
+            return [];
+        }
+
+        return data.map((item) => item.events);
+    };
+
+    // Usage in component:
+    const [favorites, setFavorites] = useState<EventFeature[]>([]);
+
+    useEffect(() => {
+        if (user) {
+            fetchFavourites(user.id).then(setFavorites);
+        }
+    }, [user]);
+
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity
