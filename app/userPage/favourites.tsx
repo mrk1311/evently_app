@@ -12,11 +12,11 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { useUser } from "@/hooks/useUser";
-import { EventFeature, EventProperties } from "@/components/ClusteredMap";
+import { EventFeature } from "@/components/ClusteredMap";
 
-// Define proper type for the Supabase response
-type FavoriteEvent = {
-    events: {
+// Define proper response type for the joined data
+type FavoriteResponse = {
+    event_id: {
         id: string;
         name: string;
         type: string;
@@ -40,9 +40,9 @@ export default function Favourites() {
             setLoading(true);
             const { data, error } = await supabase
                 .from("user_favourites")
-                .select<FavoriteEvent>(
+                .select(
                     `
-                    events:event_id (
+                    event_id (
                         id,
                         name,
                         type,
@@ -58,20 +58,20 @@ export default function Favourites() {
 
             if (error) throw error;
 
-            const formattedData = data.map(
+            // Properly type the response and map to EventFeature
+            const formattedData = (data as unknown as FavoriteResponse[]).map(
                 (item): EventFeature => ({
                     type: "Feature",
-                    geometry: item.events.geometry,
+                    geometry: item.event_id.geometry,
                     properties: {
-                        id: item.events.id,
-                        name: item.events.name,
-                        type: item.events.type,
-                        description: item.events.description,
-                        link: item.events.link,
-                        photo: item.events.photo,
-                        date: item.events.date,
-                        // Add proper location data instead of "dupa"
-                        location: "Proper location data",
+                        id: item.event_id.id,
+                        name: item.event_id.name,
+                        type: item.event_id.type,
+                        description: item.event_id.description,
+                        link: item.event_id.link,
+                        photo: item.event_id.photo,
+                        date: item.event_id.date,
+                        location: "Actual location from your data",
                     },
                 })
             );
@@ -92,5 +92,80 @@ export default function Favourites() {
         }
     }, [user?.id]);
 
-    // Rest of the component remains the same...
+    const renderItem = ({ item }: { item: EventFeature }) => (
+        <View style={styles.eventCard}>
+            <Text style={styles.eventTitle}>{item.properties.name}</Text>
+            <Text>{item.properties.description}</Text>
+            <Text>{new Date(item.properties.date).toLocaleDateString()}</Text>
+        </View>
+    );
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <TouchableOpacity
+                style={styles.header}
+                onPress={() => router.back()}
+            >
+                <MaterialIcons name="chevron-left" size={24} />
+                <Text style={styles.backText}>Back</Text>
+            </TouchableOpacity>
+
+            {loading ? (
+                <ActivityIndicator size="large" style={styles.loader} />
+            ) : error ? (
+                <Text style={styles.error}>{error}</Text>
+            ) : (
+                <FlatList
+                    data={favorites}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.properties.id}
+                    contentContainerStyle={styles.listContent}
+                />
+            )}
+        </SafeAreaView>
+    );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    header: {
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
+    },
+    backText: {
+        marginLeft: 8,
+        fontSize: 16,
+    },
+    loader: {
+        marginTop: 20,
+    },
+    error: {
+        color: "red",
+        textAlign: "center",
+        marginTop: 20,
+    },
+    listContent: {
+        padding: 16,
+    },
+    eventCard: {
+        backgroundColor: "#fff",
+        borderRadius: 8,
+        padding: 16,
+        marginBottom: 12,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    eventTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 8,
+    },
+});
