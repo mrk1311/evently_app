@@ -44,7 +44,7 @@ export default function Favourites() {
                     `
                     event_id (
                         id,
-                        name,
+                        title,
                         type,
                         description,
                         link,
