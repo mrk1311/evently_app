@@ -42,17 +42,17 @@ export default function Favourites() {
                 .from("user_favourites")
                 .select(
                     `
-                    event_id (
-                        id,
-                        title,
-                        type,
-                        description,
-                        link,
-                        photo,
-                        date,
-                        geometry
-                    )
-                `
+              event_id (
+                id,
+                title,
+                type,
+                description,
+                event_url,
+                photo_url,
+                event_time,
+                location
+              )
+            `
                 )
                 .eq("user_id", userId);
 
