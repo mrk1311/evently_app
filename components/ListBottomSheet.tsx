@@ -22,6 +22,8 @@ import {
     MenuTrigger,
 } from "react-native-popup-menu";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { Alert } from "react-native";
+import { supabase } from "@/utils/supabase";
 
 interface BottomSheetProps {
     events: EventFeatureCollection;
@@ -48,6 +50,27 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     const flatListRef = useRef<BottomSheetFlatListMethods>(null);
     const [buttonShown, setButtonShown] = useState(false);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const [favorites, setFavorites] = useState<Set<string>>(new Set());
+
+    useEffect(() => {
+        const loadFavorites = async () => {
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { data } = await supabase
+                .from("user_favourites")
+                .select("event_id")
+                .eq("user_id", user.id);
+
+            if (data) {
+                setFavorites(new Set(data.map((item) => item.event_id)));
+            }
+        };
+
+        loadFavorites();
+    }, [supabase.auth.getUser()]);
 
     const listToTop = () => {
         flatListRef.current?.scrollToIndex({ animated: true, index: 0 });
@@ -60,6 +83,49 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             setButtonShown(false);
         }
     }, [currentIndex]);
+
+    const handleAddToFavorites = useCallback(
+        async (eventId: string) => {
+            try {
+                const {
+                    data: { user },
+                } = await supabase.auth.getUser();
+
+                if (!user) {
+                    Alert.alert(
+                        "Login Required",
+                        "Please log in to save favorites"
+                    );
+                    return;
+                }
+                // Optimistic UI update
+                setFavorites((prev) => new Set(prev).add(eventId));
+
+                const { error } = await supabase
+                    .from("user_favourites")
+                    .upsert({
+                        user_id: user.id,
+                        event_id: eventId,
+                    });
+
+                if (error) {
+                    // Rollback on error
+                    setFavorites((prev) => {
+                        const updated = new Set(prev);
+                        updated.delete(eventId);
+                        return updated;
+                    });
+                    throw error;
+                }
+
+                // Optional: Update UI state here if needed
+            } catch (error) {
+                console.error("Error saving favorite:", error);
+                Alert.alert("Error", "Failed to save favorite");
+            }
+        },
+        [favorites]
+    );
 
     const renderEventCard = useCallback(
         ({ item }: { item: EventFeature }) => (
@@ -101,15 +167,22 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                         </Text>
                         <TouchableOpacity
                             onPress={() =>
-                                // TODO
-                                console.log(
-                                    "adding " +
-                                        item.properties.name +
-                                        " to local storage"
-                                )
+                                handleAddToFavorites(item.properties.id)
                             }
                         >
-                            <AntDesign name="hearto" size={24} color="black" />
+                            <AntDesign
+                                name={
+                                    favorites.has(item.properties.id)
+                                        ? "heart"
+                                        : "hearto"
+                                }
+                                size={24}
+                                color={
+                                    favorites.has(item.properties.id)
+                                        ? "red"
+                                        : "black"
+                                }
+                            />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.metaContainer}>
@@ -132,7 +205,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 </View>
             </TouchableOpacity>
         ),
-        []
+        [favorites, handleAddToFavorites, props]
     );
 
     return (
