@@ -52,7 +52,13 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
+    const listToTop = () => {
+        flatListRef.current?.scrollToIndex({ animated: true, index: 0 });
+    };
+
     useEffect(() => {
+        console.log("updating favorites");
+
         const loadFavorites = async () => {
             const {
                 data: { user },
@@ -70,11 +76,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         };
 
         loadFavorites();
-    }, [supabase.auth.getUser()]);
-
-    const listToTop = () => {
-        flatListRef.current?.scrollToIndex({ animated: true, index: 0 });
-    };
+    }, []);
 
     useEffect(() => {
         if (currentIndex >= 2) {
@@ -84,7 +86,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         }
     }, [currentIndex]);
 
-    const handleAddToFavorites = useCallback(
+    const handleAddFavoriteToServer = useCallback(
         async (eventId: string) => {
             try {
                 const {
@@ -98,8 +100,6 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     );
                     return;
                 }
-                // Optimistic UI update
-                setFavorites((prev) => new Set(prev).add(eventId));
 
                 const { error } = await supabase
                     .from("user_favourites")
@@ -110,6 +110,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
                 if (error) {
                     // Rollback on error
+                    console.log("error adding to favorites");
                     setFavorites((prev) => {
                         const updated = new Set(prev);
                         updated.delete(eventId);
@@ -126,6 +127,70 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         },
         [favorites]
     );
+
+    const handleAddToFavorites = useCallback(
+        (eventId: string) => {
+            // Optimistic UI update
+            setFavorites((prev) => new Set(prev).add(eventId));
+
+            handleAddFavoriteToServer(eventId);
+        },
+        [favorites]
+    );
+
+    const handleRemoveFavoriteFromServer = useCallback(
+        async (eventId: string) => {
+            try {
+                const {
+                    data: { user },
+                } = await supabase.auth.getUser();
+
+                if (!user) {
+                    Alert.alert(
+                        "Login Required",
+                        "Please log in to manage favorites"
+                    );
+                    return;
+                }
+
+                const { error } = await supabase
+                    .from("user_favourites")
+                    .delete()
+                    .match({
+                        user_id: user.id,
+                        event_id: eventId,
+                    });
+
+                if (error) throw error;
+
+                // Update local state
+                setFavorites((prev) => {
+                    console.log("removing from local");
+                    const updated = new Set(prev);
+                    updated.delete(eventId);
+                    return updated;
+                });
+
+                Alert.alert("Removed", "Event removed from favorites");
+            } catch (error) {
+                console.error("Error removing favorite:", error);
+                Alert.alert("Error", "Failed to remove favorite");
+            }
+        },
+        []
+    );
+
+    const handleRemoveFromFavorites = useCallback((eventId: string) => {
+        // Update local state
+        setFavorites((prev) => {
+            console.log("removing from local");
+            const updated = new Set(prev);
+            updated.delete(eventId);
+            return updated;
+        });
+
+        handleRemoveFavoriteFromServer(eventId);
+    }, []);
 
     const renderEventCard = useCallback(
         ({ item }: { item: EventFeature }) => (
@@ -166,8 +231,16 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                             {item.properties.name}
                         </Text>
                         <TouchableOpacity
-                            onPress={() =>
-                                handleAddToFavorites(item.properties.id)
+                            onPress={
+                                favorites.has(item.properties.id)
+                                    ? () =>
+                                          handleRemoveFromFavorites(
+                                              item.properties.id
+                                          )
+                                    : () =>
+                                          handleAddToFavorites(
+                                              item.properties.id
+                                          )
                             }
                         >
                             <AntDesign
@@ -205,7 +278,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 </View>
             </TouchableOpacity>
         ),
-        [favorites, handleAddToFavorites, props]
+        [favorites, handleAddToFavorites, handleRemoveFromFavorites, props]
     );
 
     return (
