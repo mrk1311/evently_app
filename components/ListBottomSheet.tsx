@@ -32,6 +32,7 @@ interface BottomSheetProps {
     openEventDetailsBottomSheet: (event: EventFeature) => void;
     pickedSortByOption: string;
     setPickedSortByOption: (sortByOption: string) => void;
+    // favorites: Set<string>;
 }
 
 const coordinatesToRegion = (coordinates: number[]) => ({
@@ -171,7 +172,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     return updated;
                 });
 
-                Alert.alert("Removed", "Event removed from favorites");
+                // Alert.alert("Removed", "Event removed from favorites");
             } catch (error) {
                 console.error("Error removing favorite:", error);
                 Alert.alert("Error", "Failed to remove favorite");
