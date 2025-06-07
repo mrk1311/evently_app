@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../utils/supabase";
 import { User } from "@supabase/supabase-js";
-import FavoritesContext from "../contexts/FavoritesContext";
+// import FavoritesContext from "../contexts/FavoritesContext";
 
 type FavoritesContextType = {
     favorites: Set<string>;

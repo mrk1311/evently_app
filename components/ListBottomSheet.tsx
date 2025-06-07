@@ -32,7 +32,6 @@ interface BottomSheetProps {
     openEventDetailsBottomSheet: (event: EventFeature) => void;
     pickedSortByOption: string;
     setPickedSortByOption: (sortByOption: string) => void;
-    // favorites: Set<string>;
 }
 
 const coordinatesToRegion = (coordinates: number[]) => ({
@@ -89,6 +88,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
     const handleAddFavoriteToServer = useCallback(
         async (eventId: string) => {
+            console.log("adding to server");
             try {
                 const {
                     data: { user },
@@ -132,6 +132,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     const handleAddToFavorites = useCallback(
         (eventId: string) => {
             // Optimistic UI update
+            console.log("adding to local");
             setFavorites((prev) => new Set(prev).add(eventId));
 
             handleAddFavoriteToServer(eventId);
@@ -141,6 +142,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
     const handleRemoveFavoriteFromServer = useCallback(
         async (eventId: string) => {
+            console.log("removing from server");
             try {
                 const {
                     data: { user },
@@ -164,14 +166,6 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
                 if (error) throw error;
 
-                // Update local state
-                setFavorites((prev) => {
-                    console.log("removing from local");
-                    const updated = new Set(prev);
-                    updated.delete(eventId);
-                    return updated;
-                });
-
                 // Alert.alert("Removed", "Event removed from favorites");
             } catch (error) {
                 console.error("Error removing favorite:", error);
@@ -183,8 +177,8 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
     const handleRemoveFromFavorites = useCallback((eventId: string) => {
         // Update local state
+        console.log("removing from local");
         setFavorites((prev) => {
-            console.log("removing from local");
             const updated = new Set(prev);
             updated.delete(eventId);
             return updated;

@@ -7,6 +7,7 @@ import {
     FlatList,
     ActivityIndicator,
     Image,
+    Alert,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
@@ -95,6 +96,43 @@ export default function Favourites() {
         }
     }, [user?.id]);
 
+    const handleRemoveFromFavorites = useCallback(async (eventId: string) => {
+        console.log("removing from server");
+        try {
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
+
+            if (!user) {
+                Alert.alert(
+                    "Login Required",
+                    "Please log in to manage favorites"
+                );
+                return;
+            }
+
+            const { error } = await supabase
+                .from("user_favourites")
+                .delete()
+                .match({
+                    user_id: user.id,
+                    event_id: eventId,
+                });
+
+            if (error) throw error;
+
+            // Alert.alert("Removed", "Event removed from favorites");
+        } catch (error) {
+            console.error("Error removing favorite:", error);
+            Alert.alert("Error", "Failed to remove favorite");
+        }
+
+        // Refresh favorites after removal
+        if (user?.id) {
+            fetchFavourites(user.id);
+        }
+    }, []);
+
     const renderEventCard = useCallback(
         ({ item }: { item: EventFeature }) => (
             <TouchableOpacity
@@ -134,16 +172,29 @@ export default function Favourites() {
                             {item.properties.name}
                         </Text>
                         <TouchableOpacity
-                            onPress={() =>
-                                // TODO
-                                console.log(
-                                    "adding " +
-                                        item.properties.name +
-                                        " to local storage"
-                                )
+                            onPress={
+                                // ask user if he realy wants to remove from favorites
+                                () =>
+                                    Alert.alert(
+                                        "Remove from Favorites",
+                                        "Are you sure you want to remove this event from your favorites?",
+                                        [
+                                            {
+                                                text: "Cancel",
+                                                style: "cancel",
+                                            },
+                                            {
+                                                text: "Remove",
+                                                onPress: () =>
+                                                    handleRemoveFromFavorites(
+                                                        item.properties.id
+                                                    ),
+                                            },
+                                        ]
+                                    )
                             }
                         >
-                            <AntDesign name="hearto" size={24} color="black" />
+                            <AntDesign name={"heart"} size={24} color={"red"} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.metaContainer}>

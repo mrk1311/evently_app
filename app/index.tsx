@@ -21,7 +21,7 @@ import throttle from "lodash/throttle";
 import { isWithinInterval, parseISO, Interval } from "date-fns";
 import { fetchEvents } from "@/utils/fetchEvents";
 
-export default function App() {
+export default function map() {
     const [eventData, setEvents] = useState<EventFeatureCollection>(
         mockData as EventFeatureCollection
     );
