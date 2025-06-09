@@ -24,6 +24,8 @@ import {
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Alert } from "react-native";
 import { supabase } from "@/utils/supabase";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import { add } from "lodash";
 
 interface BottomSheetProps {
     events: EventFeatureCollection;
@@ -50,32 +52,15 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     const flatListRef = useRef<BottomSheetFlatListMethods>(null);
     const [buttonShown, setButtonShown] = useState(false);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
-    const [favorites, setFavorites] = useState<Set<string>>(new Set());
+    const { favorites, addFavorite, removeFavorite, refreshFavorites } =
+        useFavorites();
 
     const listToTop = () => {
         flatListRef.current?.scrollToIndex({ animated: true, index: 0 });
     };
 
     useEffect(() => {
-        console.log("updating favorites");
-
-        const loadFavorites = async () => {
-            const {
-                data: { user },
-            } = await supabase.auth.getUser();
-            if (!user) return;
-
-            const { data } = await supabase
-                .from("user_favourites")
-                .select("event_id")
-                .eq("user_id", user.id);
-
-            if (data) {
-                setFavorites(new Set(data.map((item) => item.event_id)));
-            }
-        };
-
-        loadFavorites();
+        refreshFavorites();
     }, []);
 
     useEffect(() => {
@@ -112,11 +97,11 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 if (error) {
                     // Rollback on error
                     console.log("error adding to favorites");
-                    setFavorites((prev) => {
-                        const updated = new Set(prev);
-                        updated.delete(eventId);
-                        return updated;
-                    });
+                    // setFavorites((prev) => {
+                    //     const updated = new Set(prev);
+                    //     updated.delete(eventId);
+                    //     return updated;
+                    // });
                     throw error;
                 }
 
@@ -133,7 +118,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         (eventId: string) => {
             // Optimistic UI update
             console.log("adding to local");
-            setFavorites((prev) => new Set(prev).add(eventId));
+            addFavorite(eventId);
 
             handleAddFavoriteToServer(eventId);
         },
@@ -178,11 +163,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     const handleRemoveFromFavorites = useCallback((eventId: string) => {
         // Update local state
         console.log("removing from local");
-        setFavorites((prev) => {
-            const updated = new Set(prev);
-            updated.delete(eventId);
-            return updated;
-        });
+        removeFavorite(eventId);
 
         handleRemoveFavoriteFromServer(eventId);
     }, []);

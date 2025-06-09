@@ -17,6 +17,7 @@ import { useUser } from "@/hooks/useUser";
 import { EventFeature } from "@/components/ClusteredMap";
 import { AntDesign } from "@expo/vector-icons";
 import getMarkerColor from "@/functions/getMarkerColor";
+import { useFavorites } from "@/contexts/FavoritesContext";
 
 // Define proper response type for the joined data
 type FavoriteResponse = {
@@ -34,104 +35,48 @@ type FavoriteResponse = {
 
 export default function Favourites() {
     const router = useRouter();
-    const { user } = useUser();
-    const [favorites, setFavorites] = useState<EventFeature[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-
-    const fetchFavourites = async (userId: string) => {
-        try {
-            setLoading(true);
-            const { data, error } = await supabase
-                .from("user_favourites")
-                .select(
-                    `
-              event_id (
-                id,
-                title,
-                type,
-                description,
-                event_url,
-                photo_url,
-                event_time,
-                location
-              )
-            `
-                )
-                .eq("user_id", userId);
-
-            if (error) throw error;
-
-            // Properly type the response and map to EventFeature
-            const formattedData = (data as unknown as FavoriteResponse[]).map(
-                (item): EventFeature => ({
-                    type: "Feature",
-                    geometry: item.event_id.geometry,
-                    properties: {
-                        id: item.event_id.id,
-                        name: item.event_id.title,
-                        type: item.event_id.type,
-                        description: item.event_id.description,
-                        link: item.event_id.link,
-                        photo: item.event_id.photo,
-                        date: item.event_id.date,
-                        location: "Actual location from your data",
-                    },
-                })
-            );
-
-            setFavorites(formattedData);
-            setError("");
-        } catch (err) {
-            console.error("Error fetching favorites:", err);
-            setError("Failed to load favorites");
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { favorites, isLoading, removeFavorite, error } = useFavorites();
+    const [events, setEvents] = useState<EventFeature[]>([]);
 
     useEffect(() => {
-        if (user?.id) {
-            fetchFavourites(user.id);
-        }
-    }, [user?.id]);
-
-    const handleRemoveFromFavorites = useCallback(async (eventId: string) => {
-        console.log("removing from server");
-        try {
-            const {
-                data: { user },
-            } = await supabase.auth.getUser();
-
-            if (!user) {
-                Alert.alert(
-                    "Login Required",
-                    "Please log in to manage favorites"
-                );
+        const fetchFavoriteEvents = async () => {
+            if (favorites.size === 0) {
+                setEvents([]);
                 return;
             }
 
-            const { error } = await supabase
-                .from("user_favourites")
-                .delete()
-                .match({
-                    user_id: user.id,
-                    event_id: eventId,
-                });
+            try {
+                const { data, error } = await supabase
+                    .from("events")
+                    .select("*")
+                    .in("id", Array.from(favorites));
 
-            if (error) throw error;
+                if (error) throw error;
 
-            // Alert.alert("Removed", "Event removed from favorites");
-        } catch (error) {
-            console.error("Error removing favorite:", error);
-            Alert.alert("Error", "Failed to remove favorite");
-        }
+                // Convert to EventFeature format
+                const formattedEvents = data.map((event) => ({
+                    type: "Feature",
+                    geometry: event.geometry,
+                    properties: {
+                        id: event.id,
+                        name: event.title,
+                        type: event.type,
+                        description: event.description,
+                        link: event.link,
+                        photo: event.photo,
+                        date: event.event_time,
+                        location: event.location,
+                    },
+                })) as EventFeature[];
 
-        // Refresh favorites after removal
-        if (user?.id) {
-            fetchFavourites(user.id);
-        }
-    }, []);
+                setEvents(formattedEvents);
+            } catch (error) {
+                console.error("Error fetching favorite events:", error);
+            }
+        };
+
+        fetchFavoriteEvents();
+    }, [favorites]);
 
     const renderEventCard = useCallback(
         ({ item }: { item: EventFeature }) => (
@@ -186,7 +131,7 @@ export default function Favourites() {
                                             {
                                                 text: "Remove",
                                                 onPress: () =>
-                                                    handleRemoveFromFavorites(
+                                                    removeFavorite(
                                                         item.properties.id
                                                     ),
                                             },
@@ -230,13 +175,15 @@ export default function Favourites() {
                 <Text style={styles.backText}>Back</Text>
             </TouchableOpacity>
 
-            {loading ? (
+            {isLoading ? (
                 <ActivityIndicator size="large" style={styles.loader} />
             ) : error ? (
-                <Text style={styles.error}>{error}</Text>
+                <Text style={styles.error}>
+                    {error instanceof Error ? error.message : error}
+                </Text>
             ) : (
                 <FlatList
-                    data={favorites}
+                    data={events}
                     renderItem={renderEventCard}
                     keyExtractor={(item) => item.properties.id}
                     contentContainerStyle={styles.listContent}
