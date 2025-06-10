@@ -143,11 +143,11 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                 {/* if opened filter = date, show date picker */}
                 {props.openedFilter === "Date" && <DateInputField />}
                 {props.searchQuery !== "" && (
-                    <TouchableOpacity onPress={() => props.setSearchQuery("")}>
+                    <TouchableOpacity onPress={() => onChangeText("")}>
                         <MaterialIcons name="cancel" size={33} color="#333" />
                     </TouchableOpacity>
                 )}
-                {props.openedFilter === null && props.searchQuery === "" && (
+                {props.openedFilter === null && (
                     <TouchableOpacity
                         style={styles.rightIcon}
                         onPress={() => router.navigate("/userPage")}

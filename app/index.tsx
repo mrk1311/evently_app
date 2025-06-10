@@ -70,7 +70,9 @@ export default function map() {
     const [pickedTypes, setpickedTypes] = useState<string[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [places, setPlaces] = useState<FeatureCollection | null>(null);
-    const [openEvent, setOpenEvent] = useState<EventFeature | null>(null);
+    const [openEvent, setOpenEvent] = useState<EventFeature>(
+        eventData.features[0]
+    );
     const [controlledCenter, setControlledCenter] = useState<Region>({
         latitude: 51.1657,
         longitude: 10.4515,
@@ -408,7 +410,7 @@ export default function map() {
 
     const handleCancelDetails = () => {
         EventDetailsBottomSheetRef.current?.close();
-        setOpenEvent(null);
+        // setOpenEvent(null);
     };
 
     const openListBottomSheet = () => {

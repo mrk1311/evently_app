@@ -175,6 +175,8 @@ export default function Favourites() {
                 <Text style={styles.backText}>Back</Text>
             </TouchableOpacity>
 
+            {/* Show loading indicator or error message */}
+
             {isLoading ? (
                 <ActivityIndicator size="large" style={styles.loader} />
             ) : error ? (
@@ -188,6 +190,19 @@ export default function Favourites() {
                     keyExtractor={(item) => item.properties.id}
                     contentContainerStyle={styles.listContent}
                 />
+            )}
+
+            {/* if user is not logged in show a message to log in */}
+            {!useUser().user && !isLoading && (
+                <Text style={styles.error}>
+                    Please log in to view your favorites.
+                </Text>
+            )}
+
+            {/* if favorites is null, show a message  */}
+
+            {useUser().user && favorites.size === 0 && !isLoading && (
+                <Text style={styles.error}>You have no favorites yet.</Text>
             )}
         </SafeAreaView>
     );

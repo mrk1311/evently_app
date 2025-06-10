@@ -23,12 +23,6 @@ export default function AuthScreen() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    // Redirect if user is already logged in
-    if (user) {
-        router.back();
-        return null;
-    }
-
     const handleLogin = async () => {
         setError("");
         setLoading(true);
