@@ -167,13 +167,19 @@ export default function Favourites() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity
-                style={styles.header}
-                onPress={() => router.back()}
-            >
-                <MaterialIcons name="chevron-left" size={24} />
-                <Text style={styles.backText}>Back</Text>
-            </TouchableOpacity>
+            {/* put the back button in a header with a header text */}
+            <View style={styles.header}>
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => router.back()}
+                >
+                    <MaterialIcons name="chevron-left" size={24} />
+                    <Text style={styles.backText}>Back</Text>
+                </TouchableOpacity>
+                <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                    Your Favorites
+                </Text>
+            </View>
 
             {/* Show loading indicator or error message */}
 
@@ -183,14 +189,14 @@ export default function Favourites() {
                 <Text style={styles.error}>
                     {error instanceof Error ? error.message : error}
                 </Text>
-            ) : (
+            ) : useUser().user ? (
                 <FlatList
                     data={events}
                     renderItem={renderEventCard}
                     keyExtractor={(item) => item.properties.id}
                     contentContainerStyle={styles.listContent}
                 />
-            )}
+            ) : null}
 
             {/* if user is not logged in show a message to log in */}
             {!useUser().user && !isLoading && (
@@ -212,7 +218,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    header: {
+    backButton: {
         flexDirection: "row",
         alignItems: "center",
         padding: 16,
@@ -225,6 +231,14 @@ const styles = StyleSheet.create({
     },
     loader: {
         marginTop: 20,
+    },
+    header: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
     },
     error: {
         color: "red",
