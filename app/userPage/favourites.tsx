@@ -167,7 +167,6 @@ export default function Favourites() {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* put the back button in a header with a header text */}
             <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.backButton}
@@ -176,9 +175,16 @@ export default function Favourites() {
                     <MaterialIcons name="chevron-left" size={24} />
                     <Text style={styles.backText}>Back</Text>
                 </TouchableOpacity>
-                <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                <Text
+                    style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        // margin: "auto",
+                    }}
+                >
                     Your Favorites
                 </Text>
+                <Text style={{ width: 94 }} />
             </View>
 
             {/* Show loading indicator or error message */}
@@ -222,8 +228,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
     },
     backText: {
         marginLeft: 8,
@@ -236,7 +240,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: 16,
+        // padding: 16,
         borderBottomWidth: 1,
         borderBottomColor: "#ccc",
     },

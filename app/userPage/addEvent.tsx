@@ -8,6 +8,7 @@ import {
     ScrollView,
     Alert,
     SafeAreaView,
+    TouchableOpacity,
 } from "react-native";
 import { useRouter } from "expo-router";
 import MapView, { Marker } from "react-native-maps";
@@ -16,6 +17,7 @@ import * as Location from "expo-location";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useUser } from "@/hooks/useUser";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const eventTypes = ["music", "sport", "conference", "festival", "exhibition"];
 
@@ -92,9 +94,26 @@ export default function AddEventPage() {
 
     return (
         <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => router.back()}
+                >
+                    <MaterialIcons name="chevron-left" size={24} />
+                    <Text style={styles.backText}>Back</Text>
+                </TouchableOpacity>
+                <Text
+                    style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        // margin: "auto",
+                    }}
+                >
+                    Add New Event
+                </Text>
+                <Text style={{ width: 94 }} />
+            </View>
             <ScrollView style={styles.container}>
-                <Text style={styles.header}>Add New Event</Text>
-
                 <Text style={styles.label}>Event Name</Text>
                 <TextInput
                     style={styles.input}
@@ -156,18 +175,23 @@ export default function AddEventPage() {
                     keyboardType="url"
                 />
 
-                <Text style={styles.label}>Date</Text>
-                <DateTimePicker
-                    value={formData.date}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                        setShowDatePicker(false);
-                        if (selectedDate) {
-                            setFormData({ ...formData, date: selectedDate });
-                        }
-                    }}
-                />
+                <View style={styles.dateContainer}>
+                    <Text style={styles.label}>Date</Text>
+                    <DateTimePicker
+                        value={formData.date}
+                        style={styles.dateInput}
+                        mode="date"
+                        onChange={(event, selectedDate) => {
+                            setShowDatePicker(false);
+                            if (selectedDate) {
+                                setFormData({
+                                    ...formData,
+                                    date: selectedDate,
+                                });
+                            }
+                        }}
+                    />
+                </View>
 
                 <Text style={styles.label}>Location</Text>
                 <Text style={styles.instruction}>
@@ -182,6 +206,11 @@ export default function AddEventPage() {
                         longitudeDelta: 30,
                     }}
                     onPress={handleMapPress}
+                    showsCompass={false}
+                    showsUserLocation={true}
+                    showsMyLocationButton={true}
+                    rotateEnabled={false}
+                    pitchEnabled={false}
                 >
                     {formData.location && (
                         <Marker
@@ -227,11 +256,22 @@ const styles = StyleSheet.create({
         padding: 16,
         backgroundColor: "#fff",
     },
+    backButton: {
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 16,
+    },
+    backText: {
+        marginLeft: 8,
+        fontSize: 16,
+    },
     header: {
-        fontSize: 24,
-        fontWeight: "bold",
-        marginBottom: 20,
-        textAlign: "center",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        // padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
     },
     label: {
         fontSize: 16,
@@ -270,5 +310,14 @@ const styles = StyleSheet.create({
         justifyContent: "space-around",
         marginTop: 20,
         marginBottom: 30,
+    },
+    dateInput: {
+        display: "flex",
+        height: 40,
+        width: 100,
+    },
+    dateContainer: {
+        flexDirection: "column",
+        alignItems: "flex-start",
     },
 });
