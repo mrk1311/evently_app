@@ -65,19 +65,17 @@ export default function AddEventPage() {
         setIsSubmitting(true);
 
         try {
-            const { error } = await supabase.from("events").insert({
-                name: formData.name,
+            const { error } = await supabase.from("events_with_wkt").insert({
+                title: formData.name,
                 type: formData.type,
                 description: formData.description,
-                link: formData.link,
-                photo: formData.photo,
-                date: formData.date.toISOString(),
+                event_url: formData.link,
+                photo_url: formData.photo,
+                event_time: formData.date.toISOString(),
                 location: formData.address,
-                geometry: {
-                    type: "Point",
-                    coordinates: [formData.location.lng, formData.location.lat],
-                },
-                user_id: user.id,
+                coordinates:
+                    "POINT(${formData.location.lng} ${formData.location.lat})",
+                organizer_id: user.id,
             });
 
             if (error) throw error;

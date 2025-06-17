@@ -15,7 +15,7 @@ interface EventRow {
 }
 
 export async function fetchEvents(): Promise<EventFeatureCollection> {
-  // Query the VIEW instead of the original table
+
   const { data, error } = await supabase
     .from('events_with_wkt') // Use the new view
     .select('*');
@@ -47,7 +47,6 @@ export async function fetchEvents(): Promise<EventFeatureCollection> {
   };
 }
 
-// Helper function remains unchanged
 function parseCoordinates(geometry: string): [number, number] {
   const match = geometry.match(/POINT\(([^ ]+) ([^ ]+)\)/);
   if (!match) throw new Error('Invalid geometry format');
