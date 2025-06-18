@@ -82,6 +82,7 @@ export default function AuthScreen() {
                     value={email}
                     onChangeText={setEmail}
                     autoCapitalize="none"
+                    autoComplete="email"
                     keyboardType="email-address"
                 />
 
@@ -90,6 +91,7 @@ export default function AuthScreen() {
                     placeholder="Password"
                     value={password}
                     onChangeText={setPassword}
+                    autoComplete="password"
                     secureTextEntry
                 />
 

@@ -18,6 +18,7 @@ import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useUser } from "@/hooks/useUser";
 import { MaterialIcons } from "@expo/vector-icons";
+import { reverseGeocode } from "@/utils/geoUtils";
 
 const eventTypes = ["music", "sport", "conference", "festival", "exhibition"];
 
@@ -75,7 +76,7 @@ export default function AddEventPage() {
                 location: formData.address,
                 coordinates:
                     "POINT(${formData.location.lng} ${formData.location.lat})",
-                organizer_id: user.id,
+                // organizer_id: user.id,
             });
 
             if (error) throw error;
