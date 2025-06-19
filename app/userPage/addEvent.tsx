@@ -18,7 +18,8 @@ import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useUser } from "@/hooks/useUser";
 import { MaterialIcons } from "@expo/vector-icons";
-import { reverseGeocode } from "@/utils/geoUtils";
+import { formatToPostGisPoint, reverseGeocode } from "@/utils/geoUtils";
+import { fetchEvents } from "@/utils/fetchEvents";
 
 const eventTypes = ["music", "sport", "conference", "festival", "exhibition"];
 
@@ -64,9 +65,14 @@ export default function AddEventPage() {
         }
 
         setIsSubmitting(true);
+        // Convert coordinates to PostGIS format
+        const geometry = formatToPostGisPoint(
+            formData.location.lng,
+            formData.location.lat
+        );
 
         try {
-            const { error } = await supabase.from("events_with_wkt").insert({
+            const { error } = await supabase.from("events").insert({
                 title: formData.name,
                 type: formData.type,
                 description: formData.description,
@@ -74,9 +80,8 @@ export default function AddEventPage() {
                 photo_url: formData.photo,
                 event_time: formData.date.toISOString(),
                 location: formData.address,
-                coordinates:
-                    "POINT(${formData.location.lng} ${formData.location.lat})",
-                // organizer_id: user.id,
+                coordinates: geometry,
+                organizer_id: user.id,
             });
 
             if (error) throw error;
