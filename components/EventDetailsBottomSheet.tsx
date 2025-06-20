@@ -218,13 +218,13 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                     />
                     <View style={styles.horizontalContainer}>
                         {/* Event Image */}
-                        {props.event?.properties.photo && (
-                            <Image
-                                source={{ uri: props.event?.properties.photo }}
-                                style={styles.cardImagePlaceholder}
-                                resizeMode="cover"
-                            />
-                        )}
+                        {/* {props.event?.properties.photo && ( */}
+                        <Image
+                            source={{ uri: props.event?.properties.photo }}
+                            style={styles.cardImagePlaceholder}
+                            resizeMode="cover"
+                        />
+                        {/* )} */}
                         <View style={styles.descriptionContainer}>
                             <Button title="Visit website" onPress={() => {}} />
                             <Text style={styles.description}>

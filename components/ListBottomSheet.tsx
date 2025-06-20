@@ -181,13 +181,13 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 }}
             >
                 {/* Event Image */}
-                {item.properties.photo && (
-                    <Image
-                        source={{ uri: item.properties.photo }}
-                        style={styles.cardImagePlaceholder}
-                        resizeMode="cover"
-                    />
-                )}
+                {/* {item.properties.photo && ( */}
+                <Image
+                    source={{ uri: item.properties.photo }}
+                    style={styles.cardImagePlaceholder}
+                    resizeMode="cover"
+                />
+                {/* )} */}
 
                 {/* Event Type Indicator */}
                 <View
