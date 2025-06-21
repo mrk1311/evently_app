@@ -181,20 +181,23 @@ export default function AddEventPage() {
 
                 <View style={styles.dateContainer}>
                     <Text style={styles.label}>Date</Text>
-                    <DateTimePicker
-                        value={formData.date}
-                        style={styles.dateInput}
-                        mode="date"
-                        onChange={(event, selectedDate) => {
-                            setShowDatePicker(false);
-                            if (selectedDate) {
-                                setFormData({
-                                    ...formData,
-                                    date: selectedDate,
-                                });
-                            }
-                        }}
-                    />
+                    <View style={styles.dateInputContainer}>
+                        <DateTimePicker
+                            value={formData.date}
+                            style={styles.dateInput}
+                            mode="datetime"
+                            minimumDate={new Date()}
+                            onChange={(event, selectedDate) => {
+                                setShowDatePicker(false);
+                                if (selectedDate) {
+                                    setFormData({
+                                        ...formData,
+                                        date: selectedDate,
+                                    });
+                                }
+                            }}
+                        />
+                    </View>
                 </View>
 
                 <Text style={styles.label}>Location</Text>
@@ -318,10 +321,14 @@ const styles = StyleSheet.create({
     dateInput: {
         display: "flex",
         height: 40,
-        width: 100,
+        width: "100%",
     },
     dateContainer: {
         flexDirection: "column",
         alignItems: "flex-start",
+    },
+    dateInputContainer: {
+        display: "flex",
+        flexGrow: 0,
     },
 });

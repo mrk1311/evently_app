@@ -9,6 +9,7 @@ import type { supercluster } from "react-native-clusterer";
 
 import * as Location from "expo-location";
 import debounce from "lodash/debounce";
+import { Href } from "expo-router";
 
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
 
@@ -18,7 +19,7 @@ type EventProperties = {
     type: string;
     description: string;
     date: string; // mapped from event_time
-    link: string; // mapped from event_url
+    link: Href; // mapped from event_url
     photo: string; // mapped from photo_url
     location: string;
     distance?: number;

@@ -23,6 +23,7 @@ import getMarkerColor from "../functions/getMarkerColor";
 import { AntDesign } from "@expo/vector-icons";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { supabase } from "@/utils/supabase";
+import { Link } from "expo-router";
 
 interface BottomSheetProps {
     event: EventFeature;
@@ -226,14 +227,27 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                         />
                         {/* )} */}
                         <View style={styles.descriptionContainer}>
-                            <Button title="Visit website" onPress={() => {}} />
+                            <Link
+                                href={props.event?.properties.link || "#"}
+                                style={styles.type}
+                            >
+                                Visit Event Website
+                            </Link>
                             <Text style={styles.description}>
                                 {"Type: " + props.event?.properties.type}
                             </Text>
 
                             <Text style={styles.description}>
-                                {"date: " + props.event?.properties.date}
+                                {new Date(
+                                    props.event.properties.date
+                                ).toLocaleDateString()}
                             </Text>
+                            <Text style={styles.description}>
+                                {new Date(
+                                    props.event.properties.date
+                                ).toLocaleTimeString()}
+                            </Text>
+
                             {/* <Text style={styles.description}>
                                 {props.event?.properties.link}
                             </Text> */}
