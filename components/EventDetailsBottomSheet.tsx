@@ -1,5 +1,3 @@
-// create a bottom sheet for a event details like website or description that shows up when a user clicks on a marker
-
 import React, {
     useCallback,
     useEffect,
@@ -226,36 +224,39 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                             resizeMode="cover"
                         />
                         {/* )} */}
-                        <View style={styles.descriptionContainer}>
+                        <View style={styles.infoContainer}>
+                            <Text style={styles.infoTitle}>Event Type</Text>
+                            <Text style={styles.infoText}>
+                                {props.event?.properties.type.toUpperCase()}
+                            </Text>
+                            <Text style={styles.infoTitle}>Tickets</Text>
                             <Link
                                 href={props.event?.properties.link || "#"}
-                                style={styles.type}
+                                style={styles.link}
                             >
-                                Visit Event Website
+                                {props.event?.properties.link
+                                    ? props.event?.properties.link.toString()
+                                    : "No link available"}
                             </Link>
-                            <Text style={styles.description}>
-                                {"Type: " + props.event?.properties.type}
+                            <Text style={styles.infoTitle}>Location</Text>
+                            <Text style={styles.infoText}>
+                                {props.event?.properties.location}
                             </Text>
-
-                            <Text style={styles.description}>
+                            <Text style={styles.infoTitle}>Time</Text>
+                            <Text style={styles.infoText}>
                                 {new Date(
                                     props.event.properties.date
                                 ).toLocaleDateString()}
                             </Text>
-                            <Text style={styles.description}>
+                            <Text style={styles.infoText}>
                                 {new Date(
                                     props.event.properties.date
-                                ).toLocaleTimeString()}
+                                ).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: false,
+                                })}
                             </Text>
-
-                            {/* <Text style={styles.description}>
-                                {props.event?.properties.link}
-                            </Text> */}
-                            <Image
-                                source={{ uri: props.event?.properties.photo }}
-                                style={{ width: 200, height: 200 }}
-                                resizeMode="cover"
-                            />
                         </View>
                     </View>
                     <Text style={styles.headerText}>Description</Text>
@@ -285,10 +286,33 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "left",
     },
+    link: {
+        color: "#2563eb",
+        fontSize: 16,
+        margin: 8,
+        textDecorationLine: "underline",
+        textAlign: "center",
+        fontWeight: "bold",
+    },
     type: {
         fontSize: 18,
         textAlign: "center",
         marginBottom: 16,
+    },
+    infoText: {
+        fontSize: 18,
+        textAlign: "center",
+        marginBottom: 8,
+        fontWeight: "bold",
+        color: "#333333",
+        width: "100%",
+    },
+    infoTitle: {
+        fontSize: 12,
+        color: "#999999",
+        marginLeft: 8,
+        marginBottom: 4,
+        fontWeight: "bold",
     },
     description: {
         fontSize: 16,
@@ -301,18 +325,20 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     cardImagePlaceholder: {
-        width: "50%",
-        height: "100%",
+        width: 200,
+        height: 200,
         borderRadius: 8,
         backgroundColor: "#eeeeee",
     },
     horizontalContainer: {
         flexDirection: "row",
-        marginTop: 8,
-        marginBottom: 16,
+        marginTop: 16,
+        marginBottom: 8,
     },
-    descriptionContainer: {
+    infoContainer: {
         alignContent: "center",
+        justifyContent: "center",
+        flex: 1,
         padding: 10,
     },
 });

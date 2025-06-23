@@ -20,7 +20,7 @@ type EventProperties = {
     description: string;
     date: string; // mapped from event_time
     link: Href; // mapped from event_url
-    photo: string; // mapped from photo_url
+    photo: string; // mapped from photo_url TODO null?
     location: string;
     distance?: number;
 };

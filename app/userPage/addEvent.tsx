@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -9,6 +9,7 @@ import {
     Alert,
     SafeAreaView,
     TouchableOpacity,
+    Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import MapView, { Marker } from "react-native-maps";
@@ -20,6 +21,10 @@ import { useUser } from "@/hooks/useUser";
 import { MaterialIcons } from "@expo/vector-icons";
 import { formatToPostGisPoint, reverseGeocode } from "@/utils/geoUtils";
 import { fetchEvents } from "@/utils/fetchEvents";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+import { ActivityIndicator } from "react-native";
+import { uploadImageToSupabase } from "@/utils/storage";
 
 const eventTypes = ["music", "sport", "conference", "festival", "exhibition"];
 
@@ -31,13 +36,60 @@ export default function AddEventPage() {
         type: "music",
         description: "",
         link: "",
-        photo: "",
+        photo: "" as string | null,
         date: new Date(),
         location: null as { lat: number; lng: number } | null,
         address: "",
     });
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [image, setImage] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
+
+    // Request camera roll permissions
+    useEffect(() => {
+        (async () => {
+            const { status } =
+                await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== "granted") {
+                Alert.alert(
+                    "Permission required",
+                    "Please enable photo access in settings"
+                );
+            }
+        })();
+    }, []);
+
+    // Handle image selection
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: "images",
+            allowsEditing: true,
+            // aspect: [4, 3],
+            quality: 0.8,
+        });
+
+        if (!result.canceled && result.assets.length > 0) {
+            setImage(result.assets[0].uri);
+        }
+    };
+
+    // Upload image to Supabase Storage
+    const uploadImage = async () => {
+        if (!image) return null;
+
+        setUploading(true);
+
+        try {
+            return await uploadImageToSupabase(image, "event-images");
+        } catch (error) {
+            console.error("Image upload failed:", error);
+            Alert.alert("Upload failed", "Could not upload image");
+            return null;
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const handleMapPress = (event: any) => {
         const { coordinate } = event.nativeEvent;
@@ -64,6 +116,14 @@ export default function AddEventPage() {
             return;
         }
 
+        let photoUrl = formData.photo;
+
+        // Upload new image if selected
+        if (image) {
+            photoUrl = await uploadImage();
+            if (!photoUrl) return;
+        }
+
         setIsSubmitting(true);
         // Convert coordinates to PostGIS format
         const geometry = formatToPostGisPoint(
@@ -77,7 +137,7 @@ export default function AddEventPage() {
                 type: formData.type,
                 description: formData.description,
                 event_url: formData.link,
-                photo_url: formData.photo,
+                photo_url: photoUrl,
                 event_time: formData.date.toISOString(),
                 location: formData.address,
                 coordinates: geometry,
@@ -117,142 +177,177 @@ export default function AddEventPage() {
                 </Text>
                 <Text style={{ width: 94 }} />
             </View>
-            <ScrollView style={styles.container}>
-                <Text style={styles.label}>Event Name</Text>
-                <TextInput
-                    style={styles.input}
-                    value={formData.name}
-                    onChangeText={(text) =>
-                        setFormData({ ...formData, name: text })
-                    }
-                    placeholder="Enter event name"
-                />
+            {/* if user is not logged in show a message to log in */}
+            {!user && (
+                <Text style={styles.error}>Please log in to add an Event.</Text>
+            )}
+            {user && (
+                <ScrollView style={styles.container}>
+                    <Text style={styles.label}>Event Name</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={formData.name}
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, name: text })
+                        }
+                        placeholder="Enter event name"
+                    />
 
-                <Text style={styles.label}>Event Type</Text>
-                <Picker
-                    selectedValue={formData.type}
-                    onValueChange={(value: any) =>
-                        setFormData({ ...formData, type: value })
-                    }
-                    style={styles.picker}
-                >
-                    {eventTypes.map((type) => (
-                        <Picker.Item
-                            key={type}
-                            label={type.charAt(0).toUpperCase() + type.slice(1)}
-                            value={type}
-                        />
-                    ))}
-                </Picker>
-
-                <Text style={styles.label}>Description</Text>
-                <TextInput
-                    style={[styles.input, styles.multiline]}
-                    value={formData.description}
-                    onChangeText={(text) =>
-                        setFormData({ ...formData, description: text })
-                    }
-                    placeholder="Enter event description"
-                    multiline
-                    numberOfLines={4}
-                />
-
-                <Text style={styles.label}>Website Link</Text>
-                <TextInput
-                    style={styles.input}
-                    value={formData.link}
-                    onChangeText={(text) =>
-                        setFormData({ ...formData, link: text })
-                    }
-                    placeholder="https://example.com"
-                    keyboardType="url"
-                />
-
-                <Text style={styles.label}>Image URL</Text>
-                <TextInput
-                    style={styles.input}
-                    value={formData.photo}
-                    onChangeText={(text) =>
-                        setFormData({ ...formData, photo: text })
-                    }
-                    placeholder="https://example.com/photo.jpg"
-                    keyboardType="url"
-                />
-
-                <View style={styles.dateContainer}>
-                    <Text style={styles.label}>Date</Text>
-                    <View style={styles.dateInputContainer}>
-                        <DateTimePicker
-                            value={formData.date}
-                            style={styles.dateInput}
-                            mode="datetime"
-                            minimumDate={new Date()}
-                            onChange={(event, selectedDate) => {
-                                setShowDatePicker(false);
-                                if (selectedDate) {
-                                    setFormData({
-                                        ...formData,
-                                        date: selectedDate,
-                                    });
+                    <Text style={styles.label}>Event Type</Text>
+                    <Picker
+                        selectedValue={formData.type}
+                        onValueChange={(value: any) =>
+                            setFormData({ ...formData, type: value })
+                        }
+                        style={styles.picker}
+                    >
+                        {eventTypes.map((type) => (
+                            <Picker.Item
+                                key={type}
+                                label={
+                                    type.charAt(0).toUpperCase() + type.slice(1)
                                 }
-                            }}
-                        />
-                    </View>
-                </View>
+                                value={type}
+                            />
+                        ))}
+                    </Picker>
 
-                <Text style={styles.label}>Location</Text>
-                <Text style={styles.instruction}>
-                    Tap on the map to select location
-                </Text>
-                <MapView
-                    style={styles.map}
-                    initialRegion={{
-                        latitude: 51.1657,
-                        longitude: 10.4515,
-                        latitudeDelta: 30,
-                        longitudeDelta: 30,
-                    }}
-                    onPress={handleMapPress}
-                    showsCompass={false}
-                    showsUserLocation={true}
-                    showsMyLocationButton={true}
-                    rotateEnabled={false}
-                    pitchEnabled={false}
-                >
-                    {formData.location && (
-                        <Marker
-                            coordinate={{
-                                latitude: formData.location.lat,
-                                longitude: formData.location.lng,
-                            }}
+                    <Text style={styles.label}>Description</Text>
+                    <TextInput
+                        style={[styles.input, styles.multiline]}
+                        value={formData.description}
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, description: text })
+                        }
+                        placeholder="Enter event description"
+                        multiline
+                        numberOfLines={4}
+                    />
+
+                    <Text style={styles.label}>Website Link</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={formData.link}
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, link: text })
+                        }
+                        placeholder="https://example.com"
+                        keyboardType="url"
+                    />
+                    <Text style={styles.label}>Image</Text>
+                    {image ? (
+                        <Image
+                            source={{ uri: image }}
+                            style={styles.imagePreview}
+                        />
+                    ) : formData.photo ? (
+                        <Image
+                            source={{ uri: formData.photo }}
+                            style={styles.imagePreview}
+                        />
+                    ) : null}
+
+                    <View style={styles.imageButtons}>
+                        <Button
+                            title="Choose Photo"
+                            onPress={pickImage}
+                            disabled={uploading}
+                        />
+
+                        {formData.photo && (
+                            <Button
+                                title="Remove Photo"
+                                onPress={() => {
+                                    setImage(null);
+                                    setFormData({ ...formData, photo: "" });
+                                }}
+                                color="#FF3B30"
+                            />
+                        )}
+                    </View>
+
+                    {uploading && (
+                        <ActivityIndicator
+                            size="large"
+                            style={styles.uploadIndicator}
                         />
                     )}
-                </MapView>
 
-                <Text style={styles.label}>Address (Optional)</Text>
-                <TextInput
-                    style={styles.input}
-                    value={formData.address}
-                    onChangeText={(text) =>
-                        setFormData({ ...formData, address: text })
-                    }
-                    placeholder="Enter human-readable address"
-                />
+                    <View style={styles.dateContainer}>
+                        <Text style={styles.label}>Date</Text>
+                        <View style={styles.dateInputContainer}>
+                            <DateTimePicker
+                                value={formData.date}
+                                style={styles.dateInput}
+                                mode="datetime"
+                                minimumDate={new Date()}
+                                onChange={(event, selectedDate) => {
+                                    setShowDatePicker(false);
+                                    if (selectedDate) {
+                                        setFormData({
+                                            ...formData,
+                                            date: selectedDate,
+                                        });
+                                    }
+                                }}
+                            />
+                        </View>
+                    </View>
 
-                <View style={styles.buttonContainer}>
-                    <Button
-                        title={isSubmitting ? "Adding..." : "Add Event"}
-                        onPress={handleSubmit}
-                        disabled={isSubmitting}
-                        color="#007AFF"
+                    <Text style={styles.label}>Location</Text>
+                    <Text style={styles.instruction}>
+                        Tap on the map to select location
+                    </Text>
+                    <MapView
+                        style={styles.map}
+                        initialRegion={{
+                            latitude: 51.1657,
+                            longitude: 10.4515,
+                            latitudeDelta: 30,
+                            longitudeDelta: 30,
+                        }}
+                        onPress={handleMapPress}
+                        showsCompass={false}
+                        showsUserLocation={true}
+                        showsMyLocationButton={true}
+                        rotateEnabled={false}
+                        pitchEnabled={false}
+                    >
+                        {formData.location && (
+                            <Marker
+                                coordinate={{
+                                    latitude: formData.location.lat,
+                                    longitude: formData.location.lng,
+                                }}
+                            />
+                        )}
+                    </MapView>
+
+                    <Text style={styles.label}>Address (Optional)</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={formData.address}
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, address: text })
+                        }
+                        placeholder="Enter human-readable address"
                     />
-                    <Button
-                        title="Cancel"
-                        onPress={() => router.back()}
-                        color="#FF3B30"
-                    />
-                </View>
-            </ScrollView>
+
+                    <View style={styles.buttonContainer}>
+                        <Button
+                            title={isSubmitting ? "Adding..." : "Add Event"}
+                            onPress={handleSubmit}
+                            disabled={isSubmitting}
+                            color="#007AFF"
+                        />
+                        <Button
+                            title="Cancel"
+                            onPress={() => router.back()}
+                            color="#FF3B30"
+                        />
+                    </View>
+                </ScrollView>
+            )}
         </SafeAreaView>
     );
 }
@@ -330,5 +425,25 @@ const styles = StyleSheet.create({
     dateInputContainer: {
         display: "flex",
         flexGrow: 0,
+    },
+    imagePreview: {
+        width: "100%",
+        height: 400,
+        resizeMode: "contain",
+        borderRadius: 8,
+        marginBottom: 15,
+    },
+    imageButtons: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        marginBottom: 15,
+    },
+    uploadIndicator: {
+        marginVertical: 10,
+    },
+    error: {
+        color: "red",
+        textAlign: "center",
+        marginTop: 20,
     },
 });

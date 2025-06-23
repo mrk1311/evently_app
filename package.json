@@ -65,7 +65,9 @@
     "react-native-webview": "13.12.5",
     "supabase": "^2.20.12",
     "supercluster": "^8.0.1",
-    "@react-native-picker/picker": "2.9.0"
+    "@react-native-picker/picker": "2.9.0",
+    "expo-image-picker": "~16.0.6",
+    "expo-file-system": "~18.0.12"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
