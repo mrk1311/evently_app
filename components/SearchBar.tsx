@@ -81,7 +81,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                         style={styles.dateInput}
                         value={props.startDate}
                         mode={"date"}
-                        minimumDate={new Date()}
+                        // minimumDate={new Date()}
                         onChange={(event, selectedDate) => {
                             const currentDate = selectedDate || props.startDate;
                             props.setStartDate(currentDate);
@@ -94,7 +94,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                         style={styles.dateInput}
                         value={props.endDate}
                         mode={"date"}
-                        minimumDate={new Date()}
+                        // minimumDate={new Date()}
                         onChange={(event, selectedDate) => {
                             const currentDate = selectedDate || props.endDate;
                             props.setEndDate(currentDate);

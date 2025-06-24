@@ -33,7 +33,7 @@ type Ref = BottomSheet;
 // events, onListItemClick, isSearchOpen, setIsSearchOpen
 const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // hooks
-    const [picks, setPicks] = useState<string[]>(props.eventTypes);
+    const [picks, setPicks] = useState<string[]>([]);
 
     // variables
     const snapPoints = useMemo(() => ["85%"], []);
@@ -48,10 +48,6 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         ),
         []
     );
-
-    useEffect(() => {
-        if (picks.length === 0) setPicks(props.eventTypes);
-    }, []);
 
     const handleSelectClearAll = () => {
         if (picks.length === props.eventTypes.length) {

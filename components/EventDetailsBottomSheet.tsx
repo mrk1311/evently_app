@@ -246,7 +246,7 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                             <Text style={styles.infoText}>
                                 {new Date(
                                     props.event.properties.date
-                                ).toLocaleDateString()}
+                                ).toLocaleDateString("en-GB")}
                             </Text>
                             <Text style={styles.infoText}>
                                 {new Date(
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     link: {
         color: "#2563eb",
         fontSize: 16,
-        margin: 8,
+        marginBottom: 8,
         textDecorationLine: "underline",
         textAlign: "center",
         fontWeight: "bold",

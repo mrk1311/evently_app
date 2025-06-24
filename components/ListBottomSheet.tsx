@@ -239,9 +239,9 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                             {item.properties.type.toUpperCase()}
                         </Text>
                         <Text style={styles.cardDate}>
-                            {new Date(
-                                item.properties.date
-                            ).toLocaleDateString()}
+                            {new Date(item.properties.date).toLocaleDateString(
+                                "en-GB"
+                            )}
                         </Text>
                     </View>
                     <Text

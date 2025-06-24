@@ -61,6 +61,10 @@ export default function map() {
             ),
         [eventData?.features]
     );
+    // Initialize filteredEventTypes with uniqueEventTypes
+    useEffect(() => {
+        setFilteredEventTypes(uniqueEventTypes);
+    }, [uniqueEventTypes]);
     const [filteredEventTypes, setFilteredEventTypes] =
         useState<string[]>(uniqueEventTypes);
     const [openedFilter, setOpenedFilter] = useState<
