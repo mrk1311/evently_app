@@ -1,18 +1,20 @@
-// app/userPage/auth.tsx
 import {
     View,
     Text,
     TextInput,
-    Button,
     StyleSheet,
     TouchableOpacity,
     ActivityIndicator,
     SafeAreaView,
+    KeyboardAvoidingView,
+    ScrollView,
+    Platform,
+    Keyboard,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { supabase } from "@/utils/supabase";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { useUser } from "@/hooks/useUser";
 
 export default function AuthScreen() {
@@ -22,6 +24,7 @@ export default function AuthScreen() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const passwordInputRef = useRef<TextInput>(null);
 
     const handleLogin = async () => {
         setError("");
@@ -71,66 +74,106 @@ export default function AuthScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.form}>
-                <Text style={styles.title}>Welcome</Text>
-
-                {error ? <Text style={styles.error}>{error}</Text> : null}
-
-                <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    value={email}
-                    onChangeText={setEmail}
-                    autoCapitalize="none"
-                    autoComplete="email"
-                    keyboardType="email-address"
-                />
-
-                <TextInput
-                    style={styles.input}
-                    placeholder="Password"
-                    value={password}
-                    onChangeText={setPassword}
-                    autoComplete="password"
-                    secureTextEntry
-                />
-
+            <View style={styles.header}>
                 <TouchableOpacity
-                    style={styles.button}
-                    onPress={handleLogin}
-                    disabled={loading}
+                    style={styles.backButton}
+                    onPress={() => router.back()}
                 >
-                    {loading ? (
-                        <ActivityIndicator color="#fff" />
-                    ) : (
-                        <Text style={styles.buttonText}>Sign In</Text>
-                    )}
+                    <MaterialIcons name="chevron-left" size={24} />
+                    <Text style={styles.backText}>Back</Text>
                 </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[styles.button, styles.signUpButton]}
-                    onPress={handleSignUp}
-                    disabled={loading}
+                <Text
+                    style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                    }}
                 >
-                    <Text style={styles.buttonText}>Create Account</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={styles.socialButton}
-                    onPress={() =>
-                        supabase.auth.signInWithOAuth({ provider: "google" })
-                    }
-                >
-                    {/* <MaterialIcons name="google" size={24} color="#fff" /> */}
-                    <Text style={styles.socialButtonText}>
-                        Continue with Google
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => router.back()}>
-                    <Text style={styles.link}>Back to main screen</Text>
-                </TouchableOpacity>
+                    Log In / Sign Up
+                </Text>
+                <Text style={{ width: 94 }} />
             </View>
+
+            <KeyboardAvoidingView
+                style={styles.keyboardAvoidingContainer}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                // keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0}
+            >
+                <ScrollView
+                    contentContainerStyle={styles.scrollContent}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <View style={styles.form}>
+                        <Text style={styles.title}>Welcome</Text>
+
+                        {error ? (
+                            <Text style={styles.error}>{error}</Text>
+                        ) : null}
+
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Email"
+                            placeholderTextColor={"#666"}
+                            value={email}
+                            onChangeText={setEmail}
+                            autoCapitalize="none"
+                            autoComplete="email"
+                            keyboardType="email-address"
+                            returnKeyType="next"
+                            onSubmitEditing={() =>
+                                passwordInputRef.current?.focus()
+                            }
+                        />
+
+                        <TextInput
+                            ref={passwordInputRef}
+                            style={styles.input}
+                            placeholder="Password"
+                            placeholderTextColor={"#666"}
+                            value={password}
+                            onChangeText={setPassword}
+                            autoComplete="password"
+                            secureTextEntry
+                            returnKeyType="done"
+                            onSubmitEditing={Keyboard.dismiss}
+                        />
+
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={handleLogin}
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <ActivityIndicator color="#fff" />
+                            ) : (
+                                <Text style={styles.buttonText}>Sign In</Text>
+                            )}
+                        </TouchableOpacity>
+
+                        <View style={styles.signupPrompt}>
+                            <Text style={styles.signupText}>
+                                Don't have an account?
+                            </Text>
+                            <TouchableOpacity onPress={handleSignUp}>
+                                <Text style={styles.signupLink}>Sign Up</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <TouchableOpacity
+                            style={styles.socialButton}
+                            onPress={() =>
+                                supabase.auth.signInWithOAuth({
+                                    provider: "google",
+                                })
+                            }
+                        >
+                            <AntDesign name="google" size={24} color="#fff" />
+                            <Text style={styles.socialButtonText}>
+                                Available soon
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }
@@ -138,7 +181,30 @@ export default function AuthScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    backButton: {
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 16,
+    },
+    backText: {
+        marginLeft: 8,
+        fontSize: 16,
+    },
+    header: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
+    },
+    keyboardAvoidingContainer: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
         justifyContent: "center",
+        paddingBottom: 40,
     },
     form: {
         padding: 20,
@@ -180,20 +246,29 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         gap: 10,
+        marginTop: 20,
     },
     socialButtonText: {
         color: "#fff",
         fontWeight: "bold",
         fontSize: 16,
     },
-    link: {
-        color: "#2563eb",
-        textAlign: "center",
-        marginTop: 15,
-    },
     error: {
         color: "#ef4444",
         textAlign: "center",
         marginBottom: 10,
+    },
+    signupPrompt: {
+        flexDirection: "row",
+        justifyContent: "center",
+        marginTop: 10,
+    },
+    signupText: {
+        color: "#666",
+    },
+    signupLink: {
+        color: "#2563eb",
+        fontWeight: "bold",
+        marginLeft: 5,
     },
 });

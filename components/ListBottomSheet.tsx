@@ -244,12 +244,9 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                             )}
                         </Text>
                     </View>
-                    <Text
-                        style={styles.cardDescription}
-                        numberOfLines={2}
-                        ellipsizeMode="tail"
-                    >
-                        {item.properties.description}
+                    {/* location */}
+                    <Text style={styles.cardDescription}>
+                        {item.properties.location}
                     </Text>
                 </View>
             </TouchableOpacity>
