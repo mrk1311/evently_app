@@ -1517,6 +1517,8 @@ PODS:
     - Yoga
   - react-native-clusterer (3.0.0):
     - React-Core
+  - react-native-get-random-values (1.11.0):
+    - React-Core
   - react-native-maps (1.18.0):
     - React-Core
   - react-native-mmkv-storage (0.11.2):
@@ -2036,6 +2038,7 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-clusterer (from `../node_modules/react-native-clusterer`)
+  - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-mmkv-storage (from `../node_modules/react-native-mmkv-storage`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -2206,6 +2209,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   react-native-clusterer:
     :path: "../node_modules/react-native-clusterer"
+  react-native-get-random-values:
+    :path: "../node_modules/react-native-get-random-values"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
   react-native-mmkv-storage:
@@ -2349,6 +2354,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 23ffe602d0f5ca53b861ef8534cb8c63c4479671
   React-microtasksnativemodule: 258cde5410c578c4739e1d3a3bc902b7a28d4625
   react-native-clusterer: 8355e0471e1c3975842320c9517891558ce546f3
+  react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-maps: 2e6e9896195781327ee15b33e3e84bf73c08207a
   react-native-mmkv-storage: 7cbdcf3a5d2f8b71848f7339c2eefd5daed29b13
   react-native-safe-area-context: 142fade490cbebbe428640b8cbdb09daf17e8191

@@ -29,7 +29,9 @@ import { fetchEvents } from "@/utils/fetchEvents";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { uploadImageToSupabase } from "@/utils/storage";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
+// Define event types for the picker
 const eventTypes = ["music", "sport", "conference", "festival", "exhibition"];
 
 export default function AddEventPage() {
@@ -49,6 +51,7 @@ export default function AddEventPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [image, setImage] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
+    const [placeId, setPlaceId] = useState<string | null>(null);
 
     // Request camera roll permissions
     useEffect(() => {
@@ -344,14 +347,37 @@ export default function AddEventPage() {
                                 )}
                             </MapView>
 
-                            <Text style={styles.label}>Address (Optional)</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={formData.address}
-                                onChangeText={(text) =>
-                                    setFormData({ ...formData, address: text })
-                                }
-                                placeholder="Enter human-readable address"
+                            <Text style={styles.label}>Address</Text>
+                            <GooglePlacesAutocomplete
+                                placeholder="Search for venue"
+                                // onPress={(data, details = null) => {
+                                //     if (details) {
+                                //         setPlaceId(data.place_id);
+                                //         setFormData({
+                                //             ...formData,
+                                //             address: data.description,
+                                //             location: {
+                                //                 lat: details.geometry.location
+                                //                     .lat,
+                                //                 lng: details.geometry.location
+                                //                     .lng,
+                                //             },
+                                //         });
+                                //     }
+                                // }}
+                                query={{
+                                    key: "AIzaSyCAfP7Yid8ImXU9aDbrQWsea_BosO6ljuQ",
+                                    language: "pl",
+                                    // components: "country:pl",
+                                }}
+                                styles={{
+                                    textInput: styles.input,
+                                    listView: {
+                                        position: "absolute",
+                                        top: 40,
+                                        zIndex: 1000,
+                                    },
+                                }}
                             />
 
                             <View style={styles.buttonContainer}>
