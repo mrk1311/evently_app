@@ -44,7 +44,8 @@
                 {
                     "locationAlwaysAndWhenInUsePermission": "Allow Evently to access your location."
                 }
-            ]
+            ],
+            "expo-google-places"
         ],
         "experiments": {
             "typedRoutes": true

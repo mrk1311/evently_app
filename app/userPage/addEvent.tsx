@@ -29,7 +29,7 @@ import { fetchEvents } from "@/utils/fetchEvents";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { uploadImageToSupabase } from "@/utils/storage";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import * as GooglePlaces from "expo-google-places";
 
 // Define event types for the picker
 const eventTypes = ["music", "sport", "conference", "festival", "exhibition"];
@@ -52,6 +52,19 @@ export default function AddEventPage() {
     const [image, setImage] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const [placeId, setPlaceId] = useState<string | null>(null);
+    const [showPlaceSearch, setShowPlaceSearch] = useState(false);
+
+    const handlePlaceSelect = async () => {
+        try {
+            // const place = await GooglePlaces.openPlacePickerModal({
+            //     initialPlaceId: null,
+            // });
+        } catch (error) {
+            console.error("Place selection error:", error);
+        } finally {
+            setShowPlaceSearch(false);
+        }
+    };
 
     // Request camera roll permissions
     useEffect(() => {
@@ -348,37 +361,33 @@ export default function AddEventPage() {
                             </MapView>
 
                             <Text style={styles.label}>Address</Text>
-                            <GooglePlacesAutocomplete
-                                placeholder="Search for venue"
-                                // onPress={(data, details = null) => {
-                                //     if (details) {
-                                //         setPlaceId(data.place_id);
-                                //         setFormData({
-                                //             ...formData,
-                                //             address: data.description,
-                                //             location: {
-                                //                 lat: details.geometry.location
-                                //                     .lat,
-                                //                 lng: details.geometry.location
-                                //                     .lng,
-                                //             },
-                                //         });
-                                //     }
-                                // }}
-                                query={{
-                                    key: "AIzaSyCAfP7Yid8ImXU9aDbrQWsea_BosO6ljuQ",
-                                    language: "pl",
-                                    // components: "country:pl",
-                                }}
-                                styles={{
-                                    textInput: styles.input,
-                                    listView: {
-                                        position: "absolute",
-                                        top: 40,
-                                        zIndex: 1000,
-                                    },
-                                }}
-                            />
+                            <View>
+                                <Text style={styles.label}>Location</Text>
+                                {formData.address ? (
+                                    <View style={styles.selectedPlaceContainer}>
+                                        <Text style={styles.selectedPlaceText}>
+                                            {formData.address}
+                                        </Text>
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                setShowPlaceSearch(true)
+                                            }
+                                            style={styles.changePlaceButton}
+                                        >
+                                            <Text
+                                                style={styles.changePlaceText}
+                                            >
+                                                Change
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                ) : (
+                                    <Button
+                                        title="Select Venue"
+                                        onPress={() => setShowPlaceSearch(true)}
+                                    />
+                                )}
+                            </View>
 
                             <View style={styles.buttonContainer}>
                                 <Button
@@ -499,5 +508,26 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginTop: 20,
         height: "100%",
+    },
+    selectedPlaceContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: 10,
+        backgroundColor: "#f5f5f5",
+        borderRadius: 8,
+        marginBottom: 15,
+    },
+    selectedPlaceText: {
+        flex: 1,
+    },
+    changePlaceButton: {
+        backgroundColor: "#e0e0e0",
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+    },
+    changePlaceText: {
+        color: "#007AFF",
     },
 });

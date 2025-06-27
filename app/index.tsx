@@ -20,8 +20,6 @@ import { Feature, FeatureCollection, Point } from "geojson";
 import throttle from "lodash/throttle";
 import { isWithinInterval, parseISO, Interval } from "date-fns";
 import { fetchEvents } from "@/utils/fetchEvents";
-import "react-native-get-random-values";
-import { v4 as uuidv4 } from "uuid"; // Import uuid for unique IDs
 
 export default function map() {
     const [eventData, setEvents] = useState<EventFeatureCollection>(
