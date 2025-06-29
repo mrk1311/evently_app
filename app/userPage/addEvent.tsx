@@ -29,7 +29,7 @@ import { fetchEvents } from "@/utils/fetchEvents";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { uploadImageToSupabase } from "@/utils/storage";
-import * as GooglePlaces from "expo-google-places";
+import * as ExpoGooglePlaces from "expo-google-places";
 
 // Define event types for the picker
 const eventTypes = ["music", "sport", "conference", "festival", "exhibition"];
@@ -53,16 +53,33 @@ export default function AddEventPage() {
     const [uploading, setUploading] = useState(false);
     const [placeId, setPlaceId] = useState<string | null>(null);
     const [showPlaceSearch, setShowPlaceSearch] = useState(false);
+    const [predictions, setPredictions] = useState<
+        ExpoGooglePlaces.GooglePlace[] | null
+    >(null);
 
-    const handlePlaceSelect = async () => {
+    const fetchPredictions = async (search: string) => {
         try {
-            // const place = await GooglePlaces.openPlacePickerModal({
-            //     initialPlaceId: null,
-            // });
+            const predictions =
+                await ExpoGooglePlaces.fetchPredictionsWithSession(search, {
+                    countries: ["pl"],
+                });
+            setPredictions(predictions);
         } catch (error) {
-            console.error("Place selection error:", error);
-        } finally {
-            setShowPlaceSearch(false);
+            console.log("Error fetching predictions", error);
+        }
+    };
+
+    // Fetch place details when a place is selected
+    const fetchPlace = async (placeID: string) => {
+        try {
+            const placeDetails = await ExpoGooglePlaces.fetchPlaceWithSession(
+                placeID,
+                ["name", "formattedAddress", "coordinate"]
+            );
+            // Do something with the details like storing them into a state
+            // and displaying them in the UI and/or in a map
+        } catch (error) {
+            console.log("Error fetching place details", error);
         }
     };
 
