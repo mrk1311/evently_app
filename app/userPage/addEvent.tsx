@@ -10,11 +10,6 @@ import {
     SafeAreaView,
     TouchableOpacity,
     Image,
-    KeyboardAvoidingView,
-    Platform,
-    TouchableWithoutFeedback,
-    Keyboard,
-    ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
 import MapView, { Marker } from "react-native-maps";
@@ -28,10 +23,9 @@ import { formatToPostGisPoint, reverseGeocode } from "@/utils/geoUtils";
 import { fetchEvents } from "@/utils/fetchEvents";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+import { ActivityIndicator } from "react-native";
 import { uploadImageToSupabase } from "@/utils/storage";
-import * as ExpoGooglePlaces from "expo-google-places";
 
-// Define event types for the picker
 const eventTypes = ["music", "sport", "conference", "festival", "exhibition"];
 
 export default function AddEventPage() {
@@ -51,37 +45,6 @@ export default function AddEventPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [image, setImage] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
-    const [placeId, setPlaceId] = useState<string | null>(null);
-    const [showPlaceSearch, setShowPlaceSearch] = useState(false);
-    const [predictions, setPredictions] = useState<
-        ExpoGooglePlaces.GooglePlace[] | null
-    >(null);
-
-    const fetchPredictions = async (search: string) => {
-        try {
-            const predictions =
-                await ExpoGooglePlaces.fetchPredictionsWithSession(search, {
-                    countries: ["pl"],
-                });
-            setPredictions(predictions);
-        } catch (error) {
-            console.log("Error fetching predictions", error);
-        }
-    };
-
-    // Fetch place details when a place is selected
-    const fetchPlace = async (placeID: string) => {
-        try {
-            const placeDetails = await ExpoGooglePlaces.fetchPlaceWithSession(
-                placeID,
-                ["name", "formattedAddress", "coordinate"]
-            );
-            // Do something with the details like storing them into a state
-            // and displaying them in the UI and/or in a map
-        } catch (error) {
-            console.log("Error fetching place details", error);
-        }
-    };
 
     // Request camera roll permissions
     useEffect(() => {
@@ -194,238 +157,198 @@ export default function AddEventPage() {
     };
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={{ flex: 1 }}
-            // keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
-        >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <SafeAreaView style={styles.container}>
-                    <View style={styles.header}>
-                        <TouchableOpacity
-                            style={styles.backButton}
-                            onPress={() => router.back()}
-                        >
-                            <MaterialIcons name="chevron-left" size={24} />
-                            <Text style={styles.backText}>Back</Text>
-                        </TouchableOpacity>
-                        <Text
-                            style={{
-                                fontSize: 20,
-                                fontWeight: "bold",
-                            }}
-                        >
-                            Add New Event
-                        </Text>
-                        <Text style={{ width: 94 }} />
-                    </View>
-                    {!user && (
-                        <Text style={styles.error}>
-                            Please log in to add an Event.
-                        </Text>
-                    )}
-                    {user && (
-                        <ScrollView
-                            style={styles.container}
-                            contentContainerStyle={styles.scrollContainer}
-                            keyboardShouldPersistTaps="handled"
-                        >
-                            <Text style={styles.label}>Event Name</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={formData.name}
-                                onChangeText={(text) =>
-                                    setFormData({ ...formData, name: text })
+        <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => router.back()}
+                >
+                    <MaterialIcons name="chevron-left" size={24} />
+                    <Text style={styles.backText}>Back</Text>
+                </TouchableOpacity>
+                <Text
+                    style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        // margin: "auto",
+                    }}
+                >
+                    Add New Event
+                </Text>
+                <Text style={{ width: 94 }} />
+            </View>
+            {/* if user is not logged in show a message to log in */}
+            {!user && (
+                <Text style={styles.error}>Please log in to add an Event.</Text>
+            )}
+            {user && (
+                <ScrollView style={styles.container}>
+                    <Text style={styles.label}>Event Name</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={formData.name}
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, name: text })
+                        }
+                        placeholder="Enter event name"
+                    />
+
+                    <Text style={styles.label}>Event Type</Text>
+                    <Picker
+                        selectedValue={formData.type}
+                        onValueChange={(value: any) =>
+                            setFormData({ ...formData, type: value })
+                        }
+                        style={styles.picker}
+                    >
+                        {eventTypes.map((type) => (
+                            <Picker.Item
+                                key={type}
+                                label={
+                                    type.charAt(0).toUpperCase() + type.slice(1)
                                 }
-                                placeholder="Enter event name"
+                                value={type}
                             />
+                        ))}
+                    </Picker>
 
-                            <Text style={styles.label}>Event Type</Text>
-                            <Picker
-                                selectedValue={formData.type}
-                                onValueChange={(value: any) =>
-                                    setFormData({ ...formData, type: value })
-                                }
-                                style={styles.picker}
-                            >
-                                {eventTypes.map((type) => (
-                                    <Picker.Item
-                                        key={type}
-                                        label={
-                                            type.charAt(0).toUpperCase() +
-                                            type.slice(1)
-                                        }
-                                        value={type}
-                                    />
-                                ))}
-                            </Picker>
+                    <Text style={styles.label}>Description</Text>
+                    <TextInput
+                        style={[styles.input, styles.multiline]}
+                        value={formData.description}
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, description: text })
+                        }
+                        placeholder="Enter event description"
+                        multiline
+                        numberOfLines={4}
+                    />
 
-                            <Text style={styles.label}>Description</Text>
-                            <TextInput
-                                style={[styles.input, styles.multiline]}
-                                value={formData.description}
-                                onChangeText={(text) =>
-                                    setFormData({
-                                        ...formData,
-                                        description: text,
-                                    })
-                                }
-                                placeholder="Enter event description"
-                                multiline
-                                numberOfLines={4}
-                            />
+                    <Text style={styles.label}>Website Link</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={formData.link}
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, link: text })
+                        }
+                        placeholder="https://example.com"
+                        keyboardType="url"
+                    />
+                    <Text style={styles.label}>Image</Text>
+                    {image ? (
+                        <Image
+                            source={{ uri: image }}
+                            style={styles.imagePreview}
+                        />
+                    ) : formData.photo ? (
+                        <Image
+                            source={{ uri: formData.photo }}
+                            style={styles.imagePreview}
+                        />
+                    ) : null}
 
-                            <Text style={styles.label}>Website Link</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={formData.link}
-                                onChangeText={(text) =>
-                                    setFormData({ ...formData, link: text })
-                                }
-                                placeholder="https://example.com"
-                                keyboardType="url"
-                            />
-                            <Text style={styles.label}>Image</Text>
-                            {image ? (
-                                <Image
-                                    source={{ uri: image }}
-                                    style={styles.imagePreview}
-                                />
-                            ) : formData.photo ? (
-                                <Image
-                                    source={{ uri: formData.photo }}
-                                    style={styles.imagePreview}
-                                />
-                            ) : null}
+                    <View style={styles.imageButtons}>
+                        <Button
+                            title="Choose Photo"
+                            onPress={pickImage}
+                            disabled={uploading}
+                        />
 
-                            <View style={styles.imageButtons}>
-                                <Button
-                                    title="Choose Photo"
-                                    onPress={pickImage}
-                                    disabled={uploading}
-                                />
-
-                                {formData.photo && (
-                                    <Button
-                                        title="Remove Photo"
-                                        onPress={() => {
-                                            setImage(null);
-                                            setFormData({
-                                                ...formData,
-                                                photo: "",
-                                            });
-                                        }}
-                                        color="#FF3B30"
-                                    />
-                                )}
-                            </View>
-
-                            {uploading && (
-                                <ActivityIndicator
-                                    size="large"
-                                    style={styles.uploadIndicator}
-                                />
-                            )}
-
-                            <View style={styles.dateContainer}>
-                                <Text style={styles.label}>Date</Text>
-                                <View style={styles.dateInputContainer}>
-                                    <DateTimePicker
-                                        value={formData.date}
-                                        style={styles.dateInput}
-                                        mode="datetime"
-                                        minimumDate={new Date()}
-                                        onChange={(event, selectedDate) => {
-                                            setShowDatePicker(false);
-                                            if (selectedDate) {
-                                                setFormData({
-                                                    ...formData,
-                                                    date: selectedDate,
-                                                });
-                                            }
-                                        }}
-                                    />
-                                </View>
-                            </View>
-
-                            <Text style={styles.label}>Location</Text>
-                            <Text style={styles.instruction}>
-                                Tap on the map to select location
-                            </Text>
-                            <MapView
-                                style={styles.map}
-                                initialRegion={{
-                                    latitude: 51.1657,
-                                    longitude: 10.4515,
-                                    latitudeDelta: 30,
-                                    longitudeDelta: 30,
+                        {formData.photo && (
+                            <Button
+                                title="Remove Photo"
+                                onPress={() => {
+                                    setImage(null);
+                                    setFormData({ ...formData, photo: "" });
                                 }}
-                                onPress={handleMapPress}
-                                showsCompass={false}
-                                showsUserLocation={true}
-                                showsMyLocationButton={true}
-                                rotateEnabled={false}
-                                pitchEnabled={false}
-                            >
-                                {formData.location && (
-                                    <Marker
-                                        coordinate={{
-                                            latitude: formData.location.lat,
-                                            longitude: formData.location.lng,
-                                        }}
-                                    />
-                                )}
-                            </MapView>
+                                color="#FF3B30"
+                            />
+                        )}
+                    </View>
 
-                            <Text style={styles.label}>Address</Text>
-                            <View>
-                                <Text style={styles.label}>Location</Text>
-                                {formData.address ? (
-                                    <View style={styles.selectedPlaceContainer}>
-                                        <Text style={styles.selectedPlaceText}>
-                                            {formData.address}
-                                        </Text>
-                                        <TouchableOpacity
-                                            onPress={() =>
-                                                setShowPlaceSearch(true)
-                                            }
-                                            style={styles.changePlaceButton}
-                                        >
-                                            <Text
-                                                style={styles.changePlaceText}
-                                            >
-                                                Change
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                ) : (
-                                    <Button
-                                        title="Select Venue"
-                                        onPress={() => setShowPlaceSearch(true)}
-                                    />
-                                )}
-                            </View>
-
-                            <View style={styles.buttonContainer}>
-                                <Button
-                                    title={
-                                        isSubmitting ? "Adding..." : "Add Event"
-                                    }
-                                    onPress={handleSubmit}
-                                    disabled={isSubmitting}
-                                    color="#007AFF"
-                                />
-                                <Button
-                                    title="Cancel"
-                                    onPress={() => router.back()}
-                                    color="#FF3B30"
-                                />
-                            </View>
-                        </ScrollView>
+                    {uploading && (
+                        <ActivityIndicator
+                            size="large"
+                            style={styles.uploadIndicator}
+                        />
                     )}
-                </SafeAreaView>
-            </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
+
+                    <View style={styles.dateContainer}>
+                        <Text style={styles.label}>Date</Text>
+                        <View style={styles.dateInputContainer}>
+                            <DateTimePicker
+                                value={formData.date}
+                                style={styles.dateInput}
+                                mode="datetime"
+                                minimumDate={new Date()}
+                                onChange={(event, selectedDate) => {
+                                    setShowDatePicker(false);
+                                    if (selectedDate) {
+                                        setFormData({
+                                            ...formData,
+                                            date: selectedDate,
+                                        });
+                                    }
+                                }}
+                            />
+                        </View>
+                    </View>
+
+                    <Text style={styles.label}>Location</Text>
+                    <Text style={styles.instruction}>
+                        Tap on the map to select location
+                    </Text>
+                    <MapView
+                        style={styles.map}
+                        initialRegion={{
+                            latitude: 51.1657,
+                            longitude: 10.4515,
+                            latitudeDelta: 30,
+                            longitudeDelta: 30,
+                        }}
+                        onPress={handleMapPress}
+                        showsCompass={false}
+                        showsUserLocation={true}
+                        showsMyLocationButton={true}
+                        rotateEnabled={false}
+                        pitchEnabled={false}
+                    >
+                        {formData.location && (
+                            <Marker
+                                coordinate={{
+                                    latitude: formData.location.lat,
+                                    longitude: formData.location.lng,
+                                }}
+                            />
+                        )}
+                    </MapView>
+
+                    <Text style={styles.label}>Address (Optional)</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={formData.address}
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, address: text })
+                        }
+                        placeholder="Enter human-readable address"
+                    />
+
+                    <View style={styles.buttonContainer}>
+                        <Button
+                            title={isSubmitting ? "Adding..." : "Add Event"}
+                            onPress={handleSubmit}
+                            disabled={isSubmitting}
+                            color="#007AFF"
+                        />
+                        <Button
+                            title="Cancel"
+                            onPress={() => router.back()}
+                            color="#FF3B30"
+                        />
+                    </View>
+                </ScrollView>
+            )}
+        </SafeAreaView>
     );
 }
 
@@ -442,9 +365,6 @@ const styles = StyleSheet.create({
     backText: {
         marginLeft: 8,
         fontSize: 16,
-    },
-    scrollContainer: {
-        paddingBottom: 50,
     },
     header: {
         flexDirection: "row",
@@ -524,27 +444,10 @@ const styles = StyleSheet.create({
         color: "red",
         textAlign: "center",
         marginTop: 20,
+        // make it full height
         height: "100%",
-    },
-    selectedPlaceContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: 10,
-        backgroundColor: "#f5f5f5",
-        borderRadius: 8,
-        marginBottom: 15,
-    },
-    selectedPlaceText: {
-        flex: 1,
-    },
-    changePlaceButton: {
-        backgroundColor: "#e0e0e0",
-        paddingVertical: 5,
-        paddingHorizontal: 10,
-        borderRadius: 5,
-    },
-    changePlaceText: {
-        color: "#007AFF",
+        // flex: 1,
+        // flexShrink: 0,
+        // flexGrow: 1,
     },
 });

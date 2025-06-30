@@ -44,11 +44,7 @@
                 {
                     "locationAlwaysAndWhenInUsePermission": "Allow Evently to access your location."
                 }
-            ],
-            "expo-google-places",
-            {
-                "iosApiKey": "AIzaSyCAfP7Yid8ImXU9aDbrQWsea_BosO6ljuQ"
-            }
+            ]
         ],
         "experiments": {
             "typedRoutes": true

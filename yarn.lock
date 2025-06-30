@@ -3513,11 +3513,6 @@ expo-font@~13.0.1, expo-font@~13.0.4:
   dependencies:
     fontfaceobserver "^2.1.0"
 
-expo-google-places@^0.2.7:
-  version "0.2.7"
-  resolved "https://registry.npmjs.org/expo-google-places/-/expo-google-places-0.2.7.tgz"
-  integrity sha512-aElWrL8K/mU9WF5hK4sbJpXLeU/BeY1dVudfEGCVfW7Ou3m96Re2e/OsN9gxpGanNKjLNB0R8nNUPvpknDfZ+Q==
-
 expo-haptics@~14.0.0:
   version "14.0.1"
   resolved "https://registry.npmjs.org/expo-haptics/-/expo-haptics-14.0.1.tgz"

@@ -45,6 +45,7 @@ export default function map() {
             isMounted = false; // Cleanup if component unmounts
         };
     }, []); // Empty dependency array = runs once on mount
+
     const listBottomSheetRef = useRef<BottomSheet>(null);
     const typesBottomSheetRef = useRef<BottomSheet>(null);
     const placeBottomSheetRef = useRef<BottomSheet>(null);
