@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import MapView from "react-native-maps";
 import { StyleSheet, View, Dimensions, Keyboard } from "react-native";
-import { Clusterer, isPointCluster } from "react-native-clusterer";
+import { supercluster, isPointCluster } from "react-native-clusterer";
 import type { Region } from "react-native-maps";
 import type { Feature, Point, FeatureCollection, Geometry } from "geojson";
 import EventMarker from "../components/EventMarker";
-import type { supercluster } from "react-native-clusterer";
-
 import * as Location from "expo-location";
 import debounce from "lodash/debounce";
 import { Href } from "expo-router";
+import Supercluster from "react-native-clusterer";
 
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
 
@@ -34,6 +33,7 @@ type MapProps = {
     openEventDetailsBottomSheet: (event: EventFeature) => void;
     onRegionChangeComplete: (region: Region) => void;
     setCenterOnUser: (boolean: boolean) => void;
+    openClusterEventsBottomSheet: (events: EventFeature[]) => void; // Add this prop
 };
 
 const { width, height } = Dimensions.get("window");
@@ -45,10 +45,43 @@ const ClusteredMap: React.FC<MapProps> = ({
     openEventDetailsBottomSheet,
     onRegionChangeComplete,
     setCenterOnUser,
+    openClusterEventsBottomSheet,
 }) => {
     const mapRef = React.useRef<MapView>(null);
-
+    const superclusterRef = React.useRef<Supercluster | null>(null);
+    const [clusters, setClusters] = useState<IFeature[]>([]);
     const [region, setRegion] = useState<Region>(center);
+
+    // Initialize Supercluster
+    useEffect(() => {
+        if (!superclusterRef.current) {
+            superclusterRef.current = new Supercluster({
+                radius: 30,
+                maxZoom: 20,
+                minZoom: 1,
+                minPoints: 2,
+            });
+        }
+
+        // Load data into Supercluster
+        superclusterRef.current.load(data.features);
+        updateClusters();
+    }, [data]);
+
+    // Update clusters when region changes
+    useEffect(() => {
+        updateClusters();
+    }, [region]);
+
+    const updateClusters = () => {
+        if (superclusterRef.current) {
+            const clusters = superclusterRef.current.getClustersFromRegion(
+                region,
+                MAP_DIMENSIONS
+            );
+            setClusters(clusters);
+        }
+    };
 
     const onRegionChange = useCallback(
         debounce(
@@ -70,12 +103,66 @@ const ClusteredMap: React.FC<MapProps> = ({
     };
 
     const _handlePointPress = (point: IFeature) => {
-        if (isPointCluster(point)) {
-            const toRegion = point.properties.getExpansionRegion();
-            mapRef.current?.animateToRegion(toRegion, 500);
+        if (point.properties?.cluster) {
+            if (superclusterRef.current) {
+                const clusterEvents = superclusterRef.current.getLeaves(
+                    point.properties.cluster_id,
+                    Number.POSITIVE_INFINITY,
+                    0
+                ) as EventFeature[];
+
+                const tooClose = areMarkersTooClose(clusterEvents);
+
+                if (tooClose) {
+                    console.log(
+                        "Cluster has too many close markers, opening bottom sheet"
+                    );
+                    openClusterEventsBottomSheet(clusterEvents);
+                } else {
+                    // Calculate bounding box for the cluster
+                    const toRegion = calculateClusterBoundingBox(clusterEvents);
+                    mapRef.current?.animateToRegion(toRegion, 500);
+                }
+            }
         } else {
-            openEventDetailsBottomSheet(point);
+            openEventDetailsBottomSheet(point as EventFeature);
         }
+    };
+    // Calculate bounding box for a cluster
+    const calculateClusterBoundingBox = (events: EventFeature[]): Region => {
+        if (events.length === 0) {
+            return {
+                latitude: 0,
+                longitude: 0,
+                latitudeDelta: 0.1,
+                longitudeDelta: 0.1,
+            };
+        }
+
+        let minLat = events[0].geometry.coordinates[1];
+        let maxLat = minLat;
+        let minLon = events[0].geometry.coordinates[0];
+        let maxLon = minLon;
+
+        events.forEach((event) => {
+            const [lon, lat] = event.geometry.coordinates;
+            minLat = Math.min(minLat, lat);
+            maxLat = Math.max(maxLat, lat);
+            minLon = Math.min(minLon, lon);
+            maxLon = Math.max(maxLon, lon);
+        });
+
+        const centerLat = (minLat + maxLat) / 2;
+        const centerLon = (minLon + maxLon) / 2;
+        const latDelta = (maxLat - minLat) * 1.5; // Add padding
+        const lonDelta = (maxLon - minLon) * 1.5; // Add padding
+
+        return {
+            latitude: centerLat,
+            longitude: centerLon,
+            latitudeDelta: Math.max(latDelta, 0.01), // Minimum delta
+            longitudeDelta: Math.max(lonDelta, 0.01), // Minimum delta
+        };
     };
 
     useEffect(() => {
@@ -102,7 +189,7 @@ const ClusteredMap: React.FC<MapProps> = ({
                 }}
                 mapPadding={{ top: 100, right: 0, bottom: 100, left: 0 }}
             >
-                <Clusterer
+                {/* <Clusterer
                     data={data.features}
                     region={region}
                     mapDimensions={MAP_DIMENSIONS}
@@ -122,10 +209,74 @@ const ClusteredMap: React.FC<MapProps> = ({
                             />
                         );
                     }}
-                />
+                /> */}
+                {clusters.map((item) => (
+                    <EventMarker
+                        key={
+                            item.properties?.cluster
+                                ? `cluster-${item.properties.cluster_id}`
+                                : `point-${item.properties.id}`
+                        }
+                        item={item}
+                        onPress={_handlePointPress}
+                    />
+                ))}
             </MapView>
         </View>
     );
+};
+
+// Check if markers in a cluster are too close to decluster
+const areMarkersTooClose = (
+    events: EventFeature[],
+    thresholdKm = 1
+): boolean => {
+    if (events.length <= 1) return false;
+
+    const coordinates = events.map((event) => ({
+        latitude: event.geometry.coordinates[1],
+        longitude: event.geometry.coordinates[0],
+    }));
+
+    // Check distances between all points
+    for (let i = 0; i < coordinates.length; i++) {
+        for (let j = i + 1; j < coordinates.length; j++) {
+            const distance = haversine(
+                coordinates[i].latitude,
+                coordinates[i].longitude,
+                coordinates[j].latitude,
+                coordinates[j].longitude
+            );
+
+            if (distance > thresholdKm) {
+                // At least one pair is not too close
+                return false;
+            }
+        }
+    }
+
+    // All markers are very close
+    return true;
+};
+
+// Haversine distance calculation
+const haversine = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+): number => {
+    const R = 6371; // Earth radius in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((lat1 * Math.PI) / 180) *
+            Math.cos((lat2 * Math.PI) / 180) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
 };
 
 const styles = StyleSheet.create({

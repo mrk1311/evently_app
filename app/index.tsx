@@ -20,6 +20,7 @@ import { Feature, FeatureCollection, Point } from "geojson";
 import throttle from "lodash/throttle";
 import { isWithinInterval, parseISO, Interval } from "date-fns";
 import { fetchEvents } from "@/utils/fetchEvents";
+import ClusterEventsBottomSheet from "@/components/ClusterEventsBottomSheet";
 
 export default function map() {
     const [eventData, setEvents] = useState<EventFeatureCollection>(
@@ -95,6 +96,19 @@ export default function map() {
 
     const [pickedSortByOption, setPickedSortByOption] =
         useState<string>("Map Center");
+    const [clusterEvents, setClusterEvents] = useState<EventFeature[]>([]);
+    const clusterBottomSheetRef = useRef<BottomSheet>(null);
+
+    const openClusterEventsBottomSheet = (events: EventFeature[]) => {
+        setClusterEvents(events);
+        clusterBottomSheetRef.current?.snapToIndex(0);
+    };
+
+    const handleEventPressInCluster = (event: EventFeature) => {
+        setOpenEvent(event);
+        EventDetailsBottomSheetRef.current?.snapToIndex(0);
+        clusterBottomSheetRef.current?.close();
+    };
 
     // user location
     const [location, setLocation] = useState<Location.LocationObject>({
@@ -441,6 +455,7 @@ export default function map() {
                 }}
                 onRegionChangeComplete={handleRegionChangeComplete}
                 setCenterOnUser={setCenterOnUser}
+                openClusterEventsBottomSheet={openClusterEventsBottomSheet}
             />
             <ShowUserLocationButton
                 active={centerOnUser}
@@ -491,6 +506,12 @@ export default function map() {
                 event={openEvent}
                 handleCancelDetails={handleCancelDetails}
             />
+            <ClusterEventsBottomSheet
+                ref={clusterBottomSheetRef}
+                events={clusterEvents}
+                onEventPress={handleEventPressInCluster}
+            />
+
             <SearchBar
                 openTypesBottomSheet={openTypesBottomSheet}
                 openPlaceBottomSheet={openPlaceBottomSheet}
