@@ -501,15 +501,16 @@ export default function map() {
                 setEndDate={setEndDate}
             />
 
-            <EventDetailsBottomSheet
-                ref={EventDetailsBottomSheetRef}
-                event={openEvent}
-                handleCancelDetails={handleCancelDetails}
-            />
             <ClusterEventsBottomSheet
                 ref={clusterBottomSheetRef}
                 events={clusterEvents}
                 onEventPress={handleEventPressInCluster}
+            />
+
+            <EventDetailsBottomSheet
+                ref={EventDetailsBottomSheetRef}
+                event={openEvent}
+                handleCancelDetails={handleCancelDetails}
             />
 
             <SearchBar

@@ -1,4 +1,4 @@
-// components/ClusterEventsBottomSheet.tsx
+// ClusterEventsBottomSheet.tsx
 import React, { forwardRef, useMemo } from "react";
 import {
     View,
@@ -7,9 +7,11 @@ import {
     TouchableOpacity,
     FlatList,
 } from "react-native";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, {
+    BottomSheetBackdrop,
+    BottomSheetFlatList,
+} from "@gorhom/bottom-sheet";
 import { EventFeature } from "./ClusteredMap";
-import { MaterialIcons } from "@expo/vector-icons";
 
 type ClusterEventsBottomSheetProps = {
     events: EventFeature[];
@@ -42,6 +44,14 @@ const ClusterEventsBottomSheet = forwardRef<
             index={-1}
             snapPoints={snapPoints}
             enablePanDownToClose
+            backdropComponent={(props) => (
+                <BottomSheetBackdrop
+                    {...props}
+                    appearsOnIndex={0}
+                    disappearsOnIndex={-1}
+                    opacity={0.5}
+                />
+            )}
         >
             <View style={styles.container}>
                 <View style={styles.header}>
@@ -51,11 +61,14 @@ const ClusterEventsBottomSheet = forwardRef<
                     </Text>
                 </View>
 
-                <FlatList
+                <BottomSheetFlatList
                     data={events}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.properties.id}
                     contentContainerStyle={styles.listContent}
+                    ListEmptyComponent={
+                        <Text style={styles.emptyText}>No events found</Text>
+                    }
                 />
             </View>
         </BottomSheet>
@@ -66,6 +79,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+        backgroundColor: "white",
     },
     header: {
         marginBottom: 16,
@@ -99,6 +113,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#333",
         marginTop: 4,
+    },
+    emptyText: {
+        textAlign: "center",
+        padding: 20,
+        color: "#666",
     },
 });
 
