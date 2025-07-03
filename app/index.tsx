@@ -107,7 +107,7 @@ export default function map() {
     const handleEventPressInCluster = (event: EventFeature) => {
         setOpenEvent(event);
         EventDetailsBottomSheetRef.current?.snapToIndex(0);
-        clusterBottomSheetRef.current?.close();
+        // clusterBottomSheetRef.current?.close();
     };
 
     // user location
