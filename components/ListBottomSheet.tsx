@@ -383,6 +383,7 @@ const styles = StyleSheet.create({
         borderBottomColor: "#eeeeee",
         paddingBottom: 10,
         margin: 5,
+        marginBottom: 0,
         height: 41,
         overflow: "visible",
     },
