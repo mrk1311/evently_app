@@ -21,8 +21,35 @@ import throttle from "lodash/throttle";
 import { isWithinInterval, parseISO, Interval } from "date-fns";
 import { fetchEvents } from "@/utils/fetchEvents";
 import ClusterEventsBottomSheet from "@/components/ClusterEventsBottomSheet";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
 export default function map() {
+    // Inside the map component
+    const router = useRouter();
+    const params = useLocalSearchParams();
+
+    // Add this useEffect to handle navigation params
+    useEffect(() => {
+        if (params.centerOnEvent) {
+            try {
+                const coords = JSON.parse(params.centerOnEvent as string);
+                setControlledCenter({
+                    latitude: coords.latitude,
+                    longitude: coords.longitude,
+                    latitudeDelta: 0.1,
+                    longitudeDelta: 0.1,
+                });
+
+                // Clear the param after use
+                setTimeout(() => {
+                    router.setParams({ centerOnEvent: undefined });
+                }, 1000);
+            } catch (e) {
+                console.error("Error parsing center coordinates", e);
+            }
+        }
+    }, [params.centerOnEvent]);
+
     const [eventData, setEvents] = useState<EventFeatureCollection>(
         mockData as EventFeatureCollection
     );
@@ -511,6 +538,16 @@ export default function map() {
                 ref={EventDetailsBottomSheetRef}
                 event={openEvent}
                 handleCancelDetails={handleCancelDetails}
+                onCenterMap={() => {
+                    if (openEvent) {
+                        setControlledCenter({
+                            latitude: openEvent.geometry.coordinates[1],
+                            longitude: openEvent.geometry.coordinates[0],
+                            latitudeDelta: 0.1,
+                            longitudeDelta: 0.1,
+                        });
+                    }
+                }}
             />
 
             <SearchBar

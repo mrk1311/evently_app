@@ -13,13 +13,13 @@ import Supercluster from "react-native-clusterer";
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
 
 type EventProperties = {
-    id: string; // UUID format
-    name: string; // mapped from title
+    id: string;
+    name: string;
     type: string;
     description: string;
-    date: string; // mapped from event_time
-    link: Href; // mapped from event_url
-    photo: string; // mapped from photo_url TODO null?
+    date: string;
+    link: Href;
+    photo: string;
     location: string;
     distance?: number;
 };

@@ -10,14 +10,16 @@ import {
     Alert,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useNavigation, useRouter } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { useUser } from "@/hooks/useUser";
 import { EventFeature } from "@/components/ClusteredMap";
 import { AntDesign } from "@expo/vector-icons";
 import getMarkerColor from "@/functions/getMarkerColor";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import BottomSheet from "@gorhom/bottom-sheet";
+import EventDetailsBottomSheet from "@/components/EventDetailsBottomSheet";
 
 // Define proper response type for the joined data
 type FavoriteResponse = {
@@ -37,6 +39,20 @@ export default function Favourites() {
     const router = useRouter();
     const { favorites, isLoading, removeFavorite, error } = useFavorites();
     const [events, setEvents] = useState<EventFeature[]>([]);
+    const [openEvent, setOpenEvent] = useState<EventFeature | null>(null); // Add this state
+    const navigation = useNavigation();
+
+    const eventDetailsRef = useRef<BottomSheet>(null); // Add this ref
+
+    const openEventDetails = (event: EventFeature) => {
+        setOpenEvent(event);
+        console.log("event coordinates:", event.geometry);
+        eventDetailsRef.current?.snapToIndex(0);
+    };
+
+    const handleCancelDetails = () => {
+        eventDetailsRef.current?.close();
+    };
 
     useEffect(() => {
         const fetchFavoriteEvents = async () => {
@@ -47,7 +63,7 @@ export default function Favourites() {
 
             try {
                 const { data, error } = await supabase
-                    .from("events")
+                    .from("events_with_wkt")
                     .select("*")
                     .in("id", Array.from(favorites));
 
@@ -56,7 +72,10 @@ export default function Favourites() {
                 // Convert to EventFeature format
                 const formattedEvents = data.map((event) => ({
                     type: "Feature",
-                    geometry: event.geometry,
+                    geometry: {
+                        type: "Point",
+                        coordinates: parseCoordinates(event.coordinates),
+                    },
                     properties: {
                         id: event.id,
                         name: event.title,
@@ -75,6 +94,12 @@ export default function Favourites() {
             }
         };
 
+        function parseCoordinates(geometry: string): [number, number] {
+            const match = geometry.match(/POINT\(([^ ]+) ([^ ]+)\)/);
+            if (!match) throw new Error("Invalid geometry format");
+            return [parseFloat(match[1]), parseFloat(match[2])];
+        }
+
         fetchFavoriteEvents();
     }, [favorites]);
 
@@ -82,22 +107,14 @@ export default function Favourites() {
         ({ item }: { item: EventFeature }) => (
             <TouchableOpacity
                 style={styles.cardContainer}
-                // onPress={() => {
-                //     props.openEventDetailsBottomSheet(item);
-                //     props.setCenter(
-                //         coordinatesToRegion(item.geometry.coordinates)
-                //     );
-                //     props.snapToIndex(0);
-                // }}
+                onPress={() => openEventDetails(item)}
             >
                 {/* Event Image */}
-                {/* {item.properties.photo && ( */}
                 <Image
                     source={{ uri: item.properties.photo }}
                     style={styles.cardImagePlaceholder}
                     resizeMode="cover"
                 />
-                {/* )} */}
 
                 {/* Event Type Indicator */}
                 <View
@@ -216,6 +233,25 @@ export default function Favourites() {
             {useUser().user && favorites.size === 0 && !isLoading && (
                 <Text style={styles.error}>You have no favorites yet.</Text>
             )}
+            <EventDetailsBottomSheet
+                ref={eventDetailsRef}
+                event={openEvent}
+                handleCancelDetails={handleCancelDetails}
+                onCenterMap={() => {
+                    if (openEvent) {
+                        router.navigate({
+                            pathname: "/",
+                            params: {
+                                centerOnEvent: JSON.stringify({
+                                    latitude: openEvent.geometry.coordinates[1],
+                                    longitude:
+                                        openEvent.geometry.coordinates[0],
+                                }),
+                            },
+                        });
+                    }
+                }}
+            />
         </SafeAreaView>
     );
 }

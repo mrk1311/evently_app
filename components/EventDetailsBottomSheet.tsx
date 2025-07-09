@@ -24,8 +24,9 @@ import { supabase } from "@/utils/supabase";
 import { Link } from "expo-router";
 
 interface BottomSheetProps {
-    event: EventFeature;
+    event: EventFeature | null;
     handleCancelDetails: () => void;
+    onCenterMap: () => void;
 }
 
 type Ref = BottomSheet;
@@ -58,104 +59,24 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
             []
         );
 
-        // TODO: move these functions to FavoritesContext
+        // functions
+        const handleAddToFavorites = async (eventId: string) => {
+            try {
+                await addFavorite(eventId);
+            } catch (error) {
+                console.error("Error adding to favorites:", error);
+                Alert.alert("Error", "Failed to add to favorites.");
+            }
+        };
 
-        const handleAddFavoriteToServer = useCallback(
-            async (eventId: string) => {
-                console.log("adding to server");
-                try {
-                    const {
-                        data: { user },
-                    } = await supabase.auth.getUser();
-
-                    if (!user) {
-                        Alert.alert(
-                            "Login Required",
-                            "Please log in to save favorites"
-                        );
-                        return;
-                    }
-
-                    const { error } = await supabase
-                        .from("user_favourites")
-                        .upsert({
-                            user_id: user.id,
-                            event_id: eventId,
-                        });
-
-                    if (error) {
-                        // Rollback on error
-                        console.log("error adding to favorites");
-                        // setFavorites((prev) => {
-                        //     const updated = new Set(prev);
-                        //     updated.delete(eventId);
-                        //     return updated;
-                        // });
-                        throw error;
-                    }
-
-                    // Optional: Update UI state here if needed
-                } catch (error) {
-                    console.error("Error saving favorite:", error);
-                    Alert.alert("Error", "Failed to save favorite");
-                }
-            },
-            [favorites]
-        );
-
-        const handleAddToFavorites = useCallback(
-            (eventId: string) => {
-                // Optimistic UI update
-                console.log("adding to local");
-                addFavorite(eventId);
-
-                handleAddFavoriteToServer(eventId);
-            },
-            [favorites]
-        );
-
-        const handleRemoveFavoriteFromServer = useCallback(
-            async (eventId: string) => {
-                console.log("removing from server");
-                try {
-                    const {
-                        data: { user },
-                    } = await supabase.auth.getUser();
-
-                    if (!user) {
-                        Alert.alert(
-                            "Login Required",
-                            "Please log in to manage favorites"
-                        );
-                        return;
-                    }
-
-                    const { error } = await supabase
-                        .from("user_favourites")
-                        .delete()
-                        .match({
-                            user_id: user.id,
-                            event_id: eventId,
-                        });
-
-                    if (error) throw error;
-
-                    // Alert.alert("Removed", "Event removed from favorites");
-                } catch (error) {
-                    console.error("Error removing favorite:", error);
-                    Alert.alert("Error", "Failed to remove favorite");
-                }
-            },
-            []
-        );
-
-        const handleRemoveFromFavorites = useCallback((eventId: string) => {
-            // Update local state
-            console.log("removing from local");
-            removeFavorite(eventId);
-
-            handleRemoveFavoriteFromServer(eventId);
-        }, []);
+        const handleRemoveFromFavorites = async (eventId: string) => {
+            try {
+                await removeFavorite(eventId);
+            } catch (error) {
+                console.error("Error removing from favorites:", error);
+                Alert.alert("Error", "Failed to remove from favorites.");
+            }
+        };
 
         return (
             <BottomSheet
@@ -163,7 +84,7 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                 index={-1}
                 snapPoints={snapPoints}
                 enableDynamicSizing={false}
-                backdropComponent={renderBackdrop}
+                // backdropComponent={renderBackdrop}
                 // enableContentPanningGesture={true}
                 enablePanDownToClose={true}
             >
@@ -177,33 +98,53 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                             {props.event?.properties.name}
                         </Text>
 
-                        <TouchableOpacity
-                            onPress={
-                                favorites.has(props.event.properties.id)
-                                    ? () =>
-                                          handleRemoveFromFavorites(
-                                              props.event.properties.id
+                        <View style={{ gap: 15, flexDirection: "row" }}>
+                            <TouchableOpacity onPress={props.onCenterMap}>
+                                <AntDesign
+                                    name="enviromento"
+                                    size={24}
+                                    color="black"
+                                />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                onPress={
+                                    !props.event ||
+                                    props.event.properties.id === undefined
+                                        ? () => {}
+                                        : // If the event is already favorited, remove it
+                                        favorites.has(
+                                              props.event?.properties?.id
                                           )
-                                    : () =>
-                                          handleAddToFavorites(
-                                              props.event.properties.id
-                                          )
-                            }
-                        >
-                            <AntDesign
-                                name={
-                                    favorites.has(props.event.properties.id)
-                                        ? "heart"
-                                        : "hearto"
+                                        ? () =>
+                                              handleRemoveFromFavorites(
+                                                  props.event?.properties?.id!
+                                              )
+                                        : () =>
+                                              handleAddToFavorites(
+                                                  props.event?.properties?.id!
+                                              )
                                 }
-                                size={24}
-                                color={
-                                    favorites.has(props.event.properties.id)
-                                        ? "red"
-                                        : "black"
-                                }
-                            />
-                        </TouchableOpacity>
+                            >
+                                <AntDesign
+                                    name={
+                                        favorites.has(
+                                            props.event?.properties?.id!
+                                        )
+                                            ? "heart"
+                                            : "hearto"
+                                    }
+                                    size={24}
+                                    color={
+                                        favorites.has(
+                                            props?.event?.properties.id!
+                                        )
+                                            ? "red"
+                                            : "black"
+                                    }
+                                />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                     {/* Event Type Indicator */}
                     <View
@@ -231,7 +172,7 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                             </Text>
                             <Text style={styles.infoTitle}>Tickets</Text>
                             <Link
-                                href={props.event?.properties.link || "#"}
+                                href={props.event?.properties?.link! || "#"}
                                 style={styles.link}
                             >
                                 {props.event?.properties.link
@@ -245,12 +186,12 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                             <Text style={styles.infoTitle}>Time</Text>
                             <Text style={styles.infoText}>
                                 {new Date(
-                                    props.event.properties.date
+                                    props.event?.properties?.date!
                                 ).toLocaleDateString("en-GB")}
                             </Text>
                             <Text style={styles.infoText}>
                                 {new Date(
-                                    props.event.properties.date
+                                    props.event?.properties?.date!
                                 ).toLocaleTimeString([], {
                                     hour: "2-digit",
                                     minute: "2-digit",
@@ -279,10 +220,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         marginBottom: 8,
+        padding: 8,
     },
     headerText: {
         fontSize: 20,
-        margin: 8,
+        // margin: 8,
         fontWeight: "bold",
         textAlign: "left",
     },

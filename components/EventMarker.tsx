@@ -1,8 +1,10 @@
+// EventMarker.tsx
 import React, { FunctionComponent, memo, useCallback } from "react";
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import { Marker as MapsMarker } from "react-native-maps";
 import type { supercluster } from "react-native-clusterer";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { useFavorites } from "@/contexts/FavoritesContext"; // Add this import
 
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
 
@@ -46,6 +48,9 @@ const getMarkerIcon = (type: string): iconName => {
 
 const EventMarker: FunctionComponent<Props> = memo(
     ({ item, onPress }) => {
+        const { favorites } = useFavorites(); // Access favorites context
+        const isFavorite = favorites.has(item.properties.id); // Check if event is favorited
+
         const MarkerIcon = useCallback(({ type }: { type: string }) => {
             return (
                 <MaterialIcons
@@ -55,6 +60,7 @@ const EventMarker: FunctionComponent<Props> = memo(
                 />
             );
         }, []);
+
         return (
             <MapsMarker
                 key={item.properties?.cluster_id || item.properties?.id}
@@ -74,7 +80,7 @@ const EventMarker: FunctionComponent<Props> = memo(
                     </TouchableOpacity>
                 ) : (
                     // Else, create a custom marker for the event
-                    // a marker and add a always visible callout to it
+                    // Add favorite indicator if event is favorited
                     <>
                         <TouchableOpacity style={styles.markerContainer}>
                             <View style={styles.markerTitlePopup}>
@@ -93,6 +99,25 @@ const EventMarker: FunctionComponent<Props> = memo(
                                 ]}
                             >
                                 <MarkerIcon type={item.properties.type} />
+                                {/* Heart indicator for favorites */}
+                                {isFavorite && (
+                                    <>
+                                        <View style={styles.favoriteBadge}>
+                                            <AntDesign
+                                                name="heart"
+                                                size={18}
+                                                color="red"
+                                            />
+                                        </View>
+                                        <View style={styles.favoriteBadge}>
+                                            <AntDesign
+                                                name="hearto"
+                                                size={18}
+                                                color="white"
+                                            />
+                                        </View>
+                                    </>
+                                )}
                             </View>
                         </TouchableOpacity>
                     </>
@@ -136,6 +161,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#2196F3",
         justifyContent: "center",
         alignItems: "center",
+        position: "relative", // Added for positioning the badge
     },
     clusterMarkerText: {
         color: "#fff",
@@ -160,6 +186,20 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+    },
+    // Add favorite badge style
+    favoriteBadge: {
+        position: "absolute",
+        top: -4,
+        right: -12,
+        // backgroundColor: "#FF4081",
+        borderRadius: 8,
+        width: 24,
+        height: 24,
+        justifyContent: "center",
+        alignItems: "center",
+        // borderWidth: 1,
+        // borderColor: "#fff",
     },
 });
 
