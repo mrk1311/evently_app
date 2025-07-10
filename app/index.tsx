@@ -21,35 +21,9 @@ import throttle from "lodash/throttle";
 import { isWithinInterval, parseISO, Interval } from "date-fns";
 import { fetchEvents } from "@/utils/fetchEvents";
 import ClusterEventsBottomSheet from "@/components/ClusterEventsBottomSheet";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useMap } from "@/contexts/MapContext";
 
 export default function map() {
-    // Inside the map component
-    const router = useRouter();
-    const params = useLocalSearchParams();
-
-    // Add this useEffect to handle navigation params
-    useEffect(() => {
-        if (params.centerOnEvent) {
-            try {
-                const coords = JSON.parse(params.centerOnEvent as string);
-                setControlledCenter({
-                    latitude: coords.latitude,
-                    longitude: coords.longitude,
-                    latitudeDelta: 0.1,
-                    longitudeDelta: 0.1,
-                });
-
-                // Clear the param after use
-                setTimeout(() => {
-                    router.setParams({ centerOnEvent: undefined });
-                }, 1000);
-            } catch (e) {
-                console.error("Error parsing center coordinates", e);
-            }
-        }
-    }, [params.centerOnEvent]);
-
     const [eventData, setEvents] = useState<EventFeatureCollection>(
         mockData as EventFeatureCollection
     );
@@ -59,7 +33,7 @@ export default function map() {
 
         const loadEvents = async () => {
             try {
-                const data = await fetchEvents(); // Add await here
+                const data = await fetchEvents();
                 if (isMounted) setEvents(data);
             } catch (error) {
                 console.error("Error loading events:", error);
@@ -73,7 +47,7 @@ export default function map() {
             isMounted = false; // Cleanup if component unmounts
         };
     }, []); // Empty dependency array = runs once on mount
-
+    const { centerOnCoordinates } = useMap();
     const listBottomSheetRef = useRef<BottomSheet>(null);
     const typesBottomSheetRef = useRef<BottomSheet>(null);
     const placeBottomSheetRef = useRef<BottomSheet>(null);
@@ -129,6 +103,7 @@ export default function map() {
     const openClusterEventsBottomSheet = (events: EventFeature[]) => {
         setClusterEvents(events);
         clusterBottomSheetRef.current?.snapToIndex(0);
+        EventDetailsBottomSheetRef.current?.close();
     };
 
     const handleEventPressInCluster = (event: EventFeature) => {
@@ -150,6 +125,17 @@ export default function map() {
         },
         timestamp: 0,
     });
+
+    // center map on coordinates from MapContext
+    useEffect(() => {
+        if (centerOnCoordinates) {
+            setControlledCenter({
+                ...centerOnCoordinates,
+                latitudeDelta: 0.1,
+                longitudeDelta: 0.1,
+            });
+        }
+    }, [centerOnCoordinates]);
 
     // get user location
     useEffect(() => {

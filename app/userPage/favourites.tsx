@@ -20,6 +20,7 @@ import getMarkerColor from "@/functions/getMarkerColor";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import BottomSheet from "@gorhom/bottom-sheet";
 import EventDetailsBottomSheet from "@/components/EventDetailsBottomSheet";
+import { useMap } from "@/contexts/MapContext";
 
 // Define proper response type for the joined data
 type FavoriteResponse = {
@@ -41,6 +42,9 @@ export default function Favourites() {
     const [events, setEvents] = useState<EventFeature[]>([]);
     const [openEvent, setOpenEvent] = useState<EventFeature | null>(null); // Add this state
     const navigation = useNavigation();
+    const userData = useUser();
+    const user = userData.user;
+    const { requestCenter } = useMap();
 
     const eventDetailsRef = useRef<BottomSheet>(null); // Add this ref
 
@@ -212,7 +216,7 @@ export default function Favourites() {
                 <Text style={styles.error}>
                     {error instanceof Error ? error.message : error}
                 </Text>
-            ) : useUser().user ? (
+            ) : user ? (
                 <FlatList
                     data={events}
                     renderItem={renderEventCard}
@@ -222,7 +226,7 @@ export default function Favourites() {
             ) : null}
 
             {/* if user is not logged in show a message to log in */}
-            {!useUser().user && !isLoading && (
+            {!user && !isLoading && (
                 <Text style={styles.error}>
                     Please log in to view your favorites.
                 </Text>
@@ -230,7 +234,7 @@ export default function Favourites() {
 
             {/* if favorites is null, show a message  */}
 
-            {useUser().user && favorites.size === 0 && !isLoading && (
+            {user && favorites.size === 0 && !isLoading && (
                 <Text style={styles.error}>You have no favorites yet.</Text>
             )}
             <EventDetailsBottomSheet
@@ -239,15 +243,11 @@ export default function Favourites() {
                 handleCancelDetails={handleCancelDetails}
                 onCenterMap={() => {
                     if (openEvent) {
-                        router.navigate({
-                            pathname: "/",
-                            params: {
-                                centerOnEvent: JSON.stringify({
-                                    latitude: openEvent.geometry.coordinates[1],
-                                    longitude:
-                                        openEvent.geometry.coordinates[0],
-                                }),
-                            },
+                        router.back();
+                        router.back();
+                        requestCenter({
+                            latitude: openEvent.geometry.coordinates[1],
+                            longitude: openEvent.geometry.coordinates[0],
                         });
                     }
                 }}

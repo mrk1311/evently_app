@@ -84,8 +84,8 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                 index={-1}
                 snapPoints={snapPoints}
                 enableDynamicSizing={false}
-                // backdropComponent={renderBackdrop}
-                // enableContentPanningGesture={true}
+                backdropComponent={renderBackdrop}
+                enableContentPanningGesture={true}
                 enablePanDownToClose={true}
             >
                 <View style={styles.container}>
