@@ -22,6 +22,7 @@ import { isWithinInterval, parseISO, Interval } from "date-fns";
 import { fetchEvents } from "@/utils/fetchEvents";
 import ClusterEventsBottomSheet from "@/components/ClusterEventsBottomSheet";
 import { useMap } from "@/contexts/MapContext";
+import bottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet";
 
 export default function map() {
     const [eventData, setEvents] = useState<EventFeatureCollection>(
@@ -526,12 +527,15 @@ export default function map() {
                 handleCancelDetails={handleCancelDetails}
                 onCenterMap={() => {
                     if (openEvent) {
+                        // Center the map on the selected event
                         setControlledCenter({
                             latitude: openEvent.geometry.coordinates[1],
                             longitude: openEvent.geometry.coordinates[0],
                             latitudeDelta: 0.1,
                             longitudeDelta: 0.1,
                         });
+                        EventDetailsBottomSheetRef.current?.close();
+                        clusterBottomSheetRef.current?.close();
                     }
                 }}
             />

@@ -9,6 +9,7 @@ import * as Location from "expo-location";
 import debounce from "lodash/debounce";
 import { Href } from "expo-router";
 import Supercluster from "react-native-clusterer";
+import { useFavorites } from "@/contexts/FavoritesContext";
 
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
 
@@ -51,6 +52,7 @@ const ClusteredMap: React.FC<MapProps> = ({
     const superclusterRef = React.useRef<Supercluster | null>(null);
     const [clusters, setClusters] = useState<IFeature[]>([]);
     const [region, setRegion] = useState<Region>(center);
+    const { favorites } = useFavorites();
 
     // Initialize Supercluster
     useEffect(() => {
@@ -73,13 +75,45 @@ const ClusteredMap: React.FC<MapProps> = ({
         updateClusters();
     }, [region]);
 
+    // Compute cluster properties
+    const computeClusterProperties = (clusters: IFeature[]) => {
+        return clusters.map((cluster) => {
+            if (cluster.properties?.cluster && superclusterRef.current) {
+                // Get events in this cluster
+                const leaves = superclusterRef.current.getLeaves(
+                    cluster.properties.cluster_id,
+                    Number.POSITIVE_INFINITY,
+                    0
+                ) as EventFeature[];
+
+                // Check if any event in cluster is favorited
+                const hasFavorites = leaves.some((leaf) =>
+                    favorites.has(leaf.properties.id)
+                );
+
+                // Add hasFavorites property to cluster
+                return {
+                    ...cluster,
+                    properties: {
+                        ...cluster.properties,
+                        hasFavorites,
+                    },
+                };
+            }
+            return cluster;
+        });
+    };
+
     const updateClusters = () => {
         if (superclusterRef.current) {
             const clusters = superclusterRef.current.getClustersFromRegion(
                 region,
                 MAP_DIMENSIONS
             );
-            setClusters(clusters);
+
+            // Add hasFavorites property to clusters
+            const enhancedClusters = computeClusterProperties(clusters);
+            setClusters(enhancedClusters);
         }
     };
 

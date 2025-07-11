@@ -51,6 +51,9 @@ const EventMarker: FunctionComponent<Props> = memo(
         const { favorites } = useFavorites(); // Access favorites context
         const isFavorite = favorites.has(item.properties.id); // Check if event is favorited
 
+        // Check if this cluster contains any favorite events
+        const hasFavoritesInCluster = item.properties?.hasFavorites || false;
+
         const MarkerIcon = useCallback(({ type }: { type: string }) => {
             return (
                 <MaterialIcons
@@ -77,6 +80,25 @@ const EventMarker: FunctionComponent<Props> = memo(
                         <Text style={styles.clusterMarkerText}>
                             {item.properties.point_count}
                         </Text>
+                        {/* Add favorite badge if cluster has favorites */}
+                        {hasFavoritesInCluster && (
+                            <>
+                                <View style={styles.favoriteBadge}>
+                                    <AntDesign
+                                        name="heart"
+                                        size={18}
+                                        color="red"
+                                    />
+                                </View>
+                                <View style={styles.favoriteBadge}>
+                                    <AntDesign
+                                        name="hearto"
+                                        size={18}
+                                        color="white"
+                                    />
+                                </View>
+                            </>
+                        )}
                     </TouchableOpacity>
                 ) : (
                     // Else, create a custom marker for the event
