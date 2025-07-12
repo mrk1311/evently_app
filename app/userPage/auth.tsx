@@ -17,18 +17,41 @@ import { supabase } from "@/utils/supabase";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { useUser } from "@/hooks/useUser";
 
-export default function AuthScreen() {
+// ... existing imports ...
+
+export default function LoginScreen() {
     const router = useRouter();
-    const { user } = useUser();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const passwordInputRef = useRef<TextInput>(null);
 
+    const validateForm = () => {
+        const newErrors: Record<string, string> = {};
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) {
+            newErrors.email = "Email is required";
+        } else if (!emailRegex.test(email)) {
+            newErrors.email = "Invalid email format";
+        }
+
+        // Password validation
+        if (!password) {
+            newErrors.password = "Password is required";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleLogin = async () => {
-        setError("");
+        if (!validateForm()) return;
+
         setLoading(true);
+        setErrors({});
 
         try {
             const { error } = await supabase.auth.signInWithPassword({
@@ -37,36 +60,13 @@ export default function AuthScreen() {
             });
 
             if (error) {
-                setError(error.message);
+                setErrors({ server: error.message });
                 return;
             }
 
             router.back(); // Return to previous screen after successful login
         } catch (err) {
-            setError("An unexpected error occurred");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleSignUp = async () => {
-        setError("");
-        setLoading(true);
-
-        try {
-            const { error } = await supabase.auth.signUp({
-                email,
-                password,
-            });
-
-            if (error) {
-                setError(error.message);
-                return;
-            }
-
-            setError("Check your email for confirmation!");
-        } catch (err) {
-            setError("An unexpected error occurred");
+            setErrors({ server: "An unexpected error occurred" });
         } finally {
             setLoading(false);
         }
@@ -88,7 +88,7 @@ export default function AuthScreen() {
                         fontWeight: "bold",
                     }}
                 >
-                    Log In / Sign Up
+                    Sign In
                 </Text>
                 <Text style={{ width: 94 }} />
             </View>
@@ -96,21 +96,23 @@ export default function AuthScreen() {
             <KeyboardAvoidingView
                 style={styles.keyboardAvoidingContainer}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
-                // keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0}
             >
                 <ScrollView
                     contentContainerStyle={styles.scrollContent}
                     keyboardShouldPersistTaps="handled"
                 >
                     <View style={styles.form}>
-                        <Text style={styles.title}>Welcome</Text>
+                        <Text style={styles.title}>Welcome Back</Text>
 
-                        {error ? (
-                            <Text style={styles.error}>{error}</Text>
-                        ) : null}
+                        {errors.server && (
+                            <Text style={styles.error}>{errors.server}</Text>
+                        )}
 
                         <TextInput
-                            style={styles.input}
+                            style={[
+                                styles.input,
+                                errors.email && styles.inputError,
+                            ]}
                             placeholder="Email"
                             placeholderTextColor={"#666"}
                             value={email}
@@ -123,10 +125,16 @@ export default function AuthScreen() {
                                 passwordInputRef.current?.focus()
                             }
                         />
+                        {errors.email && (
+                            <Text style={styles.errorText}>{errors.email}</Text>
+                        )}
 
                         <TextInput
                             ref={passwordInputRef}
-                            style={styles.input}
+                            style={[
+                                styles.input,
+                                errors.password && styles.inputError,
+                            ]}
                             placeholder="Password"
                             placeholderTextColor={"#666"}
                             value={password}
@@ -136,6 +144,11 @@ export default function AuthScreen() {
                             returnKeyType="done"
                             onSubmitEditing={Keyboard.dismiss}
                         />
+                        {errors.password && (
+                            <Text style={styles.errorText}>
+                                {errors.password}
+                            </Text>
+                        )}
 
                         <TouchableOpacity
                             style={styles.button}
@@ -153,7 +166,9 @@ export default function AuthScreen() {
                             <Text style={styles.signupText}>
                                 Don't have an account?
                             </Text>
-                            <TouchableOpacity onPress={handleSignUp}>
+                            <TouchableOpacity
+                                onPress={() => router.push("/userPage/signup")}
+                            >
                                 <Text style={styles.signupLink}>Sign Up</Text>
                             </TouchableOpacity>
                         </View>
@@ -168,7 +183,7 @@ export default function AuthScreen() {
                         >
                             <AntDesign name="google" size={24} color="#fff" />
                             <Text style={styles.socialButtonText}>
-                                Available soon
+                                Awailable soon
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -270,5 +285,13 @@ const styles = StyleSheet.create({
         color: "#2563eb",
         fontWeight: "bold",
         marginLeft: 5,
+    },
+    inputError: {
+        borderColor: "#ef4444",
+    },
+    errorText: {
+        color: "#ef4444",
+        fontSize: 12,
+        marginTop: 5,
     },
 });
