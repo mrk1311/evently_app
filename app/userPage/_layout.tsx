@@ -13,6 +13,7 @@ export default function RootLayout() {
             <Stack.Screen name="favourites" />
             <Stack.Screen name="addEvent" />
             <Stack.Screen name="settings" />
+            <Stack.Screen name="admin" />
         </Stack>
     );
 }

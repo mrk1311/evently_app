@@ -4,6 +4,21 @@ import { supabase } from "@/utils/supabase";
 
 export const useUser = () => {
     const [user, setUser] = useState<User | null>(null);
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        const checkAdmin = async () => {
+            const { data } = await supabase
+                .from("profiles")
+                .select("is_admin")
+                .eq("user_id", user?.id)
+                .single();
+
+            setIsAdmin(data?.is_admin);
+        };
+
+        checkAdmin();
+    }, []);
 
     useEffect(() => {
         const checkUser = async () => {
@@ -24,5 +39,5 @@ export const useUser = () => {
         return () => subscription?.unsubscribe();
     }, []);
 
-    return { user };
+    return { user, isAdmin };
 };

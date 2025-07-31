@@ -21,6 +21,7 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import BottomSheet from "@gorhom/bottom-sheet";
 import EventDetailsBottomSheet from "@/components/EventDetailsBottomSheet";
 import { useMap } from "@/contexts/MapContext";
+import { fetchEvents } from "@/utils/fetchEvents";
 
 // Define proper response type for the joined data
 type FavoriteResponse = {
@@ -59,53 +60,32 @@ export default function Favourites() {
     };
 
     useEffect(() => {
+        let isMounted = true;
         const fetchFavoriteEvents = async () => {
-            if (favorites.size === 0) {
+            if (!user) {
                 setEvents([]);
                 return;
             }
 
             try {
-                const { data, error } = await supabase
-                    .from("events_with_wkt")
-                    .select("*")
-                    .in("id", Array.from(favorites));
-
-                if (error) throw error;
-
-                // Convert to EventFeature format
-                const formattedEvents = data.map((event) => ({
-                    type: "Feature",
-                    geometry: {
-                        type: "Point",
-                        coordinates: parseCoordinates(event.coordinates),
-                    },
-                    properties: {
-                        id: event.id,
-                        name: event.title,
-                        type: event.type,
-                        description: event.description,
-                        link: event.link,
-                        photo: event.photo,
-                        date: event.event_time,
-                        location: event.location,
-                    },
-                })) as EventFeature[];
-
-                setEvents(formattedEvents);
-            } catch (error) {
+                const data = await fetchEvents(Array.from(favorites));
+                console.log("Fetched favorite events:", data);
+                if (isMounted) setEvents(data.features);
+            } catch (error: unknown) {
                 console.error("Error fetching favorite events:", error);
+                Alert.alert(
+                    "Error",
+                    "An error occurred while fetching your favorite events."
+                );
             }
         };
 
-        function parseCoordinates(geometry: string): [number, number] {
-            const match = geometry.match(/POINT\(([^ ]+) ([^ ]+)\)/);
-            if (!match) throw new Error("Invalid geometry format");
-            return [parseFloat(match[1]), parseFloat(match[2])];
-        }
-
         fetchFavoriteEvents();
-    }, [favorites]);
+
+        return () => {
+            isMounted = false; // Cleanup to avoid setting state on unmounted component
+        };
+    }, [favorites, user]);
 
     const renderEventCard = useCallback(
         ({ item }: { item: EventFeature }) => (
@@ -237,6 +217,7 @@ export default function Favourites() {
             {user && favorites.size === 0 && !isLoading && (
                 <Text style={styles.error}>You have no favorites yet.</Text>
             )}
+
             <EventDetailsBottomSheet
                 ref={eventDetailsRef}
                 event={openEvent}

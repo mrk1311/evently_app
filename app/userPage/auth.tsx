@@ -169,7 +169,9 @@ export default function LoginScreen() {
                             <TouchableOpacity
                                 onPress={() => router.push("/userPage/signup")}
                             >
-                                <Text style={styles.signupLink}>Sign Up</Text>
+                                <Text style={styles.signupLink}>
+                                    Create Account
+                                </Text>
                             </TouchableOpacity>
                         </View>
 
@@ -183,7 +185,7 @@ export default function LoginScreen() {
                         >
                             <AntDesign name="google" size={24} color="#fff" />
                             <Text style={styles.socialButtonText}>
-                                Awailable soon
+                                Available soon
                             </Text>
                         </TouchableOpacity>
                     </View>

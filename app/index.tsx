@@ -48,6 +48,7 @@ export default function map() {
             isMounted = false; // Cleanup if component unmounts
         };
     }, []); // Empty dependency array = runs once on mount
+
     const { centerOnCoordinates } = useMap();
     const listBottomSheetRef = useRef<BottomSheet>(null);
     const typesBottomSheetRef = useRef<BottomSheet>(null);
@@ -110,7 +111,13 @@ export default function map() {
     const handleEventPressInCluster = (event: EventFeature) => {
         setOpenEvent(event);
         EventDetailsBottomSheetRef.current?.snapToIndex(0);
-        // clusterBottomSheetRef.current?.close();
+        clusterBottomSheetRef.current?.close();
+        setControlledCenter({
+            latitude: event.geometry.coordinates[1],
+            longitude: event.geometry.coordinates[0],
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
+        });
     };
 
     // user location

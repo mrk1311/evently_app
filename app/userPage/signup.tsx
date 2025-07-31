@@ -71,6 +71,15 @@ export default function SignUpScreen() {
     };
 
     const handleSignUp = async () => {
+        // Inside handleSignUp function
+        const { error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                emailRedirectTo: "MyEventApp://confirm?token=",
+            },
+        });
+
         if (!validateForm()) return;
 
         setLoading(true);

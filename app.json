@@ -5,15 +5,20 @@
         "version": "1.0.0",
         "orientation": "portrait",
         "icon": "./assets/images/icon.png",
-        "scheme": "myapp",
+        "scheme": "MyEventMap",
         "userInterfaceStyle": "automatic",
         "ios": {
             "supportsTablet": true,
-            "bundleIdentifier": "com.emerka.evently-app",
+            "bundleIdentifier": "com.emerka.MyEventMap",
             "renderProcess": "metal",
             "infoPlist": {
                 "NSLocationWhenInUseUsageDescription": "Allow Evently to access your location.",
-                "NSLocationAlwaysUsageDescription": "Allow Evently to access your location."
+                "NSLocationAlwaysUsageDescription": "Allow Evently to access your location.",
+                "CFBundleURLTypes": [
+                    {
+                        "CFBundleURLSchemes": ["MyEventMap"]
+                    }
+                ]
             }
         },
         "android": {
@@ -21,7 +26,18 @@
                 "foregroundImage": "./assets/images/adaptive-icon.png",
                 "backgroundColor": "#ffffff"
             },
-            "package": "com.emerka.evently_app"
+            "package": "com.emerka.MyEventMap",
+            "intentFilters": [
+                {
+                    "action": "VIEW",
+                    "data": {
+                        "scheme": "MyEventMap",
+                        "host": "confirm",
+                        "pathPrefix": "/"
+                    },
+                    "category": ["BROWSABLE", "DEFAULT"]
+                }
+            ]
         },
         "web": {
             "bundler": "metro",

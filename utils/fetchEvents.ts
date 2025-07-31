@@ -14,16 +14,27 @@ interface EventRow {
   location: string;
 }
 
-export async function fetchEvents(): Promise<EventFeatureCollection> {
+export async function fetchEvents(
+  favorites: Array<string> | null = null
+): Promise<EventFeatureCollection> {
 
+  let events: EventRow[] = [];
+
+  if (favorites=== null) {
   const { data, error } = await supabase
-    .from('events_with_wkt') // Use the new view
-    .select('*');
-
+    .from('events')
+    .select('*')
   if (error) throw error;
+   events = data as EventRow[];
+  } else {
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .in('id', favorites || [])
+  if (error) throw error;
+   events = data as EventRow[];
+  }
 
-  // Type assertion (safe because the view matches EventRow)
-  const events = data as EventRow[];
 
   return {
     type: 'FeatureCollection',

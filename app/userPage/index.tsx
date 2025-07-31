@@ -11,13 +11,12 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
 import { supabase } from "@/utils/supabase";
 import { useEffect, useState } from "react";
-import { User } from "@supabase/supabase-js";
 import { useUser } from "@/hooks/useUser";
 import { Alert } from "react-native";
 
 export default function userPage() {
     const router = useRouter();
-    const { user } = useUser();
+    const { user, isAdmin } = useUser();
     const [profile, setProfile] = useState<{ username?: string } | null>(null);
 
     // Fetch profile when user changes
@@ -97,7 +96,7 @@ export default function userPage() {
                 onPress={() => router.navigate("/userPage/addEvent")}
             >
                 <MaterialIcons name="event" size={36} color="#333" />
-                <Text>Add a event</Text>
+                <Text>Submit an event</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
@@ -106,6 +105,20 @@ export default function userPage() {
                 <MaterialIcons name="settings" size={36} color="#333" />
                 <Text>Settings</Text>
             </TouchableOpacity>
+            {/* {if user is admin, show an admin dashboard button} */}
+            {isAdmin && (
+                <TouchableOpacity
+                    style={styles.menuItem}
+                    onPress={() => router.navigate("/userPage/admin")}
+                >
+                    <MaterialIcons
+                        name="admin-panel-settings"
+                        size={36}
+                        color="#333"
+                    />
+                    <Text>Admin Dashboard</Text>
+                </TouchableOpacity>
+            )}
         </SafeAreaView>
     );
 }

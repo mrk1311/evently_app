@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { User } from "@supabase/supabase-js";
+import { Alert } from "react-native";
 
 type FavoritesContextType = {
     favorites: Set<string>;
@@ -62,7 +63,10 @@ export const FavoritesProvider = ({
         const {
             data: { user },
         } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user) {
+            Alert.alert("Login Required", "Please log in to save favorites");
+            return;
+        }
 
         try {
             // Optimistic update
