@@ -13,6 +13,7 @@ import { supabase } from "@/utils/supabase";
 import { useEffect, useState } from "react";
 import { useUser } from "@/hooks/useUser";
 import { Alert } from "react-native";
+import AdminDashboard from "./admin";
 
 export default function userPage() {
     const router = useRouter();
@@ -54,6 +55,25 @@ export default function userPage() {
         } else {
             router.navigate("/userPage/auth");
         }
+    };
+
+    // Admin dashboard button update when user changes and is admin
+    const AdminDashboardButton = () => {
+        if (!isAdmin) return null;
+
+        return (
+            <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => router.navigate("/userPage/admin")}
+            >
+                <MaterialIcons
+                    name="admin-panel-settings"
+                    size={36}
+                    color="#333"
+                />
+                <Text>Admin Dashboard</Text>
+            </TouchableOpacity>
+        );
     };
 
     return (
@@ -106,19 +126,7 @@ export default function userPage() {
                 <Text>Settings</Text>
             </TouchableOpacity>
             {/* {if user is admin, show an admin dashboard button} */}
-            {isAdmin && (
-                <TouchableOpacity
-                    style={styles.menuItem}
-                    onPress={() => router.navigate("/userPage/admin")}
-                >
-                    <MaterialIcons
-                        name="admin-panel-settings"
-                        size={36}
-                        color="#333"
-                    />
-                    <Text>Admin Dashboard</Text>
-                </TouchableOpacity>
-            )}
+            <AdminDashboardButton />
         </SafeAreaView>
     );
 }

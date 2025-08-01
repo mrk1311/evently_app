@@ -7,20 +7,6 @@ export const useUser = () => {
     const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
-        const checkAdmin = async () => {
-            const { data } = await supabase
-                .from("profiles")
-                .select("is_admin")
-                .eq("user_id", user?.id)
-                .single();
-
-            setIsAdmin(data?.is_admin);
-        };
-
-        checkAdmin();
-    }, []);
-
-    useEffect(() => {
         const checkUser = async () => {
             const {
                 data: { user },
@@ -38,6 +24,23 @@ export const useUser = () => {
 
         return () => subscription?.unsubscribe();
     }, []);
+
+    useEffect(() => {
+        const checkAdmin = async () => {
+            const { data } = await supabase
+                .from("profiles")
+                .select("is_admin")
+                .eq("id", user?.id)
+                .single();
+
+            setIsAdmin(data?.is_admin);
+            console.log("Admin status fetched:", data);
+        };
+        console.log("Checking admin status for user:", user?.id);
+        console.log("Admin status:", isAdmin);
+
+        checkAdmin();
+    }, [user]);
 
     return { user, isAdmin };
 };

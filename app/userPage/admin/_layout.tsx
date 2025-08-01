@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import AdminDashboard from "./index";
-import SuggestionDetail from "./suggestionDetails";
+import SuggestionDetails from "./suggestionDetails";
 
 export default function RootLayout() {
     return (
@@ -14,7 +14,7 @@ export default function RootLayout() {
                 options={{ headerShown: false }}
             />
             <Stack.Screen
-                name="SuggestionDetail"
+                name="SuggestionDetails"
                 options={{ title: "Edit Suggestion" }}
             />
         </Stack>

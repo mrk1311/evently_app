@@ -17,6 +17,7 @@ import { useUser } from "@/hooks/useUser";
 import { AntDesign } from "@expo/vector-icons";
 import getMarkerColor from "@/functions/getMarkerColor";
 import { EventSuggestion } from "@/types";
+import { useRouter } from "expo-router";
 
 export default function AdminDashboard() {
     const navigation = useNavigation();
@@ -24,6 +25,7 @@ export default function AdminDashboard() {
     const [suggestions, setSuggestions] = useState<EventSuggestion[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
     // Fetch pending suggestions
     const fetchSuggestions = useCallback(async () => {
@@ -99,11 +101,12 @@ export default function AdminDashboard() {
         ({ item }: { item: EventSuggestion }) => (
             <TouchableOpacity
                 style={styles.cardContainer}
-                // onPress={() =>
-                // navigation.navigate("SuggestionDetail", {
-                //     suggestion: item,
-                // })
-                // }
+                onPress={() => {
+                    router.push({
+                        pathname: "/userPage/admin/suggestionDetails",
+                        params: { suggestion: JSON.stringify(item) },
+                    });
+                }}
             >
                 <Image
                     source={{

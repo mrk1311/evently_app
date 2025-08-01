@@ -10,16 +10,18 @@ import {
     Alert,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRouter, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { EventSuggestion } from "@/types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function SuggestionDetail() {
-    const navigation = useNavigation();
-    const route = useRoute();
-    const { suggestion } = route.params as { suggestion: EventSuggestion };
+    const router = useRouter();
+    const params = useLocalSearchParams();
+    const suggestion = JSON.parse(
+        params.suggestion as string
+    ) as EventSuggestion;
 
     const [formData, setFormData] = useState(suggestion);
     const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +39,7 @@ export default function SuggestionDetail() {
                 .update(formData)
                 .eq("id", suggestion.id);
 
-            navigation.goBack();
+            router.back();
             Alert.alert("Success", "Suggestion updated successfully");
         } catch (err) {
             Alert.alert("Error", "Failed to update suggestion");
@@ -70,7 +72,7 @@ export default function SuggestionDetail() {
                 .update({ status: "approved" })
                 .eq("id", suggestion.id);
 
-            navigation.goBack();
+            router.back();
             Alert.alert("Approved", "Event has been published");
         } catch (err) {
             Alert.alert("Error", "Failed to approve suggestion");
@@ -88,7 +90,7 @@ export default function SuggestionDetail() {
                 .update({ status: "rejected" })
                 .eq("id", suggestion.id);
 
-            navigation.goBack();
+            router.back();
             Alert.alert("Rejected", "Suggestion has been rejected");
         } catch (err) {
             Alert.alert("Error", "Failed to reject suggestion");
@@ -102,7 +104,7 @@ export default function SuggestionDetail() {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity
-                    onPress={() => navigation.goBack()}
+                    onPress={() => router.back()}
                     style={styles.backButton}
                 >
                     <MaterialIcons name="chevron-left" size={24} />
