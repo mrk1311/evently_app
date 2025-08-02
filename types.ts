@@ -3,7 +3,7 @@ export type EventSuggestion = {
     title: string;
     description: string;
     location: string;
-    coordinates: string; // "SRID=4326;POINT(lng lat)"
+    coordinates: [number, number]; // "SRID=4326;POINT(lng lat)"
     photo_url: string;
     event_url: string;
     event_time: string;

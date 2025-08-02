@@ -38,7 +38,18 @@ export default function AdminDashboard() {
                 .order("created_at", { ascending: false });
 
             if (error) throw error;
-            setSuggestions(data as EventSuggestion[]);
+            // change coordinates to [lng, lat] format
+            const formattedData = data.map((suggestion) => ({
+                ...suggestion,
+                coordinates: suggestion.coordinates
+                    ? suggestion.coordinates
+                          .replace("SRID=4326;POINT(", "")
+                          .replace(")", "")
+                          .split(" ")
+                          .map(Number) // Convert to number array
+                    : [0, 0], // Default if no coordinates
+            }));
+            setSuggestions(formattedData);
         } catch (err: unknown) {
             if (err instanceof Error) {
                 setError(err.message || "Failed to load suggestions");

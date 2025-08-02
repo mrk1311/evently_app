@@ -15,6 +15,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { EventSuggestion } from "@/types";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import MapView, { Marker } from "react-native-maps";
 
 export default function SuggestionDetail() {
     const router = useRouter();
@@ -100,6 +101,14 @@ export default function SuggestionDetail() {
         }
     };
 
+    const handleMapPress = (event: any) => {
+        const { coordinate } = event.nativeEvent;
+        setFormData({
+            ...formData,
+            coordinates: [coordinate.latitude, coordinate.longitude],
+        });
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -180,6 +189,31 @@ export default function SuggestionDetail() {
                     onChangeText={(text) => handleChange("type", text)}
                     placeholder="music, art, sport..."
                 />
+
+                <MapView
+                    style={styles.map}
+                    initialRegion={{
+                        latitude: 51.1657,
+                        longitude: 10.4515,
+                        latitudeDelta: 30,
+                        longitudeDelta: 30,
+                    }}
+                    onPress={handleMapPress}
+                    showsCompass={false}
+                    showsUserLocation={true}
+                    showsMyLocationButton={true}
+                    rotateEnabled={false}
+                    pitchEnabled={false}
+                >
+                    {formData.coordinates && (
+                        <Marker
+                            coordinate={{
+                                latitude: formData.coordinates[1],
+                                longitude: formData.coordinates[0],
+                            }}
+                        />
+                    )}
+                </MapView>
 
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
@@ -288,5 +322,10 @@ const styles = StyleSheet.create({
         color: "white",
         fontWeight: "bold",
         fontSize: 16,
+    },
+    map: {
+        height: 300,
+        borderRadius: 8,
+        marginBottom: 15,
     },
 });
