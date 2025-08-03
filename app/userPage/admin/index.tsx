@@ -18,6 +18,7 @@ import { AntDesign } from "@expo/vector-icons";
 import getMarkerColor from "@/functions/getMarkerColor";
 import { EventSuggestion } from "@/types";
 import { useRouter } from "expo-router";
+import { parseCoordinates } from "@/utils/geoUtils";
 
 export default function AdminDashboard() {
     const navigation = useNavigation();
@@ -38,18 +39,7 @@ export default function AdminDashboard() {
                 .order("created_at", { ascending: false });
 
             if (error) throw error;
-            // change coordinates to [lng, lat] format
-            const formattedData = data.map((suggestion) => ({
-                ...suggestion,
-                coordinates: suggestion.coordinates
-                    ? suggestion.coordinates
-                          .replace("SRID=4326;POINT(", "")
-                          .replace(")", "")
-                          .split(" ")
-                          .map(Number) // Convert to number array
-                    : [0, 0], // Default if no coordinates
-            }));
-            setSuggestions(formattedData);
+            setSuggestions(data);
         } catch (err: unknown) {
             if (err instanceof Error) {
                 setError(err.message || "Failed to load suggestions");

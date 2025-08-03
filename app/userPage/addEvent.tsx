@@ -290,12 +290,12 @@ export default function AddEventPage() {
                                 )}
                             </View>
 
-                            {uploading && (
+                            {/* {uploading && (
                                 <ActivityIndicator
                                     size="large"
                                     style={styles.uploadIndicator}
                                 />
-                            )}
+                            )} */}
 
                             <View style={styles.dateContainer}>
                                 <Text style={styles.label}>Date</Text>
@@ -306,7 +306,7 @@ export default function AddEventPage() {
                                         mode="datetime"
                                         minimumDate={new Date()}
                                         onChange={(event, selectedDate) => {
-                                            setShowDatePicker(false);
+                                            // setShowDatePicker(false);
                                             if (selectedDate) {
                                                 setFormData({
                                                     ...formData,
