@@ -152,8 +152,12 @@ export default function SuggestionDetail() {
         const { coordinate } = event.nativeEvent;
         setFormData({
             ...formData,
-            coordinates: formatToPostGisPoint(coordinate[0], coordinate[1]),
+            coordinates: formatToPostGisPoint(
+                coordinate.longitude,
+                coordinate.latitude
+            ),
         });
+        console.log("Selected coordinates:", coordinate);
         setGeometry([coordinate.longitude, coordinate.latitude]);
     };
 
@@ -170,7 +174,7 @@ export default function SuggestionDetail() {
                             <Text style={styles.backText}>Back</Text>
                         </TouchableOpacity>
                         <Text style={styles.headerTitle}>Edit Suggestion</Text>
-                        <View style={{ width: 94 }} />
+                        <View style={{ width: 62 }} />
                     </View>
 
                     <ScrollView
@@ -278,8 +282,8 @@ export default function SuggestionDetail() {
                         <View style={styles.dateContainer}>
                             <Text style={styles.label}>Date</Text>
                             <View style={styles.dateInputContainer}>
-                                {/* <DateTimePicker
-                                    value={formData.event_time}
+                                <DateTimePicker
+                                    value={new Date(formData.event_time)}
                                     style={styles.dateInput}
                                     mode="datetime"
                                     minimumDate={new Date()}
@@ -287,11 +291,12 @@ export default function SuggestionDetail() {
                                         if (selectedDate) {
                                             setFormData({
                                                 ...formData,
-                                                event_time: selectedDate,
+                                                event_time:
+                                                    selectedDate.toISOString(),
                                             });
                                         }
                                     }}
-                                /> */}
+                                />
                             </View>
                         </View>
 
@@ -384,16 +389,16 @@ export default function SuggestionDetail() {
 
 const styles = StyleSheet.create({
     container: {
-        // flex: 1,
+        padding: 16,
         backgroundColor: "#fff",
     },
     header: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingVertical: 16,
+        padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#eee",
+        borderBottomColor: "#ccc",
     },
     backButton: {
         flexDirection: "row",

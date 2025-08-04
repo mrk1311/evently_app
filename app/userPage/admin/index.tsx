@@ -50,11 +50,11 @@ export default function AdminDashboard() {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [router, navigation]);
 
     useEffect(() => {
         fetchSuggestions();
-    }, []);
+    }, [router, fetchSuggestions]);
 
     // Handle suggestion actions
     const handleSuggestionAction = async (

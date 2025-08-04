@@ -186,7 +186,7 @@ export default function AddEventPage() {
                         >
                             Submit an Event
                         </Text>
-                        <Text style={{ width: 94 }} />
+                        <Text style={{ width: 62 }} />
                     </View>
                     {/* if user is not logged in show a message to log in */}
                     {!user && (
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     backButton: {
         flexDirection: "row",
         alignItems: "center",
-        padding: 16,
+        // paddingHorizontal: 16,
     },
     backText: {
         marginLeft: 8,
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        // padding: 16,
+        padding: 16,
         borderBottomWidth: 1,
         borderBottomColor: "#ccc",
     },
