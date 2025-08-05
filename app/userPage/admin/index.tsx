@@ -80,6 +80,9 @@ export default function AdminDashboard() {
                     type: suggestion.type,
                     organizer_id: suggestion.user_id,
                 });
+
+                // alert that event has been approved
+                Alert.alert("Success", "Event suggestion approved and added.");
             }
 
             // Update suggestion status

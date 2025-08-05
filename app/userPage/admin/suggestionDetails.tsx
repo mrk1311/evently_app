@@ -102,7 +102,7 @@ export default function SuggestionDetail() {
             setIsLoading(true);
 
             // Move to main events table
-            await supabase.from("events").insert({
+            const { error } = await supabase.from("events").insert({
                 title: formData.title,
                 description: formData.description,
                 location: formData.location,
@@ -113,6 +113,10 @@ export default function SuggestionDetail() {
                 type: formData.type,
                 organizer_id: formData.user_id,
             });
+
+            if (error) {
+                throw error;
+            }
 
             // Update suggestion status
             await supabase
