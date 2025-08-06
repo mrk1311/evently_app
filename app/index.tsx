@@ -49,7 +49,7 @@ export default function map() {
         };
     }, []); // Empty dependency array = runs once on mount
 
-    const { centerOnCoordinates } = useMap();
+    const { centerOnCoordinates, eventIdForDetails } = useMap();
     const listBottomSheetRef = useRef<BottomSheet>(null);
     const typesBottomSheetRef = useRef<BottomSheet>(null);
     const placeBottomSheetRef = useRef<BottomSheet>(null);
@@ -115,8 +115,8 @@ export default function map() {
         setControlledCenter({
             latitude: event.geometry.coordinates[1],
             longitude: event.geometry.coordinates[0],
-            latitudeDelta: 0.1,
-            longitudeDelta: 0.1,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
         });
     };
 
@@ -139,11 +139,25 @@ export default function map() {
         if (centerOnCoordinates) {
             setControlledCenter({
                 ...centerOnCoordinates,
-                latitudeDelta: 0.1,
-                longitudeDelta: 0.1,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
             });
         }
     }, [centerOnCoordinates]);
+
+    // open event details bottom sheet when eventIdForDetails changes
+    useEffect(() => {
+        if (eventIdForDetails) {
+            // Find the event with the given ID
+            const event = eventData.features.find(
+                (event) => event.properties?.id === eventIdForDetails
+            );
+            if (event) {
+                setOpenEvent(event);
+                EventDetailsBottomSheetRef.current?.snapToIndex(0);
+            }
+        }
+    }, [eventIdForDetails]);
 
     // get user location
     useEffect(() => {
@@ -538,11 +552,11 @@ export default function map() {
                         setControlledCenter({
                             latitude: openEvent.geometry.coordinates[1],
                             longitude: openEvent.geometry.coordinates[0],
-                            latitudeDelta: 0.1,
-                            longitudeDelta: 0.1,
+                            latitudeDelta: 0.01,
+                            longitudeDelta: 0.01,
                         });
-                        EventDetailsBottomSheetRef.current?.close();
-                        clusterBottomSheetRef.current?.close();
+                        EventDetailsBottomSheetRef.current?.snapToIndex(0);
+                        // clusterBottomSheetRef.current?.close();
                     }
                 }}
             />

@@ -45,7 +45,7 @@ export default function Favourites() {
     const navigation = useNavigation();
     const userData = useUser();
     const user = userData.user;
-    const { requestCenter } = useMap();
+    const { requestCenter, openEventDetailsOnMap } = useMap();
 
     const eventDetailsRef = useRef<BottomSheet>(null); // Add this ref
 
@@ -230,6 +230,8 @@ export default function Favourites() {
                             latitude: openEvent.geometry.coordinates[1],
                             longitude: openEvent.geometry.coordinates[0],
                         });
+                        // open event details bottom sheet on map
+                        openEventDetailsOnMap(openEvent.properties.id);
                     }
                 }}
             />

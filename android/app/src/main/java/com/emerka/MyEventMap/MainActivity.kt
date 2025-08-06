@@ -1,4 +1,4 @@
-package com.emerka.evently_app
+package com.emerka.MyEventMap
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

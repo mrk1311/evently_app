@@ -39,8 +39,8 @@ interface BottomSheetProps {
 const coordinatesToRegion = (coordinates: number[]) => ({
     latitude: coordinates[1],
     longitude: coordinates[0],
-    latitudeDelta: 0.1,
-    longitudeDelta: 0.1,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
 });
 
 type Ref = BottomSheet;

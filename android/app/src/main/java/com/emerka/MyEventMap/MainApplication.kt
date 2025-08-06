@@ -1,4 +1,4 @@
-package com.emerka.evently_app
+package com.emerka.MyEventMap
 
 import android.app.Application
 import android.content.res.Configuration

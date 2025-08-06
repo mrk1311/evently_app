@@ -30,6 +30,14 @@
         <data android:scheme="myapp"/>
         <data android:scheme="com.emerka.evently_app"/>
         <data android:scheme="exp+eventlyapp"/>
+        <data android:scheme="MyEventMap"/>
+        <data android:scheme="com.emerka.MyEventMap"/>
+      </intent-filter>
+      <intent-filter data-generated="true">
+        <action android:name="android.intent.action.VIEW"/>
+        <data android:scheme="MyEventMap" android:host="confirm" android:pathPrefix="/"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <category android:name="android.intent.category.DEFAULT"/>
       </intent-filter>
     </activity>
   </application>

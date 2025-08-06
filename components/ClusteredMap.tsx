@@ -148,9 +148,9 @@ const ClusteredMap: React.FC<MapProps> = ({
                 const tooClose = areMarkersTooClose(clusterEvents);
 
                 if (tooClose) {
-                    console.log(
-                        "Cluster has too many close markers, opening bottom sheet"
-                    );
+                    // If markers are too close, open bottom sheet with cluster events and zoom in
+                    const toRegion = calculateClusterBoundingBox(clusterEvents);
+                    mapRef.current?.animateToRegion(toRegion, 500);
                     openClusterEventsBottomSheet(clusterEvents);
                 } else {
                     // Calculate bounding box for the cluster

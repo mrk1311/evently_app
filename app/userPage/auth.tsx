@@ -175,7 +175,7 @@ export default function LoginScreen() {
                             </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             style={styles.socialButton}
                             onPress={() =>
                                 supabase.auth.signInWithOAuth({
@@ -187,7 +187,7 @@ export default function LoginScreen() {
                             <Text style={styles.socialButtonText}>
                                 Available soon
                             </Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>

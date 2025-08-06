@@ -29,8 +29,6 @@ interface BottomSheetProps {
 type Ref = BottomSheet;
 
 const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
-    // hooks
-
     // variables
     const [lastSearched, setLastSearched] = useState<Feature[] | null>(null);
     const snapPoints = useMemo(() => ["85%"], []);

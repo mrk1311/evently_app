@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     StyleSheet,
     Button,
+    Keyboard,
 } from "react-native";
 import type { EventFeatureCollection } from "./ClusteredMap";
 import { debounce } from "lodash";
@@ -51,12 +52,14 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                 onPress={() => {
                     if (type === "Type") {
                         props.openTypesBottomSheet();
+                        inputRef.current?.blur();
                     } else if (type === "Place") {
                         props.openPlaceBottomSheet();
+                        inputRef.current?.focus();
                     } else if (type === "Date") {
                         props.openDateBottomSheet();
                     }
-                    inputRef.current?.blur();
+                    // inputRef.current?.blur();
                     inputRef.current?.clear();
                 }}
             >
@@ -139,6 +142,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                             onFocus={() => {
                                 props.openListBottomSheet();
                             }}
+                            autoFocus={props.openedFilter === "Place"}
                         />
                     </View>
                 )}
