@@ -57,6 +57,7 @@ export default function map() {
     const EventDetailsBottomSheetRef = useRef<BottomSheet>(null);
     const [filteredEvents, setFilteredEvents] =
         useState<EventFeatureCollection>(eventData as EventFeatureCollection);
+    const [eventsInRegion, setEventsInRegion] = useState<EventFeature[]>([]);
     const uniqueEventTypes = useMemo(
         () =>
             Array.from(
@@ -133,6 +134,13 @@ export default function map() {
         },
         timestamp: 0,
     });
+
+    // list bottom sheet ref to top after center changed
+    useEffect(() => {
+        if (listBottomSheetRef.current) {
+            listBottomSheetRef.current.snapToIndex(0);
+        }
+    }, [controlledCenter]);
 
     // center map on coordinates from MapContext
     useEffect(() => {
@@ -491,6 +499,7 @@ export default function map() {
                 onRegionChangeComplete={handleRegionChangeComplete}
                 setCenterOnUser={setCenterOnUser}
                 openClusterEventsBottomSheet={openClusterEventsBottomSheet}
+                setEventsInRegion={setEventsInRegion}
             />
             <ShowUserLocationButton
                 active={centerOnUser}
@@ -509,6 +518,7 @@ export default function map() {
                 }}
                 pickedSortByOption={pickedSortByOption}
                 setPickedSortByOption={setPickedSortByOption}
+                eventsInRegion={eventsInRegion}
             />
 
             <TypesBottomSheet

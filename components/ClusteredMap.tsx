@@ -35,6 +35,7 @@ type MapProps = {
     onRegionChangeComplete: (region: Region) => void;
     setCenterOnUser: (boolean: boolean) => void;
     openClusterEventsBottomSheet: (events: EventFeature[]) => void; // Add this prop
+    setEventsInRegion: (events: EventFeature[]) => void;
 };
 
 const { width, height } = Dimensions.get("window");
@@ -47,12 +48,30 @@ const ClusteredMap: React.FC<MapProps> = ({
     onRegionChangeComplete,
     setCenterOnUser,
     openClusterEventsBottomSheet,
+    setEventsInRegion,
 }) => {
     const mapRef = React.useRef<MapView>(null);
     const superclusterRef = React.useRef<Supercluster | null>(null);
     const [clusters, setClusters] = useState<IFeature[]>([]);
     const [region, setRegion] = useState<Region>(center);
     const { favorites } = useFavorites();
+
+    useEffect(() => {
+        if (data && data.features) {
+            // Filter events in the current region
+            const filteredEvents = data.features.filter((feature) => {
+                const [lon, lat] = feature.geometry.coordinates;
+                return (
+                    lon >= region.longitude - region.longitudeDelta / 2 &&
+                    lon <= region.longitude + region.longitudeDelta / 2 &&
+                    lat >= region.latitude - region.latitudeDelta / 2 &&
+                    lat <= region.latitude + region.latitudeDelta / 2
+                );
+            }) as EventFeature[];
+
+            setEventsInRegion(filteredEvents);
+        }
+    }, [data, region]);
 
     // Initialize Supercluster
     useEffect(() => {

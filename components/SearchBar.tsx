@@ -13,7 +13,7 @@ import { debounce } from "lodash";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 
 type SearchBarProps = {
     openTypesBottomSheet: () => void;
@@ -40,7 +40,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
         type,
     }) => {
         const title =
-            type === "Type" ? "Types" : type === "Place" ? "Place" : "Time";
+            type === "Type" ? "Rodzaj" : type === "Place" ? "Miejsce" : "Czas";
 
         return (
             <TouchableOpacity
@@ -135,7 +135,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                                     ? "Find event types..."
                                     : props.openedFilter === "Place"
                                     ? "Find location..."
-                                    : "Find events..."
+                                    : "Szukaj wydarzeń..."
                             }
                             placeholderTextColor={"#666"}
                             onChangeText={(input) => onChangeText(input)}
@@ -158,7 +158,13 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                         style={styles.rightIcon}
                         onPress={() => router.navigate("/userPage")}
                     >
-                        <AntDesign name="user" size={18} color="#333" />
+                        {/* <AntDesign name="user" size={18} color="#333" /> */}
+                        <FontAwesome6
+                            style={styles.userIcon}
+                            name="user-large"
+                            size={15}
+                            color={"#78c181"}
+                        />
                     </TouchableOpacity>
                 )}
             </View>
@@ -200,10 +206,10 @@ const styles = StyleSheet.create({
         backgroundColor: "#e0e0e0",
     },
     selectedFilter: {
-        backgroundColor: "#2196F3",
+        backgroundColor: "#528759",
     },
     activeFilter: {
-        backgroundColor: "#8eb3ed",
+        backgroundColor: "#78c181",
     },
     filterButtonText: {
         color: "#333",
@@ -247,12 +253,16 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     rightIcon: {
-        backgroundColor: "#e0e0e0",
-        borderRadius: 25,
+        backgroundColor: "#528759",
+        borderRadius: 50,
         width: 30,
         height: 30,
         alignItems: "center",
         justifyContent: "center",
+    },
+    userIcon: {
+        position: "relative",
+        // top: 10,
     },
 });
 

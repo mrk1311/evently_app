@@ -143,7 +143,9 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     <>
                         <Text style={styles.subHeader}>Last searched:</Text>
                         {lastSearched === null ? (
-                            <Text>No places found</Text>
+                            <Text style={styles.text}>
+                                Brak historii wyszukiwania
+                            </Text>
                         ) : (
                             lastSearched.map((place) => (
                                 <PlaceCard
@@ -227,6 +229,9 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         color: "#333333",
         textAlign: "left",
+        paddingHorizontal: 16,
+    },
+    text: {
         paddingHorizontal: 16,
     },
     cardContainer: {

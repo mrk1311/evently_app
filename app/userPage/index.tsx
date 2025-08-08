@@ -6,9 +6,8 @@ import {
     SafeAreaView,
     TouchableOpacity,
 } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { supabase } from "@/utils/supabase";
 import { useEffect, useState } from "react";
@@ -16,7 +15,7 @@ import { useUser } from "@/hooks/useUser";
 import { Alert } from "react-native";
 import AdminDashboard from "./admin";
 import { LinearGradient } from "expo-linear-gradient";
-import MaskedView from "@react-native-masked-view/masked-view";
+// import MaskedView from "@react-native-masked-view/masked-view";
 
 export default function userPage() {
     const router = useRouter();
@@ -81,40 +80,36 @@ export default function userPage() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity
-                style={styles.header}
-                onPress={() => router.back()}
-            >
-                <MaterialIcons name="chevron-left" size={24} />
-                <Text style={styles.backText}>Back to map</Text>
-            </TouchableOpacity>
+            <View style={styles.header}>
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => router.back()}
+                >
+                    <MaterialIcons name="chevron-left" size={24} />
+                    <Text style={styles.backText}>Back</Text>
+                </TouchableOpacity>
+                <Text
+                    style={{
+                        fontSize: 25,
+                        fontWeight: "bold",
+                        // margin: "auto",
+                    }}
+                >
+                    MyEventMap
+                </Text>
+                <Text style={{ width: 94 }} />
+            </View>
             <TouchableOpacity
                 style={styles.userPreview}
                 onPress={handleAuthPress}
             >
-                <MaskedView
-                    style={styles.userIcon}
-                    maskElement={
-                        <FontAwesome
-                            name="user-circle-o"
-                            size={80}
-                            color="#000"
-                        />
-                    }
-                >
-                    <LinearGradient
-                        colors={["#e0e0e0", "#c0c0c0"]}
-                        style={styles.gradient}
+                <View style={styles.userIcon}>
+                    <FontAwesome6
+                        name="user-large"
+                        size={30}
+                        color={"#78c181"}
                     />
-                </MaskedView>
-                {/* <View style={styles.userIcon}>
-                    <FontAwesome
-                        name="user-circle-o"
-                        size={80}
-                        // create a gradient
-                        // color={}
-                    />
-                </View> */}
+                </View>
 
                 <Text>
                     {user
@@ -132,21 +127,21 @@ export default function userPage() {
                     })
                 }
             >
-                <AntDesign name="heart" size={36} color="red" />
+                <AntDesign name="heart" size={36} color="#d35050" />
                 <Text>Favourite events</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => router.navigate("/userPage/addEvent")}
             >
-                <MaterialIcons name="event" size={36} color="green" />
+                <MaterialIcons name="event" size={36} color="#ab64c9" />
                 <Text>Submit an event</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => router.navigate("/userPage/settings")}
             >
-                <MaterialIcons name="settings" size={36} color="blue" />
+                <MaterialIcons name="settings" size={36} color="#50a1d3" />
                 <Text>Settings</Text>
             </TouchableOpacity>
             {/* {if user is admin, show an admin dashboard button} */}
@@ -160,17 +155,16 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        display: "flex",
         flexDirection: "row",
-        // justifyContent: "flex-start",
         alignItems: "center",
-        alignContent: "center",
-        height: 50,
-        padding: 10,
+        justifyContent: "space-between",
+        // padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
     },
     backText: {
-        // justifyContent: "center",
-        // alignItems: "center",
+        marginLeft: 8,
+        fontSize: 16,
     },
     userPreview: {
         flexDirection: "row",
@@ -181,10 +175,10 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
     },
     userIcon: {
-        // backgroundColor: "#e0e0e0",
+        backgroundColor: "#528759",
         borderRadius: 50,
-        width: 100,
-        height: 100,
+        width: 80,
+        height: 80,
         alignItems: "center",
         justifyContent: "center",
     },
@@ -195,9 +189,9 @@ const styles = StyleSheet.create({
         gap: 30,
         borderBottomWidth: 1,
     },
-    gradient: {
-        flex: 1,
-        width: "100%",
-        height: "100%",
+    backButton: {
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 16,
     },
 });

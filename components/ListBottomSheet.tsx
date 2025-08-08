@@ -34,6 +34,7 @@ interface BottomSheetProps {
     openEventDetailsBottomSheet: (event: EventFeature) => void;
     pickedSortByOption: string;
     setPickedSortByOption: (sortByOption: string) => void;
+    eventsInRegion?: EventFeature[];
 }
 
 const coordinatesToRegion = (coordinates: number[]) => ({
@@ -58,6 +59,40 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     const listToTop = () => {
         flatListRef.current?.scrollToIndex({ animated: true, index: 0 });
     };
+
+    // create a new list with all events in region first, then all events in the whole collection
+    const eventList = useMemo(() => {
+        const eventsInRegionSet = new Set(
+            props.eventsInRegion?.map((event) => event.properties.id)
+        );
+
+        const listWithoutEventsInRegion = props.events.features.filter(
+            (event) => !eventsInRegionSet.has(event.properties.id)
+        );
+
+        // separator between two lists
+        if (props.eventsInRegion) {
+            listWithoutEventsInRegion.unshift({
+                type: "Feature",
+                geometry: {
+                    type: "Point",
+                    coordinates: [0, 0],
+                },
+                properties: {
+                    id: "separator",
+                    name: "Pozostałe najbliższe wydarzenia",
+                    type: "",
+                    description: "",
+                    date: "",
+                    link: "/#${string}",
+                    photo: "",
+                    location: "",
+                },
+            });
+        }
+
+        return [...(props.eventsInRegion || []), ...listWithoutEventsInRegion];
+    }, [props.events, props.eventsInRegion]);
 
     useEffect(() => {
         refreshFavorites();
@@ -170,86 +205,113 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
     const renderEventCard = useCallback(
         ({ item }: { item: EventFeature }) => (
-            <TouchableOpacity
-                style={styles.cardContainer}
-                onPress={() => {
-                    props.openEventDetailsBottomSheet(item);
-                    props.setCenter(
-                        coordinatesToRegion(item.geometry.coordinates)
-                    );
-                    props.snapToIndex(0);
-                }}
+            // if item is separator, return a view with text
+            <View
+            // style={[
+            //     styles.itemContainer,
+            //     item.properties.id === "separator" && {
+            //         backgroundColor: "#f0f0f0",
+            //         borderBottomWidth: 0,
+            //     },
+            // ]}
             >
-                {/* Event Image */}
-                {/* {item.properties.photo && ( */}
-                <Image
-                    source={{ uri: item.properties.photo }}
-                    style={styles.cardImagePlaceholder}
-                    resizeMode="cover"
-                />
-                {/* )} */}
-
-                {/* Event Type Indicator */}
-                <View
-                    style={[
-                        styles.typeIndicator,
-                        {
-                            backgroundColor: getMarkerColor(
-                                item.properties.type
-                            ),
-                        },
-                    ]}
-                />
-                {/* Main Content */}
-                <View style={styles.cardContent}>
-                    <View style={styles.cardHeader}>
-                        <Text style={styles.cardTitle}>
+                {item.properties.id === "separator" ? (
+                    <View
+                        style={[
+                            styles.itemContainer,
+                            item.properties.id === "separator" && {
+                                // backgroundColor: "#f0f0f0",
+                                borderBottomWidth: 0,
+                            },
+                        ]}
+                    >
+                        <Text style={{ fontWeight: "bold" }}>
                             {item.properties.name}
                         </Text>
-                        <TouchableOpacity
-                            onPress={
-                                favorites.has(item.properties.id)
-                                    ? () =>
-                                          handleRemoveFromFavorites(
-                                              item.properties.id
-                                          )
-                                    : () =>
-                                          handleAddToFavorites(
-                                              item.properties.id
-                                          )
-                            }
-                        >
-                            <AntDesign
-                                name={
-                                    favorites.has(item.properties.id)
-                                        ? "heart"
-                                        : "hearto"
-                                }
-                                size={24}
-                                color={
-                                    favorites.has(item.properties.id)
-                                        ? "red"
-                                        : "black"
-                                }
-                            />
-                        </TouchableOpacity>
                     </View>
-                    <View style={styles.metaContainer}>
-                        <Text style={styles.cardSubtitle}>
-                            {item.properties.type.toUpperCase()}
-                        </Text>
-                        <Text style={styles.cardDate}>
-                            {new Date(item.properties.date).toLocaleDateString(
-                                "en-GB"
-                            )}
-                        </Text>
-                    </View>
-                    {/* location */}
-                    <Text style={styles.cardDescription}>
-                        {item.properties.location}
-                    </Text>
-                </View>
-            </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity
+                        style={styles.cardContainer}
+                        onPress={() => {
+                            props.openEventDetailsBottomSheet(item);
+                            props.setCenter(
+                                coordinatesToRegion(item.geometry.coordinates)
+                            );
+                            props.snapToIndex(0);
+                        }}
+                    >
+                        {/* Event Image */}
+                        {/* {item.properties.photo && ( */}
+                        <Image
+                            source={{ uri: item.properties.photo }}
+                            style={styles.cardImagePlaceholder}
+                            resizeMode="cover"
+                        />
+                        {/* )} */}
+
+                        {/* Event Type Indicator */}
+                        <View
+                            style={[
+                                styles.typeIndicator,
+                                {
+                                    backgroundColor: getMarkerColor(
+                                        item.properties.type
+                                    ),
+                                },
+                            ]}
+                        />
+                        {/* Main Content */}
+                        <View style={styles.cardContent}>
+                            <View style={styles.cardHeader}>
+                                <Text style={styles.cardTitle}>
+                                    {item.properties.name}
+                                </Text>
+                                <TouchableOpacity
+                                    onPress={
+                                        favorites.has(item.properties.id)
+                                            ? () =>
+                                                  handleRemoveFromFavorites(
+                                                      item.properties.id
+                                                  )
+                                            : () =>
+                                                  handleAddToFavorites(
+                                                      item.properties.id
+                                                  )
+                                    }
+                                >
+                                    <AntDesign
+                                        name={
+                                            favorites.has(item.properties.id)
+                                                ? "heart"
+                                                : "hearto"
+                                        }
+                                        size={24}
+                                        color={
+                                            favorites.has(item.properties.id)
+                                                ? "red"
+                                                : "black"
+                                        }
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.metaContainer}>
+                                <Text style={styles.cardSubtitle}>
+                                    {item.properties.type.toUpperCase()}
+                                </Text>
+                                <Text style={styles.cardDate}>
+                                    {new Date(
+                                        item.properties.date
+                                    ).toLocaleDateString("en-GB")}
+                                </Text>
+                            </View>
+                            {/* location */}
+                            <Text style={styles.cardDescription}>
+                                {item.properties.location}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                )}
+            </View>
         ),
         [favorites, handleAddToFavorites, handleRemoveFromFavorites, props]
     );
@@ -263,12 +325,22 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         >
             <View style={styles.horizontalContainer}>
                 <Text style={styles.header}>
-                    Events: {props.events.features.length}
+                    {/* Wydarzenia: {props.events.features.length} */}
+                    Wydarzenia w tym obszarze
                 </Text>
 
-                <Menu>
+                {/* <Menu>
                     <MenuTrigger
-                        text={"Sort by: " + props.pickedSortByOption}
+                        text={
+                            "Sort by: " + props.pickedSortByOption ===
+                            "Map Center"
+                                ? "W centrum mapy"
+                                : props.pickedSortByOption === "User Location"
+                                ? "Najbliej ciebie"
+                                : props.pickedSortByOption === "Date of Event"
+                                ? "Nadchodzące"
+                                : "W centrum mapy"
+                        }
                         customStyles={triggerStyles}
                     />
                     <MenuOptions customStyles={optionsStyles}>
@@ -276,26 +348,34 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                             onSelect={() =>
                                 props.setPickedSortByOption("Map Center")
                             }
-                            text="Map Center"
+                            text="W centrum mapy"
                         />
                         <MenuOption
                             onSelect={() =>
                                 props.setPickedSortByOption("User Location")
                             }
-                            text="User Location"
+                            text="Najbliej ciebie"
                         />
                         <MenuOption
                             onSelect={() =>
                                 props.setPickedSortByOption("Date of Event")
                             }
-                            text="Date of Event"
+                            text="Nadchodzące"
                         />
                     </MenuOptions>
-                </Menu>
+                </Menu> */}
             </View>
+
+            {/* if no events in region, show message */}
+            {props.eventsInRegion?.length === 0 && (
+                <View style={styles.itemContainer}>
+                    <Text>Brak wydarzeń w tym obszarze.</Text>
+                </View>
+            )}
+
             <BottomSheetFlatList
                 ref={flatListRef}
-                data={props.events.features as EventFeature[]}
+                data={eventList}
                 keyExtractor={(item) => item.properties.id.toString()}
                 renderItem={renderEventCard}
                 contentContainerStyle={styles.contentContainer}
@@ -309,6 +389,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     }
                 }}
             />
+
             <ScrollToTopButton
                 active={buttonShown}
                 listToTop={listToTop}
@@ -377,12 +458,12 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         gap: "70%",
-        paddingLeft: 38,
+        paddingLeft: 16,
         paddingRight: 10,
         borderBottomWidth: 1,
         borderBottomColor: "#eeeeee",
         paddingBottom: 10,
-        margin: 5,
+        margin: 6,
         marginBottom: 0,
         height: 41,
         overflow: "visible",
@@ -394,7 +475,8 @@ const styles = StyleSheet.create({
     itemContainer: {
         padding: 6,
         margin: 6,
-        backgroundColor: "#eee",
+        paddingLeft: 16,
+        // backgroundColor: "#eee",
     },
     typeIndicator: {
         width: 6,

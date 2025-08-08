@@ -24,6 +24,7 @@ export async function fetchEvents(
   const { data, error } = await supabase
     .from('events')
     .select('*')
+    .order('event_time', { ascending: false });
   if (error) throw error;
    events = data as EventRow[];
   } else {
@@ -31,6 +32,7 @@ export async function fetchEvents(
     .from('events')
     .select('*')
     .in('id', favorites || [])
+    .order('event_time', { ascending: false });
   if (error) throw error;
    events = data as EventRow[];
   }
