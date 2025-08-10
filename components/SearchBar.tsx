@@ -79,11 +79,12 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
         () => (
             <View style={styles.inputContainer}>
                 <View style={styles.dateContainer}>
-                    <Text>From:</Text>
+                    <Text style={{ color: "#ffffff" }}>Od:</Text>
                     <DateTimePicker
                         style={styles.dateInput}
                         value={props.startDate}
                         mode={"date"}
+                        locale="pl"
                         // minimumDate={new Date()}
                         onChange={(event, selectedDate) => {
                             const currentDate = selectedDate || props.startDate;
@@ -92,11 +93,12 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                     />
                 </View>
                 <View style={styles.dateContainer}>
-                    <Text>To:</Text>
+                    <Text style={{ color: "#ffffff" }}>Do:</Text>
                     <DateTimePicker
                         style={styles.dateInput}
                         value={props.endDate}
                         mode={"date"}
+                        locale="pl"
                         // minimumDate={new Date()}
                         onChange={(event, selectedDate) => {
                             const currentDate = selectedDate || props.endDate;
@@ -125,6 +127,15 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
             <View style={styles.searchContainer}>
                 {props.openedFilter !== "Date" && (
                     <View style={styles.inputContainer}>
+                        {text === "" && (
+                            // render a search icon
+                            <MaterialIcons
+                                name="search"
+                                size={24}
+                                color="#ffffff"
+                                style={{ marginLeft: 10 }}
+                            />
+                        )}
                         <TextInput
                             ref={inputRef}
                             style={styles.input}
@@ -132,12 +143,12 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                             placeholder={
                                 //depending on the picked filter, the placeholder will change
                                 props.openedFilter === "Type"
-                                    ? "Find event types..."
+                                    ? "Wyszukaj rodzaje wydarzeń..."
                                     : props.openedFilter === "Place"
-                                    ? "Find location..."
+                                    ? "Wyszukaj miejscowość..."
                                     : "Szukaj wydarzeń..."
                             }
-                            placeholderTextColor={"#666"}
+                            placeholderTextColor={"#ffffff"}
                             onChangeText={(input) => onChangeText(input)}
                             onFocus={() => {
                                 props.openListBottomSheet();
@@ -150,7 +161,11 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                 {props.openedFilter === "Date" && <DateInputField />}
                 {props.searchQuery !== "" && (
                     <TouchableOpacity onPress={() => onChangeText("")}>
-                        <MaterialIcons name="cancel" size={33} color="#333" />
+                        <MaterialIcons
+                            name="cancel"
+                            size={33}
+                            color="#575757"
+                        />
                     </TouchableOpacity>
                 )}
                 {props.openedFilter === null && (
@@ -190,7 +205,7 @@ const styles = StyleSheet.create({
         top: -20,
         flexDirection: "row",
         justifyContent: "space-between",
-        backgroundColor: "white",
+        backgroundColor: "#282828",
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
         paddingTop: 20,
@@ -203,7 +218,7 @@ const styles = StyleSheet.create({
         height: 30,
         alignItems: "center",
         borderRadius: 15,
-        backgroundColor: "#e0e0e0",
+        backgroundColor: "#575757",
     },
     selectedFilter: {
         backgroundColor: "#528759",
@@ -212,13 +227,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#78c181",
     },
     filterButtonText: {
-        color: "#333",
+        color: "#ffffff",
     },
     searchContainer: {
-        backgroundColor: "white",
+        backgroundColor: "#282828",
         borderRadius: 20,
         paddingLeft: 5,
         paddingRight: 5,
+        gap: 10,
         zIndex: 1000,
         display: "flex",
         flexDirection: "row",
@@ -229,6 +245,7 @@ const styles = StyleSheet.create({
         height: 40,
         width: "100%",
         paddingHorizontal: 10,
+        color: "#ffffff",
     },
     typeControlButton: {
         padding: 8,

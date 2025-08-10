@@ -75,7 +75,7 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     {
                         backgroundColor: picks.includes(item)
                             ? getMarkerColor(item)
-                            : "white",
+                            : "#282828",
 
                         borderColor: getMarkerColor(item),
                     },
@@ -94,10 +94,12 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             backdropComponent={renderBackdrop}
             enableContentPanningGesture={true}
             enablePanDownToClose={false}
+            backgroundStyle={{ backgroundColor: "#282828" }}
+            handleIndicatorStyle={{ backgroundColor: "#ffffff" }}
         >
             <View style={styles.horizontalContainer}>
                 <Button
-                    title="Cancel"
+                    title="Anuluj"
                     // change to cancel and close
                     onPress={() => {
                         props.handleCancelTypes();
@@ -105,9 +107,9 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                         Keyboard.dismiss();
                     }}
                 />
-                <Text style={styles.header}>Choose Types</Text>
+                <Text style={styles.header}>Wybierz rodzaje</Text>
                 <Button
-                    title="Accept"
+                    title="Akceptuj"
                     // change to accept and close
                     onPress={() => {
                         props.handleAcceptTypes(picks);
@@ -121,8 +123,8 @@ const TypesBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     title={
                         // alternate between "Clear All" and "Select All"
                         picks.length === props.eventTypes.length
-                            ? "Clear All"
-                            : "Select All"
+                            ? "Odznacz Wszystkie"
+                            : "Zaznacz Wszystkie"
                     }
                     onPress={handleSelectClearAll}
                 />
@@ -161,7 +163,7 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 20,
         fontWeight: "700",
-        color: "#333333",
+        color: "#ffffff",
         textAlign: "center",
         padding: 8,
     },
@@ -174,7 +176,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     cardTitle: {
-        color: "#333333",
+        color: "#ffffff",
     },
 });
 

@@ -123,10 +123,12 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             backdropComponent={renderBackdrop}
             enableContentPanningGesture={true}
             enablePanDownToClose={false}
+            backgroundStyle={{ backgroundColor: "#282828" }}
+            handleIndicatorStyle={{ backgroundColor: "#ffffff" }}
         >
             <View style={styles.horizontalContainer}>
                 <Button
-                    title="Cancel"
+                    title="Anuluj"
                     // change to cancel and close
                     onPress={() => {
                         props.handleCancelPlace();
@@ -134,14 +136,16 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                         Keyboard.dismiss();
                     }}
                 />
-                <Text style={styles.header}>Choose Place</Text>
-                <Button title="Accept" />
+                <Text style={styles.header}>Wybierz Miejsce</Text>
+                <Button title="Akceptuj" />
             </View>
             <View style={styles.container}>
                 {/* display last searched items when not searching*/}
                 {props.places === null ? (
                     <>
-                        <Text style={styles.subHeader}>Last searched:</Text>
+                        <Text style={styles.subHeader}>
+                            Ostatnio wyszukiwane:
+                        </Text>
                         {lastSearched === null ? (
                             <Text style={styles.text}>
                                 Brak historii wyszukiwania
@@ -173,6 +177,7 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#282828",
     },
     horizontalContainer: {
         flexDirection: "row",
@@ -200,26 +205,11 @@ const styles = StyleSheet.create({
     textContainer: {
         flex: 1,
     },
-    eventTitle: {
-        fontSize: 16,
-        fontWeight: "600",
-        color: "#333333",
-    },
-    eventSubtitle: {
-        fontSize: 14,
-        color: "#666666",
-        marginTop: 4,
-    },
-    eventDate: {
-        fontSize: 12,
-        color: "#999999",
-        marginTop: 4,
-    },
     header: {
         fontSize: 20,
         fontWeight: "700",
         marginBottom: 16,
-        color: "#333333",
+        color: "#ffffff",
         textAlign: "center",
         padding: 8,
     },
@@ -227,7 +217,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "700",
         marginBottom: 16,
-        color: "#333333",
+        color: "#ffffff",
         textAlign: "left",
         paddingHorizontal: 16,
     },
@@ -245,7 +235,7 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         fontSize: 16,
-        color: "#333333",
+        color: "#ffffff",
     },
     metaContainer: {
         flexDirection: "row",

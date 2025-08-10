@@ -383,7 +383,7 @@ export default function AddEventPage() {
 const styles = StyleSheet.create({
     container: {
         padding: 16,
-        backgroundColor: "#fff",
+        backgroundColor: "#282828",
     },
     scrollContainer: {
         paddingBottom: 50,

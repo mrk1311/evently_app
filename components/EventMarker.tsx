@@ -87,7 +87,7 @@ const EventMarker: FunctionComponent<Props> = memo(
                                     <AntDesign
                                         name="heart"
                                         size={18}
-                                        color="red"
+                                        color="#d35050"
                                     />
                                 </View>
                                 <View style={styles.favoriteBadge}>
@@ -128,7 +128,7 @@ const EventMarker: FunctionComponent<Props> = memo(
                                             <AntDesign
                                                 name="heart"
                                                 size={18}
-                                                color="red"
+                                                color="#d35050"
                                             />
                                         </View>
                                         <View style={styles.favoriteBadge}>

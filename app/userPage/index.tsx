@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import { Feather, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { supabase } from "@/utils/supabase";
 import { useEffect, useState } from "react";
@@ -50,10 +50,7 @@ export default function userPage() {
 
     const handleAuthPress = () => {
         if (user) {
-            Alert.alert("Log Out", "Are you sure you want to log out?", [
-                { text: "Cancel", style: "cancel" },
-                { text: "Log Out", onPress: handleLogout },
-            ]);
+            return;
         } else {
             router.navigate("/userPage/auth");
         }
@@ -73,7 +70,7 @@ export default function userPage() {
                     size={36}
                     color="#333"
                 />
-                <Text>Admin Dashboard</Text>
+                <Text style={{ color: "#ffffff" }}>Admin Dashboard</Text>
             </TouchableOpacity>
         );
     };
@@ -85,38 +82,58 @@ export default function userPage() {
                     style={styles.backButton}
                     onPress={() => router.back()}
                 >
-                    <MaterialIcons name="chevron-left" size={24} />
-                    <Text style={styles.backText}>Back</Text>
+                    <MaterialIcons
+                        name="chevron-left"
+                        size={24}
+                        color={"#ffffff"}
+                    />
+                    <Text style={styles.backText}>Cofnij</Text>
                 </TouchableOpacity>
                 <Text
                     style={{
                         fontSize: 25,
                         fontWeight: "bold",
                         // margin: "auto",
+                        color: "#ffffff",
                     }}
                 >
                     MyEventMap
                 </Text>
                 <Text style={{ width: 94 }} />
             </View>
-            <TouchableOpacity
-                style={styles.userPreview}
-                onPress={handleAuthPress}
-            >
-                <View style={styles.userIcon}>
-                    <FontAwesome6
-                        name="user-large"
-                        size={30}
-                        color={"#78c181"}
-                    />
-                </View>
+            {user && (
+                <View style={styles.userPreview}>
+                    <View style={styles.userIcon}>
+                        <FontAwesome6
+                            name="user-large"
+                            size={30}
+                            color={"#78c181"}
+                        />
+                    </View>
 
-                <Text>
-                    {user
-                        ? profile?.username || user.email
-                        : "Log In / Sign Up"}
-                </Text>
-            </TouchableOpacity>
+                    <Text style={{ color: "#ffffff" }}>
+                        {profile?.username || user.email}
+                    </Text>
+                </View>
+            )}
+            {!user && (
+                <TouchableOpacity
+                    style={styles.userPreview}
+                    onPress={() => router.navigate("/userPage/auth")}
+                >
+                    <View style={styles.userIcon}>
+                        <FontAwesome6
+                            name="user-large"
+                            size={30}
+                            color={"#78c181"}
+                        />
+                    </View>
+
+                    <Text style={{ color: "#ffffff" }}>
+                        {"Zaloguj się / Zarejestruj"}
+                    </Text>
+                </TouchableOpacity>
+            )}
 
             <TouchableOpacity
                 style={styles.menuItem}
@@ -128,24 +145,56 @@ export default function userPage() {
                 }
             >
                 <AntDesign name="heart" size={36} color="#d35050" />
-                <Text>Favourite events</Text>
+                <Text style={{ color: "#ffffff" }}>Ulubione wydarzenia</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => router.navigate("/userPage/addEvent")}
             >
                 <MaterialIcons name="event" size={36} color="#ab64c9" />
-                <Text>Submit an event</Text>
+                <Text style={{ color: "#ffffff" }}>Zaproponuj wydarzenie</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => router.navigate("/userPage/settings")}
             >
                 <MaterialIcons name="settings" size={36} color="#50a1d3" />
-                <Text>Settings</Text>
+                <Text style={{ color: "#ffffff" }}>Ustawienia</Text>
             </TouchableOpacity>
             {/* {if user is admin, show an admin dashboard button} */}
             <AdminDashboardButton />
+            <TouchableOpacity
+                style={styles.menuItem}
+                // onPress={() => router.navigate("/userPage/settings")}
+            >
+                <MaterialIcons name="star-rate" size={36} color="gold" />
+                <Text style={{ color: "#ffffff" }}>Podziel się opinią</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.menuItem}
+                // onPress={() => router.navigate("/userPage/settings")}
+            >
+                <Feather name="alert-circle" size={36} color="#fff" />
+                <Text style={{ color: "#ffffff" }}>Zgłoś problem</Text>
+            </TouchableOpacity>
+            {user && (
+                <TouchableOpacity
+                    style={styles.menuItem}
+                    onPress={() =>
+                        Alert.alert(
+                            "Log Out",
+                            "Are you sure you want to log out?",
+                            [
+                                { text: "Cancel", style: "cancel" },
+                                { text: "Log Out", onPress: handleLogout },
+                            ]
+                        )
+                    }
+                >
+                    <MaterialIcons name="logout" size={36} color="#fff" />
+                    <Text style={{ color: "#ffffff" }}>Wyloguj się</Text>
+                </TouchableOpacity>
+            )}
         </SafeAreaView>
     );
 }
@@ -153,6 +202,7 @@ export default function userPage() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#282828",
     },
     header: {
         flexDirection: "row",
@@ -160,11 +210,12 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         // padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
+        borderBottomColor: "#575757",
     },
     backText: {
         marginLeft: 8,
         fontSize: 16,
+        color: "#ffffff",
     },
     userPreview: {
         flexDirection: "row",
@@ -173,6 +224,7 @@ const styles = StyleSheet.create({
         gap: 30,
         borderBottomWidth: 1,
         borderTopWidth: 1,
+        borderColor: "#575757",
     },
     userIcon: {
         backgroundColor: "#528759",
@@ -188,6 +240,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 30,
         borderBottomWidth: 1,
+        borderColor: "#575757",
     },
     backButton: {
         flexDirection: "row",

@@ -50,6 +50,6 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 150,
         right: 20,
-        backgroundColor: "white",
+        backgroundColor: "#282828",
     },
 });

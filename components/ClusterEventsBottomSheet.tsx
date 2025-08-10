@@ -206,8 +206,8 @@ const ClusterEventsBottomSheet = forwardRef<
                                 size={24}
                                 color={
                                     favorites.has(item.properties.id)
-                                        ? "red"
-                                        : "black"
+                                        ? "#d35050"
+                                        : "#fff"
                                 }
                             />
                         </TouchableOpacity>
@@ -246,12 +246,14 @@ const ClusterEventsBottomSheet = forwardRef<
                     opacity={0.5}
                 />
             )}
+            backgroundStyle={{ backgroundColor: "#282828" }}
+            handleIndicatorStyle={{ backgroundColor: "#fff" }}
         >
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Events at this location</Text>
+                    <Text style={styles.title}>Wydarzenia w tym miejscu</Text>
                     <Text style={styles.subtitle}>
-                        {events.length} event{events.length > 1 ? "s" : ""}
+                        {events[0]?.properties.location}
                     </Text>
                 </View>
 
@@ -261,7 +263,9 @@ const ClusterEventsBottomSheet = forwardRef<
                     keyExtractor={(item) => item.properties.id}
                     contentContainerStyle={styles.listContent}
                     ListEmptyComponent={
-                        <Text style={styles.emptyText}>No events found</Text>
+                        <Text style={styles.emptyText}>
+                            Nie znaleziono wydarzeń
+                        </Text>
                     }
                 />
             </View>
@@ -273,21 +277,22 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         // padding: 16,
-        backgroundColor: "white",
+        backgroundColor: "#282828",
     },
     header: {
         // marginBottom: 16,
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#eee",
+        borderBottomColor: "#575757",
     },
     title: {
         fontSize: 20,
         fontWeight: "bold",
+        color: "#fff",
     },
     subtitle: {
         fontSize: 16,
-        color: "#666",
+        color: "#fff",
     },
     listContent: {
         paddingBottom: 20,
@@ -295,7 +300,7 @@ const styles = StyleSheet.create({
     eventItem: {
         paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: "#eee",
+        borderBottomColor: "#575757",
     },
     eventName: {
         fontSize: 16,
@@ -320,7 +325,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#eeeeee",
+        borderBottomColor: "#575757",
     },
     cardHeader: {
         flexDirection: "row",
@@ -333,7 +338,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontSize: 16,
         fontWeight: "600",
-        color: "#333333",
+        color: "#fff",
     },
     metaContainer: {
         flexDirection: "row",
@@ -341,16 +346,16 @@ const styles = StyleSheet.create({
     },
     cardSubtitle: {
         fontSize: 14,
-        color: "#666666",
+        color: "#fff",
     },
     cardDate: {
         fontSize: 12,
-        color: "#999999",
+        color: "#fff",
         marginLeft: 8,
     },
     cardDescription: {
         fontSize: 14,
-        color: "#666666",
+        color: "#fff",
         marginTop: 8,
     },
     cardImage: {

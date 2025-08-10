@@ -91,6 +91,26 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             });
         }
 
+        if (props.eventsInRegion?.length === 0) {
+            listWithoutEventsInRegion.unshift({
+                type: "Feature",
+                geometry: {
+                    type: "Point",
+                    coordinates: [0, 0],
+                },
+                properties: {
+                    id: "separator2",
+                    name: "Brak wydarzeń w okolicy",
+                    type: "",
+                    description: "",
+                    date: "",
+                    link: "/#${string}",
+                    photo: "",
+                    location: "",
+                },
+            });
+        }
+
         return [...(props.eventsInRegion || []), ...listWithoutEventsInRegion];
     }, [props.events, props.eventsInRegion]);
 
@@ -215,17 +235,15 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             //     },
             // ]}
             >
-                {item.properties.id === "separator" ? (
-                    <View
-                        style={[
-                            styles.itemContainer,
-                            item.properties.id === "separator" && {
-                                // backgroundColor: "#f0f0f0",
-                                borderBottomWidth: 0,
-                            },
-                        ]}
-                    >
-                        <Text style={{ fontWeight: "bold" }}>
+                {item.properties.id === "separator" ||
+                item.properties.id === "separator2" ? (
+                    <View style={styles.itemContainer}>
+                        <Text
+                            style={{
+                                fontWeight: "bold",
+                                color: "#ffffff",
+                            }}
+                        >
                             {item.properties.name}
                         </Text>
                     </View>
@@ -288,8 +306,8 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                                         size={24}
                                         color={
                                             favorites.has(item.properties.id)
-                                                ? "red"
-                                                : "black"
+                                                ? "#d35050"
+                                                : "#ffffff"
                                         }
                                     />
                                 </TouchableOpacity>
@@ -322,6 +340,8 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             snapPoints={snapPoints}
             enableDynamicSizing={false}
             style={styles.container}
+            backgroundStyle={{ backgroundColor: "#282828" }}
+            handleIndicatorStyle={{ backgroundColor: "#ffffff" }}
         >
             <View style={styles.horizontalContainer}>
                 <Text style={styles.header}>
@@ -367,11 +387,13 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             </View>
 
             {/* if no events in region, show message */}
-            {props.eventsInRegion?.length === 0 && (
+            {/* {props.eventsInRegion?.length === 0 && (
                 <View style={styles.itemContainer}>
-                    <Text>Brak wydarzeń w tym obszarze.</Text>
+                    <Text style={{ color: "#ffffff" }}>
+                        Brak wydarzeń w tym obszarze.
+                    </Text>
                 </View>
-            )}
+            )} */}
 
             <BottomSheetFlatList
                 ref={flatListRef}
@@ -399,54 +421,54 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     );
 });
 
-const triggerStyles = {
-    triggerText: {
-        color: "#333",
-        padding: 8,
-        borderRadius: 15,
-        width: 145,
-    },
-    triggerOuterWrapper: {
-        backgroundColor: "#e0e0e0",
-        flex: 1,
-        borderRadius: 15,
-    },
-    triggerWrapper: {
-        borderRadius: 15,
-    },
-    triggerTouchable: {
-        textAlign: "center",
-        underlayColor: "#8eb3ed",
-        borderRadius: 15,
-        activeOpacity: 70,
-        style: {
-            flex: 1,
-        },
-    },
-};
+// const triggerStyles = {
+//     triggerText: {
+//         color: "#333",
+//         padding: 8,
+//         borderRadius: 15,
+//         width: 145,
+//     },
+//     triggerOuterWrapper: {
+//         backgroundColor: "#e0e0e0",
+//         flex: 1,
+//         borderRadius: 15,
+//     },
+//     triggerWrapper: {
+//         borderRadius: 15,
+//     },
+//     triggerTouchable: {
+//         textAlign: "center",
+//         underlayColor: "#8eb3ed",
+//         borderRadius: 15,
+//         activeOpacity: 70,
+//         style: {
+//             flex: 1,
+//         },
+//     },
+// };
 
-const optionsStyles = {
-    optionsContainer: {
-        backgroundColor: "transparent",
-        marginTop: 30,
-        marginLeft: 70,
-    },
-    optionsWrapper: {
-        backgroundColor: "#e0e0e0",
-        borderRadius: 15,
-        width: 120,
-    },
-    optionWrapper: {
-        margin: 5,
-    },
-    optionTouchable: {
-        underlayColor: "#8eb3ed",
-        activeOpacity: 70,
-    },
-    optionText: {
-        color: "#333",
-    },
-};
+// const optionsStyles = {
+//     optionsContainer: {
+//         backgroundColor: "transparent",
+//         marginTop: 30,
+//         marginLeft: 70,
+//     },
+//     optionsWrapper: {
+//         backgroundColor: "#e0e0e0",
+//         borderRadius: 15,
+//         width: 120,
+//     },
+//     optionWrapper: {
+//         margin: 5,
+//     },
+//     optionTouchable: {
+//         underlayColor: "#8eb3ed",
+//         activeOpacity: 70,
+//     },
+//     optionText: {
+//         color: "#333",
+//     },
+// };
 
 const styles = StyleSheet.create({
     container: {
@@ -461,22 +483,24 @@ const styles = StyleSheet.create({
         paddingLeft: 16,
         paddingRight: 10,
         borderBottomWidth: 1,
-        borderBottomColor: "#eeeeee",
+        borderBottomColor: "#575757",
         paddingBottom: 10,
-        margin: 6,
+        // margin: 6,
         marginBottom: 0,
         height: 41,
         overflow: "visible",
     },
     contentContainer: {
-        backgroundColor: "white",
+        backgroundColor: "#282828",
         zIndex: 5000,
     },
     itemContainer: {
-        padding: 6,
-        margin: 6,
+        padding: 12,
+        // margin: 6,
         paddingLeft: 16,
         // backgroundColor: "#eee",
+        borderBottomWidth: 1,
+        borderBottomColor: "#575757",
     },
     typeIndicator: {
         width: 6,
@@ -488,7 +512,7 @@ const styles = StyleSheet.create({
     eventTitle: {
         fontSize: 16,
         fontWeight: "600",
-        color: "#333333",
+        color: "#ffffff",
     },
     eventSubtitle: {
         fontSize: 14,
@@ -503,14 +527,14 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 20,
         fontWeight: "700",
-        color: "#333333",
+        color: "#ffffff",
         textAlign: "left",
     },
     cardContainer: {
         flexDirection: "row",
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#eeeeee",
+        borderBottomColor: "#575757",
     },
     cardHeader: {
         flexDirection: "row",
@@ -523,7 +547,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontSize: 16,
         fontWeight: "600",
-        color: "#333333",
+        color: "#ffffff",
     },
     metaContainer: {
         flexDirection: "row",
@@ -531,16 +555,16 @@ const styles = StyleSheet.create({
     },
     cardSubtitle: {
         fontSize: 14,
-        color: "#666666",
+        color: "#ffffff",
     },
     cardDate: {
         fontSize: 12,
-        color: "#999999",
+        color: "#ffffff",
         marginLeft: 8,
     },
     cardDescription: {
         fontSize: 14,
-        color: "#666666",
+        color: "#ffffff",
         marginTop: 8,
     },
     cardImage: {

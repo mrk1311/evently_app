@@ -87,6 +87,8 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                 backdropComponent={renderBackdrop}
                 enableContentPanningGesture={true}
                 enablePanDownToClose={true}
+                backgroundStyle={{ backgroundColor: "#282828" }}
+                handleIndicatorStyle={{ backgroundColor: "#ffffff" }}
             >
                 <View style={styles.container}>
                     <View style={styles.header}>
@@ -103,7 +105,7 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                                 <AntDesign
                                     name="enviromento"
                                     size={24}
-                                    color="black"
+                                    color="#ffffff"
                                 />
                             </TouchableOpacity>
 
@@ -139,8 +141,8 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                                         favorites.has(
                                             props?.event?.properties.id!
                                         )
-                                            ? "red"
-                                            : "black"
+                                            ? "#d35050"
+                                            : "#ffffff"
                                     }
                                 />
                             </TouchableOpacity>
@@ -166,24 +168,15 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                         />
                         {/* )} */}
                         <View style={styles.infoContainer}>
-                            <Text style={styles.infoTitle}>Event Type</Text>
+                            <Text style={styles.infoTitle}>Rodzaj</Text>
                             <Text style={styles.infoText}>
                                 {props.event?.properties.type.toUpperCase()}
                             </Text>
-                            <Text style={styles.infoTitle}>Tickets</Text>
-                            <Link
-                                href={props.event?.properties?.link! || "#"}
-                                style={styles.link}
-                            >
-                                {props.event?.properties.link
-                                    ? props.event?.properties.link.toString()
-                                    : "No link available"}
-                            </Link>
-                            <Text style={styles.infoTitle}>Location</Text>
+                            <Text style={styles.infoTitle}>Miejsce</Text>
                             <Text style={styles.infoText}>
                                 {props.event?.properties.location}
                             </Text>
-                            <Text style={styles.infoTitle}>Time</Text>
+                            <Text style={styles.infoTitle}>Data i czas</Text>
                             <Text style={styles.infoText}>
                                 {new Date(
                                     props.event?.properties?.date!
@@ -198,9 +191,18 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                                     hour12: false,
                                 })}
                             </Text>
+                            <Text style={styles.infoTitle}>Kup bilety</Text>
+                            <Link
+                                href={props.event?.properties?.link! || "#"}
+                                style={styles.link}
+                            >
+                                {props.event?.properties.link
+                                    ? props.event?.properties.link.toString()
+                                    : "No link available"}
+                            </Link>
                         </View>
                     </View>
-                    <Text style={styles.headerText}>Description</Text>
+                    <Text style={styles.subHeaderText}>Opis</Text>
                     <Text style={styles.description}>
                         {props.event?.properties.description}
                     </Text>
@@ -213,20 +215,30 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "white",
+        backgroundColor: "#282828",
         padding: 20,
     },
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginBottom: 8,
+        // marginBottom: 8,
         padding: 8,
+        paddingLeft: 0,
+        alignItems: "center",
     },
     headerText: {
         fontSize: 20,
-        // margin: 8,
+        margin: 8,
         fontWeight: "bold",
         textAlign: "left",
+        color: "#ffffff",
+    },
+    subHeaderText: {
+        fontSize: 20,
+        margin: 8,
+        fontWeight: "bold",
+        textAlign: "left",
+        color: "#fff",
     },
     link: {
         color: "#2563eb",
@@ -246,19 +258,20 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginBottom: 8,
         fontWeight: "bold",
-        color: "#333333",
+        color: "#ffffff",
         width: "100%",
     },
     infoTitle: {
-        fontSize: 12,
+        fontSize: 16,
         color: "#999999",
         marginLeft: 8,
         marginBottom: 4,
-        fontWeight: "bold",
+        // fontWeight: "bold",
     },
     description: {
         fontSize: 16,
         margin: 8,
+        color: "#ffffff",
     },
     typeIndicator: {
         height: 6,
@@ -271,6 +284,10 @@ const styles = StyleSheet.create({
         height: 200,
         borderRadius: 8,
         backgroundColor: "#eeeeee",
+        alignContent: "center",
+        justifyContent: "center",
+        alignItems: "center",
+        margin: "auto",
     },
     horizontalContainer: {
         flexDirection: "row",

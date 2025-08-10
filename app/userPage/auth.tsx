@@ -79,16 +79,21 @@ export default function LoginScreen() {
                     style={styles.backButton}
                     onPress={() => router.back()}
                 >
-                    <MaterialIcons name="chevron-left" size={24} />
-                    <Text style={styles.backText}>Back</Text>
+                    <MaterialIcons
+                        name="chevron-left"
+                        size={24}
+                        color={"#fff"}
+                    />
+                    <Text style={styles.backText}>Cofnij</Text>
                 </TouchableOpacity>
                 <Text
                     style={{
                         fontSize: 20,
                         fontWeight: "bold",
+                        color: "#fff",
                     }}
                 >
-                    Sign In
+                    MyEventMap
                 </Text>
                 <Text style={{ width: 94 }} />
             </View>
@@ -102,7 +107,7 @@ export default function LoginScreen() {
                     keyboardShouldPersistTaps="handled"
                 >
                     <View style={styles.form}>
-                        <Text style={styles.title}>Welcome Back</Text>
+                        <Text style={styles.title}>Zaloguj się</Text>
 
                         {errors.server && (
                             <Text style={styles.error}>{errors.server}</Text>
@@ -113,8 +118,8 @@ export default function LoginScreen() {
                                 styles.input,
                                 errors.email && styles.inputError,
                             ]}
-                            placeholder="Email"
-                            placeholderTextColor={"#666"}
+                            placeholder="Adres e-mail"
+                            placeholderTextColor={"#fff"}
                             value={email}
                             onChangeText={setEmail}
                             autoCapitalize="none"
@@ -135,8 +140,8 @@ export default function LoginScreen() {
                                 styles.input,
                                 errors.password && styles.inputError,
                             ]}
-                            placeholder="Password"
-                            placeholderTextColor={"#666"}
+                            placeholder="Hasło"
+                            placeholderTextColor={"#fff"}
                             value={password}
                             onChangeText={setPassword}
                             autoComplete="password"
@@ -158,19 +163,21 @@ export default function LoginScreen() {
                             {loading ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
-                                <Text style={styles.buttonText}>Sign In</Text>
+                                <Text style={styles.buttonText}>
+                                    Zaloguj się
+                                </Text>
                             )}
                         </TouchableOpacity>
 
                         <View style={styles.signupPrompt}>
                             <Text style={styles.signupText}>
-                                Don't have an account?
+                                Nie masz konta?
                             </Text>
                             <TouchableOpacity
                                 onPress={() => router.push("/userPage/signup")}
                             >
                                 <Text style={styles.signupLink}>
-                                    Create Account
+                                    Zarejestruj się
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -198,6 +205,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#282828",
     },
     backButton: {
         flexDirection: "row",
@@ -207,13 +215,14 @@ const styles = StyleSheet.create({
     backText: {
         marginLeft: 8,
         fontSize: 16,
+        color: "#fff",
     },
     header: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
         borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
+        borderBottomColor: "#575757",
     },
     keyboardAvoidingContainer: {
         flex: 1,
@@ -232,13 +241,15 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 20,
         textAlign: "center",
+        color: "#fff",
     },
     input: {
         height: 50,
         borderWidth: 1,
         borderRadius: 8,
         padding: 10,
-        backgroundColor: "#fff",
+        borderColor: "#575757",
+        backgroundColor: "#282828",
     },
     button: {
         height: 50,
@@ -281,7 +292,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     signupText: {
-        color: "#666",
+        color: "#fff",
     },
     signupLink: {
         color: "#2563eb",

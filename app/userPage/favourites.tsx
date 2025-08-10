@@ -140,7 +140,11 @@ export default function Favourites() {
                                     )
                             }
                         >
-                            <AntDesign name={"heart"} size={24} color={"red"} />
+                            <AntDesign
+                                name={"heart"}
+                                size={24}
+                                color={"#d35050"}
+                            />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.metaContainer}>
@@ -269,7 +273,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     listContent: {
-        padding: 16,
+        // padding: 16,
     },
     // cardContainer: {
     //     backgroundColor: "#fff",

@@ -34,11 +34,11 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             <TouchableOpacity
                 style={styles.cardContainer}
                 onPress={() => {
-                    if (item === "Today") {
+                    if (item === "Dzisiaj") {
                         props.setStartDate(new Date());
                         props.setEndDate(new Date());
                         props.handleAcceptDates();
-                    } else if (item === "This Week") {
+                    } else if (item === "W tym tygodniu") {
                         const today = new Date();
                         const startOfWeek = new Date(
                             today.getFullYear(),
@@ -53,7 +53,7 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                         props.setStartDate(startOfWeek);
                         props.setEndDate(endOfWeek);
                         props.handleAcceptDates();
-                    } else if (item === "This Month") {
+                    } else if (item === "W tym miesiącu") {
                         const today = new Date();
                         const startOfMonth = new Date(
                             today.getFullYear(),
@@ -71,7 +71,7 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     }
                 }}
             >
-                <Text>{item}</Text>
+                <Text style={styles.cardText}>{item}</Text>
             </TouchableOpacity>
         ),
         [] // No dependencies needed due to functional update
@@ -86,18 +86,24 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             backdropComponent={renderBackdrop}
             enableContentPanningGesture={true}
             enablePanDownToClose={false}
+            backgroundStyle={{ backgroundColor: "#282828" }}
+            handleIndicatorStyle={{ backgroundColor: "#ffffff" }}
         >
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Button title="Cancel" onPress={props.handleCancelDates} />
-                    <Text style={styles.headerText}>Select Dates</Text>
-                    <Button title="Accept" onPress={props.handleAcceptDates} />
+                    <Button title="Anuluj" onPress={props.handleCancelDates} />
+                    <Text style={styles.headerText}>Wybierz datę</Text>
+                    <Button
+                        title="Akceptuj"
+                        onPress={props.handleAcceptDates}
+                    />
                 </View>
 
                 <BottomSheetFlatList
-                    data={["Today", "This Week", "This Month"]}
+                    data={["Dzisiaj", "W tym tygodniu", "W tym miesiącu"]}
                     keyExtractor={(item) => item}
                     renderItem={renderItem}
+                    contentContainerStyle={{ paddingBottom: 20 }}
                 />
             </View>
         </BottomSheet>
@@ -109,7 +115,7 @@ export default memo(DateBottomSheet);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "white",
+        backgroundColor: "#282828",
     },
     header: {
         flexDirection: "row",
@@ -117,14 +123,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#eeeeee",
-    },
-    clearAllText: {
-        color: "#007AFF",
+        borderBottomColor: "#575757",
     },
     headerText: {
         fontSize: 18,
         fontWeight: "bold",
+        color: "#ffffff",
     },
     doneButton: {
         padding: 8,
@@ -135,6 +139,11 @@ const styles = StyleSheet.create({
     cardContainer: {
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#eeeeee",
+        borderBottomColor: "#575757",
+        color: "#ffffff",
+    },
+    cardText: {
+        color: "#ffffff",
+        fontSize: 16,
     },
 });
