@@ -250,6 +250,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderColor: "#575757",
         backgroundColor: "#282828",
+        color: "#ffffff",
     },
     button: {
         height: 50,

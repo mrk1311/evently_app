@@ -15,6 +15,7 @@ import { useRouter } from "expo-router";
 import { useState, useRef } from "react";
 import { supabase } from "@/utils/supabase";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import Octicons from "@expo/vector-icons/Octicons";
 
 export default function SignUpScreen() {
     const router = useRouter();
@@ -131,16 +132,21 @@ export default function SignUpScreen() {
                     style={styles.backButton}
                     onPress={() => router.back()}
                 >
-                    <MaterialIcons name="chevron-left" size={24} />
+                    <MaterialIcons
+                        name="chevron-left"
+                        size={24}
+                        color={"#fff"}
+                    />
                     <Text style={styles.backText}>Back</Text>
                 </TouchableOpacity>
                 <Text
                     style={{
                         fontSize: 20,
                         fontWeight: "bold",
+                        color: "#ffffff",
                     }}
                 >
-                    Create Account
+                    Zarejestruj się
                 </Text>
                 <Text style={{ width: 94 }} />
             </View>
@@ -154,7 +160,7 @@ export default function SignUpScreen() {
                     keyboardShouldPersistTaps="handled"
                 >
                     <View style={styles.form}>
-                        <Text style={styles.title}>Create Account</Text>
+                        <Text style={styles.title}>Zarejestruj się</Text>
 
                         {errors.server && (
                             <Text style={styles.error}>{errors.server}</Text>
@@ -169,8 +175,8 @@ export default function SignUpScreen() {
                                 styles.input,
                                 errors.email && styles.inputError,
                             ]}
-                            placeholder="Email"
-                            placeholderTextColor={"#666"}
+                            placeholder="Adres e-mail"
+                            placeholderTextColor={"#fff"}
                             value={email}
                             onChangeText={setEmail}
                             autoCapitalize="none"
@@ -191,8 +197,8 @@ export default function SignUpScreen() {
                                 styles.input,
                                 errors.confirmEmail && styles.inputError,
                             ]}
-                            placeholder="Confirm Email"
-                            placeholderTextColor={"#666"}
+                            placeholder="Potwierdź adres e-mail"
+                            placeholderTextColor={"#fff"}
                             value={confirmEmail}
                             onChangeText={setConfirmEmail}
                             autoCapitalize="none"
@@ -215,8 +221,8 @@ export default function SignUpScreen() {
                                 styles.input,
                                 errors.password && styles.inputError,
                             ]}
-                            placeholder="Password"
-                            placeholderTextColor={"#666"}
+                            placeholder="Hasło"
+                            placeholderTextColor={"#fff"}
                             value={password}
                             onChangeText={setPassword}
                             autoComplete="password"
@@ -237,70 +243,90 @@ export default function SignUpScreen() {
                                 Password must include:
                             </Text>
                             <View style={styles.ruleItem}>
-                                <Text
+                                <Octicons
+                                    name="dot-fill"
+                                    size={24}
+                                    // color={
+                                    //     password.length >= 8
+                                    //         ? "#16a34a"
+                                    //         : "#ef4444"
+                                    // }
                                     style={[
                                         styles.ruleIcon,
                                         password.length >= 8 &&
                                             styles.ruleValid,
                                     ]}
-                                >
-                                    •
-                                </Text>
+                                />
+
                                 <Text style={styles.ruleText}>
                                     At least 8 characters
                                 </Text>
                             </View>
                             <View style={styles.ruleItem}>
-                                <Text
+                                <Octicons
+                                    name="dot-fill"
+                                    size={24}
                                     style={[
                                         styles.ruleIcon,
                                         /[A-Z]/.test(password) &&
                                             styles.ruleValid,
                                     ]}
-                                >
-                                    •
-                                </Text>
+                                />
                                 <Text style={styles.ruleText}>
                                     Uppercase letter
                                 </Text>
                             </View>
                             <View style={styles.ruleItem}>
-                                <Text
+                                <Octicons
+                                    name="dot-fill"
+                                    size={24}
                                     style={[
                                         styles.ruleIcon,
                                         /[a-z]/.test(password) &&
                                             styles.ruleValid,
                                     ]}
-                                >
-                                    •
-                                </Text>
+                                />
                                 <Text style={styles.ruleText}>
                                     Lowercase letter
                                 </Text>
                             </View>
                             <View style={styles.ruleItem}>
-                                <Text
+                                <Octicons
+                                    name="dot-fill"
+                                    size={24}
+                                    // color={
+                                    //     /[0-9]/.test(password)
+                                    //         ? "#16a34a"
+                                    //         : "#ef4444"
+                                    // }
                                     style={[
                                         styles.ruleIcon,
                                         /[0-9]/.test(password) &&
                                             styles.ruleValid,
                                     ]}
-                                >
-                                    •
-                                </Text>
+                                />
                                 <Text style={styles.ruleText}>Number</Text>
                             </View>
                             <View style={styles.ruleItem}>
-                                <Text
+                                <Octicons
+                                    name="dot-fill"
+                                    size={24}
+                                    // color={
+                                    //     /[!@#$%^&*()\-_=+{};:,<.>]/.test(
+                                    //         password
+                                    //     )
+                                    //         ? "#16a34a"
+                                    //         : "#ef4444"
+                                    // }
+                                    // style={styles.ruleIcon}
+
                                     style={[
                                         styles.ruleIcon,
                                         /[!@#$%^&*()\-_=+{};:,<.>]/.test(
                                             password
                                         ) && styles.ruleValid,
                                     ]}
-                                >
-                                    •
-                                </Text>
+                                />
                                 <Text style={styles.ruleText}>
                                     Special character
                                 </Text>
@@ -313,8 +339,8 @@ export default function SignUpScreen() {
                                 styles.input,
                                 errors.confirmPassword && styles.inputError,
                             ]}
-                            placeholder="Confirm Password"
-                            placeholderTextColor={"#666"}
+                            placeholder="Potwierdź hasło"
+                            placeholderTextColor={"#fff"}
                             value={confirmPassword}
                             onChangeText={setConfirmPassword}
                             autoComplete="password"
@@ -360,6 +386,7 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#282828",
     },
     backButton: {
         flexDirection: "row",
@@ -369,13 +396,14 @@ const styles = StyleSheet.create({
     backText: {
         marginLeft: 8,
         fontSize: 16,
+        color: "#ffffff",
     },
     header: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
         borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
+        borderBottomColor: "#575757",
     },
     keyboardAvoidingContainer: {
         flex: 1,
@@ -394,14 +422,16 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 20,
         textAlign: "center",
+        color: "#ffffff",
     },
     input: {
         height: 50,
         borderWidth: 1,
-        borderColor: "#ccc",
+        borderColor: "#575757",
+        color: "#ffffff",
         borderRadius: 8,
         padding: 10,
-        backgroundColor: "#fff",
+        backgroundColor: "#282828",
     },
     inputError: {
         borderColor: "#ef4444",
@@ -446,7 +476,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     loginText: {
-        color: "#666",
+        color: "#fff",
     },
     loginLink: {
         color: "#2563eb",
@@ -456,24 +486,26 @@ const styles = StyleSheet.create({
     passwordRules: {
         marginVertical: 10,
         padding: 10,
-        backgroundColor: "#f8fafc",
+        backgroundColor: "#282828",
         borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#575757",
     },
     ruleItem: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 4,
+        margin: 2,
     },
     ruleIcon: {
-        marginRight: 8,
+        marginLeft: 8,
         color: "#ef4444",
-        fontSize: 16,
     },
     ruleValid: {
         color: "#16a34a",
     },
     ruleText: {
-        color: "#64748b",
+        color: "#fff",
         fontSize: 12,
+        marginLeft: 8,
     },
 });
