@@ -1841,27 +1841,6 @@ PODS:
     - React-utils (= 0.76.7)
   - RNCAsyncStorage (1.23.1):
     - React-Core
-  - RNCMaskedView (0.3.2):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - RCT-Folly (= 2024.01.01.00)
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - Yoga
   - RNCPicker (2.9.0):
     - React-Core
   - RNDateTimePicker (8.2.0):
@@ -2100,7 +2079,6 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
-  - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -2309,8 +2287,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
-  RNCMaskedView:
-    :path: "../node_modules/@react-native-masked-view/masked-view"
   RNCPicker:
     :path: "../node_modules/@react-native-picker/picker"
   RNDateTimePicker:
@@ -2425,7 +2401,6 @@ SPEC CHECKSUMS:
   ReactCodegen: 9a99ced51aab02909c7ab5056f33dff7054305bb
   ReactCommon: 04292c6f596181ebf755e7929d96d2148542b0e8
   RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
-  RNCMaskedView: e07a0b5e9e8d6962826def06e6ff2ecdb815433f
   RNCPicker: f963e01f78e546a93b98aa201501713dbda14e94
   RNDateTimePicker: 40ffda97d071a98a10fdca4fa97e3977102ccd14
   RNGestureHandler: 511250b190a284388f9dd0d2e56c1df76f14cfb8

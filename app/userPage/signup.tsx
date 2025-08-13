@@ -42,29 +42,29 @@ export default function SignUpScreen() {
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email) {
-            newErrors.email = "Email is required";
+            newErrors.email = "Adres e-mail jest wymagany";
         } else if (!emailRegex.test(email)) {
-            newErrors.email = "Invalid email format";
+            newErrors.email = "Nieprawidłowy format adresu e-mail";
         }
 
         // Confirm email validation
         if (email !== confirmEmail) {
-            newErrors.confirmEmail = "Emails do not match";
+            newErrors.confirmEmail = "Adresy e-mail nie pasują";
         }
 
         // Password validation
         if (!password) {
-            newErrors.password = "Password is required";
+            newErrors.password = "Hasło jest wymagane";
         } else if (password.length < 8) {
-            newErrors.password = "Password must be at least 8 characters";
+            newErrors.password = "Hasło musi mieć co najmniej 8 znaków";
         } else if (!checkPasswordStrength(password)) {
             newErrors.password =
-                "Password must include uppercase, lowercase, number, and special character";
+                "Hasło musi zawierać wielką literę, małą literę, cyfrę i znak specjalny";
         }
 
         // Confirm password validation
         if (password !== confirmPassword) {
-            newErrors.confirmPassword = "Passwords do not match";
+            newErrors.confirmPassword = "Hasła nie pasują";
         }
 
         setErrors(newErrors);
@@ -116,7 +116,10 @@ export default function SignUpScreen() {
             }
 
             // Show success message and navigate back
-            setErrors({ success: "Check your email for confirmation!" });
+            setErrors({
+                success:
+                    "Na twoją skrzynkę został wysłany link. Potwierdź swój adres email!",
+            });
             setTimeout(() => router.back(), 3000);
         } catch (err) {
             setErrors({ server: "An unexpected error occurred" });
@@ -240,7 +243,7 @@ export default function SignUpScreen() {
 
                         <View style={styles.passwordRules}>
                             <Text style={styles.ruleText}>
-                                Password must include:
+                                Hasło musi zawierać:
                             </Text>
                             <View style={styles.ruleItem}>
                                 <Octicons
@@ -259,7 +262,7 @@ export default function SignUpScreen() {
                                 />
 
                                 <Text style={styles.ruleText}>
-                                    At least 8 characters
+                                    Co najmniej 8 znaków
                                 </Text>
                             </View>
                             <View style={styles.ruleItem}>
@@ -273,7 +276,7 @@ export default function SignUpScreen() {
                                     ]}
                                 />
                                 <Text style={styles.ruleText}>
-                                    Uppercase letter
+                                    Wielką literę
                                 </Text>
                             </View>
                             <View style={styles.ruleItem}>
@@ -286,9 +289,7 @@ export default function SignUpScreen() {
                                             styles.ruleValid,
                                     ]}
                                 />
-                                <Text style={styles.ruleText}>
-                                    Lowercase letter
-                                </Text>
+                                <Text style={styles.ruleText}>Małą literę</Text>
                             </View>
                             <View style={styles.ruleItem}>
                                 <Octicons
@@ -305,7 +306,7 @@ export default function SignUpScreen() {
                                             styles.ruleValid,
                                     ]}
                                 />
-                                <Text style={styles.ruleText}>Number</Text>
+                                <Text style={styles.ruleText}>Cyfrę</Text>
                             </View>
                             <View style={styles.ruleItem}>
                                 <Octicons
@@ -328,7 +329,7 @@ export default function SignUpScreen() {
                                     ]}
                                 />
                                 <Text style={styles.ruleText}>
-                                    Special character
+                                    Znak specjalny
                                 </Text>
                             </View>
                         </View>
@@ -363,17 +364,19 @@ export default function SignUpScreen() {
                                 <ActivityIndicator color="#fff" />
                             ) : (
                                 <Text style={styles.buttonText}>
-                                    Create Account
+                                    Zarejestruj się
                                 </Text>
                             )}
                         </TouchableOpacity>
 
                         <View style={styles.loginPrompt}>
                             <Text style={styles.loginText}>
-                                Already have an account?
+                                Masz już konto?
                             </Text>
                             <TouchableOpacity onPress={() => router.back()}>
-                                <Text style={styles.loginLink}>Sign In</Text>
+                                <Text style={styles.loginLink}>
+                                    Zaloguj się
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
