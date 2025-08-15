@@ -12,20 +12,29 @@ import {
     Keyboard,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/utils/supabase";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
-import { useUser } from "@/hooks/useUser";
+import Octicons from "@expo/vector-icons/Octicons";
 
-// ... existing imports ...
-
-export default function LoginScreen() {
+export default function SignUpScreen() {
     const router = useRouter();
     const [email, setEmail] = useState("");
+    const [confirmEmail, setConfirmEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const confirmEmailInputRef = useRef<TextInput>(null);
     const passwordInputRef = useRef<TextInput>(null);
+    const confirmPasswordInputRef = useRef<TextInput>(null);
+
+    // Password strength checker
+    const checkPasswordStrength = (password: string) => {
+        const strongRegex =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{8,}$/;
+        return strongRegex.test(password);
+    };
 
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
@@ -33,48 +42,86 @@ export default function LoginScreen() {
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email) {
-            newErrors.email = "Email is required";
+            newErrors.email = "Adres e-mail jest wymagany";
         } else if (!emailRegex.test(email)) {
-            newErrors.email = "Invalid email format";
-        }
-
-        // Password validation
-        if (!password) {
-            newErrors.password = "Password is required";
+            newErrors.email = "Nieprawidłowy format adresu e-mail";
         }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleLogin = async () => {
+    useEffect(() => {
+        supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event == "PASSWORD_RECOVERY") {
+                const newPassword = prompt(
+                    "What would you like your new password to be?"
+                ) as string;
+                const { data, error } = await supabase.auth.updateUser({
+                    password: newPassword,
+                });
+                if (data) alert("Password updated successfully!");
+                if (error) alert("There was an error updating your password.");
+            }
+        });
+    }, []);
+
+    const handlePress = async () => {
+        // Inside handleSignUp function
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: "MyEventMap://userPage/auth",
+        });
+
         if (!validateForm()) return;
 
         setLoading(true);
         setErrors({});
 
-        try {
-            const { error } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            });
+        // try {
+        //     // Check if email already exists
+        //     const { data: userData, error: userError } = await supabase
+        //         .from("profiles")
+        //         .select("id")
+        //         .eq("email", email)
+        //         .single();
 
-            if (error) {
-                setErrors({ server: error.message });
-                return;
-            }
+        //     if (userData) {
+        //         setErrors({ email: "Email is already registered" });
+        //         setLoading(false);
+        //         return;
+        //     }
 
-            router.back(); // Return to previous screen after successful login
-        } catch (err) {
-            setErrors({ server: "An unexpected error occurred" });
-        } finally {
-            setLoading(false);
-        }
+        //     // Create account
+        //     const { error } = await supabase.auth.signUp({
+        //         email,
+        //         password,
+        //     });
+
+        //     if (error) {
+        //         if (error.message.includes("already been registered")) {
+        //             setErrors({ email: "Email is already registered" });
+        //         } else {
+        //             setErrors({ server: error.message });
+        //         }
+        //         return;
+        //     }
+
+        //     // Show success message and navigate back
+        //     setErrors({
+        //         success:
+        //             "Na twoją skrzynkę został wysłany link. Potwierdź swój adres email!",
+        //     });
+        //     setTimeout(() => router.back(), 3000);
+        // } catch (err) {
+        //     setErrors({ server: "An unexpected error occurred" });
+        // } finally {
+        //     setLoading(false);
+        // }
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
+            {/* <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => router.back()}
@@ -84,19 +131,19 @@ export default function LoginScreen() {
                         size={24}
                         color={"#fff"}
                     />
-                    <Text style={styles.backText}>Cofnij</Text>
+                    <Text style={styles.backText}>Back</Text>
                 </TouchableOpacity>
                 <Text
                     style={{
                         fontSize: 20,
                         fontWeight: "bold",
-                        color: "#fff",
+                        color: "#ffffff",
                     }}
                 >
-                    MyEventMap
+                    Zresetuj hasło
                 </Text>
                 <Text style={{ width: 94 }} />
-            </View>
+            </View> */}
 
             <KeyboardAvoidingView
                 style={styles.keyboardAvoidingContainer}
@@ -107,10 +154,14 @@ export default function LoginScreen() {
                     keyboardShouldPersistTaps="handled"
                 >
                     <View style={styles.form}>
-                        <Text style={styles.title}>Zaloguj się</Text>
+                        <Text style={styles.title}>Zresetuj hasło</Text>
 
                         {errors.server && (
                             <Text style={styles.error}>{errors.server}</Text>
+                        )}
+
+                        {errors.success && (
+                            <Text style={styles.success}>{errors.success}</Text>
                         )}
 
                         <TextInput
@@ -127,89 +178,26 @@ export default function LoginScreen() {
                             keyboardType="email-address"
                             returnKeyType="next"
                             onSubmitEditing={() =>
-                                passwordInputRef.current?.focus()
+                                confirmEmailInputRef.current?.focus()
                             }
                         />
                         {errors.email && (
                             <Text style={styles.errorText}>{errors.email}</Text>
                         )}
 
-                        <TextInput
-                            ref={passwordInputRef}
-                            style={[
-                                styles.input,
-                                errors.password && styles.inputError,
-                            ]}
-                            placeholder="Hasło"
-                            placeholderTextColor={"#fff"}
-                            value={password}
-                            onChangeText={setPassword}
-                            autoComplete="password"
-                            secureTextEntry
-                            returnKeyType="done"
-                            onSubmitEditing={Keyboard.dismiss}
-                        />
-                        {errors.password && (
-                            <Text style={styles.errorText}>
-                                {errors.password}
-                            </Text>
-                        )}
-
                         <TouchableOpacity
                             style={styles.button}
-                            onPress={handleLogin}
+                            onPress={handlePress}
                             disabled={loading}
                         >
                             {loading ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
                                 <Text style={styles.buttonText}>
-                                    Zaloguj się
+                                    Zresetuj hasło
                                 </Text>
                             )}
                         </TouchableOpacity>
-
-                        <View style={styles.signupPrompt}>
-                            <Text style={styles.signupText}>
-                                Nie masz konta?
-                            </Text>
-                            <TouchableOpacity
-                                onPress={() => router.push("/userPage/signup")}
-                            >
-                                <Text style={styles.signupLink}>
-                                    Zarejestruj się
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-
-                        <View style={styles.signupPrompt}>
-                            <Text style={styles.signupText}>
-                                Zapomniałeś hasła?
-                            </Text>
-                            <TouchableOpacity
-                                onPress={() =>
-                                    router.push("/userPage/resetPassword")
-                                }
-                            >
-                                <Text style={styles.signupLink}>
-                                    Zresetuj hasło
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-
-                        {/* <TouchableOpacity
-                            style={styles.socialButton}
-                            onPress={() =>
-                                supabase.auth.signInWithOAuth({
-                                    provider: "google",
-                                })
-                            }
-                        >
-                            <AntDesign name="google" size={24} color="#fff" />
-                            <Text style={styles.socialButtonText}>
-                                Available soon
-                            </Text>
-                        </TouchableOpacity> */}
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
@@ -221,6 +209,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#282828",
+        borderTopWidth: 1,
+        borderColor: "#575757",
     },
     backButton: {
         flexDirection: "row",
@@ -230,7 +220,7 @@ const styles = StyleSheet.create({
     backText: {
         marginLeft: 8,
         fontSize: 16,
-        color: "#fff",
+        color: "#ffffff",
     },
     header: {
         flexDirection: "row",
@@ -256,16 +246,19 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 20,
         textAlign: "center",
-        color: "#fff",
+        color: "#ffffff",
     },
     input: {
         height: 50,
         borderWidth: 1,
+        borderColor: "#575757",
+        color: "#ffffff",
         borderRadius: 8,
         padding: 10,
-        borderColor: "#575757",
         backgroundColor: "#282828",
-        color: "#ffffff",
+    },
+    inputError: {
+        borderColor: "#ef4444",
     },
     button: {
         height: 50,
@@ -273,26 +266,9 @@ const styles = StyleSheet.create({
         backgroundColor: "#2563eb",
         justifyContent: "center",
         alignItems: "center",
-    },
-    signUpButton: {
-        backgroundColor: "#3b82f6",
+        marginTop: 10,
     },
     buttonText: {
-        color: "#fff",
-        fontWeight: "bold",
-        fontSize: 16,
-    },
-    socialButton: {
-        flexDirection: "row",
-        height: 50,
-        borderRadius: 8,
-        backgroundColor: "#db4437",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 10,
-        marginTop: 20,
-    },
-    socialButtonText: {
         color: "#fff",
         fontWeight: "bold",
         fontSize: 16,
@@ -301,26 +277,59 @@ const styles = StyleSheet.create({
         color: "#ef4444",
         textAlign: "center",
         marginBottom: 10,
+        padding: 10,
+        backgroundColor: "#fee2e2",
+        borderRadius: 8,
     },
-    signupPrompt: {
+    success: {
+        color: "#16a34a",
+        textAlign: "center",
+        marginBottom: 10,
+        padding: 10,
+        backgroundColor: "#dcfce7",
+        borderRadius: 8,
+    },
+    errorText: {
+        color: "#ef4444",
+        marginTop: -10,
+        marginBottom: 5,
+    },
+    loginPrompt: {
         flexDirection: "row",
         justifyContent: "center",
-        marginTop: 10,
+        marginTop: 20,
     },
-    signupText: {
+    loginText: {
         color: "#fff",
     },
-    signupLink: {
+    loginLink: {
         color: "#2563eb",
         fontWeight: "bold",
         marginLeft: 5,
     },
-    inputError: {
-        borderColor: "#ef4444",
+    passwordRules: {
+        marginVertical: 10,
+        padding: 10,
+        backgroundColor: "#282828",
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#575757",
     },
-    errorText: {
+    ruleItem: {
+        flexDirection: "row",
+        alignItems: "center",
+        margin: 2,
+    },
+    ruleIcon: {
+        marginLeft: 8,
         color: "#ef4444",
+    },
+    ruleValid: {
+        color: "#16a34a",
+    },
+    ruleText: {
+        color: "#fff",
         fontSize: 12,
-        marginTop: 5,
+        marginLeft: 8,
     },
 });

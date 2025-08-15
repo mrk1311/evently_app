@@ -55,12 +55,12 @@ export default function AddEventPage() {
         (async () => {
             const { status } =
                 await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (status !== "granted") {
-                Alert.alert(
-                    "Permission required",
-                    "Please enable photo access in settings"
-                );
-            }
+            // if (status !== "granted") {
+            //     Alert.alert(
+            //         "Permission required",
+            //         "Please enable photo access in settings"
+            //     );
+            // }
         })();
     }, []);
 
@@ -169,7 +169,7 @@ export default function AddEventPage() {
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <SafeAreaView style={styles.container}>
-                    <View style={styles.header}>
+                    {/* <View style={styles.header}>
                         <TouchableOpacity
                             style={styles.backButton}
                             onPress={() => router.back()}
@@ -187,7 +187,7 @@ export default function AddEventPage() {
                             Submit an Event
                         </Text>
                         <Text style={{ width: 62 }} />
-                    </View>
+                    </View> */}
                     {/* if user is not logged in show a message to log in */}
                     {!user && (
                         <Text style={styles.error}>

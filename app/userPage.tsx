@@ -52,7 +52,7 @@ export default function userPage() {
         if (user) {
             return;
         } else {
-            router.navigate("/userPage/auth");
+            router.navigate("/auth");
         }
     };
 
@@ -63,7 +63,7 @@ export default function userPage() {
         return (
             <TouchableOpacity
                 style={styles.menuItem}
-                onPress={() => router.navigate("/userPage/admin")}
+                onPress={() => router.navigate("/admin")}
             >
                 <MaterialIcons
                     name="admin-panel-settings"
@@ -77,7 +77,7 @@ export default function userPage() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
+            {/* <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => router.back()}
@@ -100,7 +100,7 @@ export default function userPage() {
                     MyEventMap
                 </Text>
                 <Text style={{ width: 94 }} />
-            </View>
+            </View> */}
             {user && (
                 <View style={styles.userPreview}>
                     <View style={styles.userIcon}>
@@ -119,7 +119,7 @@ export default function userPage() {
             {!user && (
                 <TouchableOpacity
                     style={styles.userPreview}
-                    onPress={() => router.navigate("/userPage/auth")}
+                    onPress={() => router.navigate("/auth")}
                 >
                     <View style={styles.userIcon}>
                         <FontAwesome6
@@ -139,7 +139,7 @@ export default function userPage() {
                 style={styles.menuItem}
                 onPress={() =>
                     router.navigate({
-                        pathname: "/userPage/favourites",
+                        pathname: "/favourites",
                         params: { userId: user?.id },
                     })
                 }
@@ -149,14 +149,14 @@ export default function userPage() {
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
-                onPress={() => router.navigate("/userPage/addEvent")}
+                onPress={() => router.navigate("/addEvent")}
             >
                 <MaterialIcons name="event" size={36} color="#ab64c9" />
                 <Text style={{ color: "#ffffff" }}>Zaproponuj wydarzenie</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.menuItem}
-                onPress={() => router.navigate("/userPage/settings")}
+                onPress={() => router.navigate("/settings")}
             >
                 <MaterialIcons name="settings" size={36} color="#50a1d3" />
                 <Text style={{ color: "#ffffff" }}>Ustawienia</Text>
@@ -182,11 +182,15 @@ export default function userPage() {
                     style={styles.menuItem}
                     onPress={() =>
                         Alert.alert(
-                            "Log Out",
-                            "Are you sure you want to log out?",
+                            "Wyloguj się",
+                            "Czy na pewno chcesz się wylogować?",
                             [
-                                { text: "Cancel", style: "cancel" },
-                                { text: "Log Out", onPress: handleLogout },
+                                { text: "Anuluj", style: "cancel" },
+                                {
+                                    text: "Wyloguj",
+                                    style: "destructive",
+                                    onPress: handleLogout,
+                                },
                             ]
                         )
                     }

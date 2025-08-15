@@ -122,8 +122,8 @@ export default function Favourites() {
                                 // ask user if he realy wants to remove from favorites
                                 () =>
                                     Alert.alert(
-                                        "Remove from Favorites",
-                                        "Are you sure you want to remove this event from your favorites?",
+                                        "Usuń z ulubionych",
+                                        "Czy na pewno chcesz usunąć to wydarzenie z ulubionych?",
                                         [
                                             {
                                                 text: "Cancel",
@@ -171,8 +171,9 @@ export default function Favourites() {
     );
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
+        <View style={styles.container}>
+            {/* <SafeAreaView style={styles.container}> */}
+            {/* <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => router.back()}
@@ -190,7 +191,7 @@ export default function Favourites() {
                     Your Favorites
                 </Text>
                 <Text style={{ width: 94 }} />
-            </View>
+            </View> */}
 
             {/* Show loading indicator or error message */}
 
@@ -212,14 +213,16 @@ export default function Favourites() {
             {/* if user is not logged in show a message to log in */}
             {!user && !isLoading && (
                 <Text style={styles.error}>
-                    Please log in to view your favorites.
+                    Zaloguj się, aby zobaczyć swoje ulubione wydarzenia.
                 </Text>
             )}
 
             {/* if favorites is null, show a message  */}
 
             {user && favorites.size === 0 && !isLoading && (
-                <Text style={styles.error}>You have no favorites yet.</Text>
+                <Text style={styles.error}>
+                    Nie masz jeszcze żadnych ulubionych wydarzeń.
+                </Text>
             )}
 
             <EventDetailsBottomSheet
@@ -239,13 +242,17 @@ export default function Favourites() {
                     }
                 }}
             />
-        </SafeAreaView>
+            {/* </SafeAreaView> */}
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#282828",
+        borderTopWidth: 1,
+        borderTopColor: "#575757",
     },
     backButton: {
         flexDirection: "row",
@@ -265,7 +272,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         // padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
+        borderBottomColor: "#575757",
     },
     error: {
         color: "red",
@@ -303,7 +310,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#eeeeee",
+        borderBottomColor: "#575757",
     },
     cardHeader: {
         flexDirection: "row",
@@ -316,7 +323,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontSize: 16,
         fontWeight: "600",
-        color: "#333333",
+        color: "#ffff",
     },
     metaContainer: {
         flexDirection: "row",
@@ -324,16 +331,16 @@ const styles = StyleSheet.create({
     },
     cardSubtitle: {
         fontSize: 14,
-        color: "#666666",
+        color: "#ffffff",
     },
     cardDate: {
         fontSize: 12,
-        color: "#999999",
+        color: "#ffffff",
         marginLeft: 8,
     },
     cardDescription: {
         fontSize: 14,
-        color: "#666666",
+        color: "#ffffff",
         marginTop: 8,
     },
     cardImage: {

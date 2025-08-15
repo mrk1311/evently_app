@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { View, Text, ActivityIndicator } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { supabase } from "./../../utils/supabase";
+import { supabase } from "../utils/supabase";
 import { StyleSheet } from "react-native";
 import React from "react";
 
@@ -23,12 +23,12 @@ export default function ConfirmEmailScreen() {
 
                 // Redirect to app after 2 seconds
                 setTimeout(() => {
-                    router.replace("/");
+                    router.replace("/userPage");
                 }, 2000);
             } catch (error) {
                 console.error("Email confirmation error:", error);
                 setTimeout(() => {
-                    router.replace("/");
+                    router.replace("/userPage");
                 }, 2000);
             }
         };
@@ -36,7 +36,7 @@ export default function ConfirmEmailScreen() {
         if (token) {
             confirmEmail();
         } else {
-            router.replace("/");
+            router.replace("/userPage");
         }
     }, [token]);
 

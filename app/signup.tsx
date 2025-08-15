@@ -130,7 +130,7 @@ export default function SignUpScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
+            {/* <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => router.back()}
@@ -140,7 +140,7 @@ export default function SignUpScreen() {
                         size={24}
                         color={"#fff"}
                     />
-                    <Text style={styles.backText}>Back</Text>
+                    <Text style={styles.backText}>Cofnij </Text>
                 </TouchableOpacity>
                 <Text
                     style={{
@@ -152,7 +152,7 @@ export default function SignUpScreen() {
                     Zarejestruj się
                 </Text>
                 <Text style={{ width: 94 }} />
-            </View>
+            </View> */}
 
             <KeyboardAvoidingView
                 style={styles.keyboardAvoidingContainer}
@@ -369,7 +369,7 @@ export default function SignUpScreen() {
                             )}
                         </TouchableOpacity>
 
-                        <View style={styles.loginPrompt}>
+                        {/* <View style={styles.loginPrompt}>
                             <Text style={styles.loginText}>
                                 Masz już konto?
                             </Text>
@@ -378,7 +378,7 @@ export default function SignUpScreen() {
                                     Zaloguj się
                                 </Text>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
@@ -390,6 +390,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#282828",
+        borderTopWidth: 1,
+        borderColor: "#575757",
     },
     backButton: {
         flexDirection: "row",

@@ -9,7 +9,7 @@ import {
     Keyboard,
 } from "react-native";
 import type { EventFeatureCollection } from "./ClusteredMap";
-import { debounce } from "lodash";
+import { debounce, set } from "lodash";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
@@ -35,6 +35,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
     const [text, onChangeText] = useState("");
     const inputRef = useRef<TextInput>(null);
     const router = useRouter();
+    const [minDate, setMinDate] = useState<Date>(new Date());
 
     const FilterButton: React.FC<{ type: "Type" | "Place" | "Date" }> = ({
         type,
@@ -87,8 +88,10 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                         locale="pl"
                         // minimumDate={new Date()}
                         onChange={(event, selectedDate) => {
-                            const currentDate = selectedDate || props.startDate;
-                            props.setStartDate(currentDate);
+                            // const currentDate = selectedDate || props.startDate;
+
+                            setMinDate(selectedDate || props.startDate);
+                            // props.setStartDate(selectedDate || props.startDate);
                         }}
                     />
                 </View>
@@ -101,8 +104,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                         locale="pl"
                         // minimumDate={new Date()}
                         onChange={(event, selectedDate) => {
-                            const currentDate = selectedDate || props.endDate;
-                            props.setEndDate(currentDate);
+                            props.setEndDate(selectedDate || props.endDate);
                         }}
                     />
                 </View>

@@ -15,26 +15,15 @@ import { useRouter } from "expo-router";
 import { useState, useRef } from "react";
 import { supabase } from "@/utils/supabase";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
-import Octicons from "@expo/vector-icons/Octicons";
+import { useUser } from "@/hooks/useUser";
 
-export default function SignUpScreen() {
+export default function LoginScreen() {
     const router = useRouter();
     const [email, setEmail] = useState("");
-    const [confirmEmail, setConfirmEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
-    const confirmEmailInputRef = useRef<TextInput>(null);
     const passwordInputRef = useRef<TextInput>(null);
-    const confirmPasswordInputRef = useRef<TextInput>(null);
-
-    // Password strength checker
-    const checkPasswordStrength = (password: string) => {
-        const strongRegex =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{8,}$/;
-        return strongRegex.test(password);
-    };
 
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
@@ -42,85 +31,38 @@ export default function SignUpScreen() {
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email) {
-            newErrors.email = "Adres e-mail jest wymagany";
+            newErrors.email = "Email is required";
         } else if (!emailRegex.test(email)) {
-            newErrors.email = "Nieprawidłowy format adresu e-mail";
-        }
-
-        // Confirm email validation
-        if (email !== confirmEmail) {
-            newErrors.confirmEmail = "Adresy e-mail nie pasują";
+            newErrors.email = "Invalid email format";
         }
 
         // Password validation
         if (!password) {
-            newErrors.password = "Hasło jest wymagane";
-        } else if (password.length < 8) {
-            newErrors.password = "Hasło musi mieć co najmniej 8 znaków";
-        } else if (!checkPasswordStrength(password)) {
-            newErrors.password =
-                "Hasło musi zawierać wielką literę, małą literę, cyfrę i znak specjalny";
-        }
-
-        // Confirm password validation
-        if (password !== confirmPassword) {
-            newErrors.confirmPassword = "Hasła nie pasują";
+            newErrors.password = "Password is required";
         }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSignUp = async () => {
-        // Inside handleSignUp function
-        const { error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                emailRedirectTo: "MyEventApp://confirm?token=",
-            },
-        });
-
+    const handleLogin = async () => {
         if (!validateForm()) return;
 
         setLoading(true);
         setErrors({});
 
         try {
-            // Check if email already exists
-            const { data: userData, error: userError } = await supabase
-                .from("profiles")
-                .select("id")
-                .eq("email", email)
-                .single();
-
-            if (userData) {
-                setErrors({ email: "Email is already registered" });
-                setLoading(false);
-                return;
-            }
-
-            // Create account
-            const { error } = await supabase.auth.signUp({
+            const { error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             });
 
             if (error) {
-                if (error.message.includes("already been registered")) {
-                    setErrors({ email: "Email is already registered" });
-                } else {
-                    setErrors({ server: error.message });
-                }
+                setErrors({ server: error.message });
                 return;
             }
 
-            // Show success message and navigate back
-            setErrors({
-                success:
-                    "Na twoją skrzynkę został wysłany link. Potwierdź swój adres email!",
-            });
-            setTimeout(() => router.back(), 3000);
+            router.back(); // Return to previous screen after successful login
         } catch (err) {
             setErrors({ server: "An unexpected error occurred" });
         } finally {
@@ -130,7 +72,7 @@ export default function SignUpScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
+            {/* <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => router.back()}
@@ -140,37 +82,33 @@ export default function SignUpScreen() {
                         size={24}
                         color={"#fff"}
                     />
-                    <Text style={styles.backText}>Back</Text>
+                    <Text style={styles.backText}>Cofnij</Text>
                 </TouchableOpacity>
                 <Text
                     style={{
                         fontSize: 20,
                         fontWeight: "bold",
-                        color: "#ffffff",
+                        color: "#fff",
                     }}
                 >
-                    Zarejestruj się
+                    MyEventMap
                 </Text>
                 <Text style={{ width: 94 }} />
-            </View>
+            </View> */}
 
             <KeyboardAvoidingView
                 style={styles.keyboardAvoidingContainer}
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                // behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
                 <ScrollView
                     contentContainerStyle={styles.scrollContent}
                     keyboardShouldPersistTaps="handled"
                 >
                     <View style={styles.form}>
-                        <Text style={styles.title}>Zresetuj hasło</Text>
+                        <Text style={styles.title}>Zaloguj się</Text>
 
                         {errors.server && (
                             <Text style={styles.error}>{errors.server}</Text>
-                        )}
-
-                        {errors.success && (
-                            <Text style={styles.success}>{errors.success}</Text>
                         )}
 
                         <TextInput
@@ -187,26 +125,87 @@ export default function SignUpScreen() {
                             keyboardType="email-address"
                             returnKeyType="next"
                             onSubmitEditing={() =>
-                                confirmEmailInputRef.current?.focus()
+                                passwordInputRef.current?.focus()
                             }
                         />
                         {errors.email && (
                             <Text style={styles.errorText}>{errors.email}</Text>
                         )}
 
+                        <TextInput
+                            ref={passwordInputRef}
+                            style={[
+                                styles.input,
+                                errors.password && styles.inputError,
+                            ]}
+                            placeholder="Hasło"
+                            placeholderTextColor={"#fff"}
+                            value={password}
+                            onChangeText={setPassword}
+                            autoComplete="password"
+                            secureTextEntry
+                            returnKeyType="done"
+                            onSubmitEditing={Keyboard.dismiss}
+                        />
+                        {errors.password && (
+                            <Text style={styles.errorText}>
+                                {errors.password}
+                            </Text>
+                        )}
+
                         <TouchableOpacity
                             style={styles.button}
-                            onPress={handleSignUp}
+                            onPress={handleLogin}
                             disabled={loading}
                         >
                             {loading ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
                                 <Text style={styles.buttonText}>
-                                    Zresetuj hasło
+                                    Zaloguj się
                                 </Text>
                             )}
                         </TouchableOpacity>
+
+                        <View style={styles.signupPrompt}>
+                            <Text style={styles.signupText}>
+                                Nie masz konta?
+                            </Text>
+                            <TouchableOpacity
+                                onPress={() => router.push("/signup")}
+                            >
+                                <Text style={styles.signupLink}>
+                                    Zarejestruj się
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.signupPrompt}>
+                            <Text style={styles.signupText}>
+                                Zapomniałeś hasła?
+                            </Text>
+                            <TouchableOpacity
+                                onPress={() => router.push("/resetPassword")}
+                            >
+                                <Text style={styles.signupLink}>
+                                    Zresetuj hasło
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* <TouchableOpacity
+                            style={styles.socialButton}
+                            onPress={() =>
+                                supabase.auth.signInWithOAuth({
+                                    provider: "google",
+                                })
+                            }
+                        >
+                            <AntDesign name="google" size={24} color="#fff" />
+                            <Text style={styles.socialButtonText}>
+                                Available soon
+                            </Text>
+                        </TouchableOpacity> */}
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
@@ -218,6 +217,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#282828",
+        borderTopWidth: 1,
+        borderColor: "#575757",
     },
     backButton: {
         flexDirection: "row",
@@ -227,7 +228,7 @@ const styles = StyleSheet.create({
     backText: {
         marginLeft: 8,
         fontSize: 16,
-        color: "#ffffff",
+        color: "#fff",
     },
     header: {
         flexDirection: "row",
@@ -253,19 +254,16 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginBottom: 20,
         textAlign: "center",
-        color: "#ffffff",
+        color: "#fff",
     },
     input: {
         height: 50,
         borderWidth: 1,
-        borderColor: "#575757",
-        color: "#ffffff",
         borderRadius: 8,
         padding: 10,
+        borderColor: "#575757",
         backgroundColor: "#282828",
-    },
-    inputError: {
-        borderColor: "#ef4444",
+        color: "#ffffff",
     },
     button: {
         height: 50,
@@ -273,9 +271,26 @@ const styles = StyleSheet.create({
         backgroundColor: "#2563eb",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 10,
+    },
+    signUpButton: {
+        backgroundColor: "#3b82f6",
     },
     buttonText: {
+        color: "#fff",
+        fontWeight: "bold",
+        fontSize: 16,
+    },
+    socialButton: {
+        flexDirection: "row",
+        height: 50,
+        borderRadius: 8,
+        backgroundColor: "#db4437",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 10,
+        marginTop: 20,
+    },
+    socialButtonText: {
         color: "#fff",
         fontWeight: "bold",
         fontSize: 16,
@@ -284,59 +299,27 @@ const styles = StyleSheet.create({
         color: "#ef4444",
         textAlign: "center",
         marginBottom: 10,
-        padding: 10,
-        backgroundColor: "#fee2e2",
-        borderRadius: 8,
     },
-    success: {
-        color: "#16a34a",
-        textAlign: "center",
-        marginBottom: 10,
-        padding: 10,
-        backgroundColor: "#dcfce7",
-        borderRadius: 8,
-    },
-    errorText: {
-        color: "#ef4444",
-        marginTop: -10,
-        marginBottom: 5,
-    },
-    loginPrompt: {
+    signupPrompt: {
         flexDirection: "row",
         justifyContent: "center",
-        marginTop: 20,
+        marginTop: 10,
     },
-    loginText: {
+    signupText: {
         color: "#fff",
     },
-    loginLink: {
+    signupLink: {
         color: "#2563eb",
         fontWeight: "bold",
         marginLeft: 5,
+        height: 20,
     },
-    passwordRules: {
-        marginVertical: 10,
-        padding: 10,
-        backgroundColor: "#282828",
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: "#575757",
+    inputError: {
+        borderColor: "#ef4444",
     },
-    ruleItem: {
-        flexDirection: "row",
-        alignItems: "center",
-        margin: 2,
-    },
-    ruleIcon: {
-        marginLeft: 8,
+    errorText: {
         color: "#ef4444",
-    },
-    ruleValid: {
-        color: "#16a34a",
-    },
-    ruleText: {
-        color: "#fff",
         fontSize: 12,
-        marginLeft: 8,
+        marginTop: 5,
     },
 });

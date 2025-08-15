@@ -16,7 +16,8 @@ type Ref = BottomSheet;
 
 const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // variables
-    const snapPoints = useMemo(() => ["85%"], []);
+
+    const snapPoints = useMemo(() => ["50%", "85%"], []);
 
     const renderBackdrop = useCallback(
         (props: any) => (
