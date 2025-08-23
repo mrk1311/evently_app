@@ -5,7 +5,7 @@ import type {
     EventFeatureCollection,
 } from "../components/ClusteredMap";
 import ListBottomSheet from "../components/ListBottomSheet";
-import { StyleSheet } from "react-native";
+import { InteractionManager, StyleSheet } from "react-native";
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import type { Region } from "react-native-maps";
 import SearchBar from "../components/SearchBar";
@@ -92,6 +92,12 @@ export default function map() {
     const [centerOnUser, setCenterOnUser] = useState(true);
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(
+        new Date(new Date().setDate(new Date().getDate() + 365))
+    );
+    const [previousStartDate, setPreviousStartDate] = useState<Date>(
+        new Date(new Date())
+    );
+    const [previousEndDate, setPreviousEndDate] = useState<Date>(
         new Date(new Date().setDate(new Date().getDate() + 365))
     );
     const [dateInterval, setDateInterval] = useState<Interval | null>(null);
@@ -218,7 +224,7 @@ export default function map() {
     const filterByDate = (
         array: EventFeatureCollection
     ): EventFeatureCollection => {
-        if (!startDate || !endDate) return array;
+        // if (dateInterval) return array;
         const filteredFeatures = array.features.filter((event) => {
             const eventDate = parseISO(event.properties?.date);
             return isWithinInterval(eventDate, {
@@ -251,14 +257,19 @@ export default function map() {
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     };
 
-    // throttle the region change event to prevent too many updates
-    const handleRegionChangeComplete = useMemo(
-        () =>
-            throttle((region: Region) => {
-                setMapViewCenter(region);
-            }, 500),
-        []
-    );
+    const handleRegionChangeComplete = () => {
+        setMapViewCenter(controlledCenter);
+    };
+
+    // handleRegionChange();
+    // }, [controlledCenter]);
+    // const handleRegionChangeComplete = useMemo(
+    //     () =>
+    //         throttle((region: Region) => {
+    //             setMapViewCenter(region);
+    //         }, 500),
+    //     []
+    // );
 
     // sort events by distance from the center of the map
     const sortedEvents = useMemo(() => {
@@ -449,8 +460,16 @@ export default function map() {
         placeBottomSheetRef.current?.close();
     };
 
-    const handleAcceptDates = () => {
+    const handleAcceptDates = (startDate: Date, endDate: Date) => {
+        console.log("Accepting dates:", {
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString(),
+        });
         if (startDate && endDate) {
+            console.log("Setting date interval:", {
+                start: startDate.toISOString(),
+                end: endDate.toISOString(),
+            });
             setDateInterval({
                 start: parseISO(startDate.toISOString()), // Convert startDate to ISO string
                 end: parseISO(endDate.toISOString()), // Convert endDate to ISO string
@@ -465,7 +484,10 @@ export default function map() {
         handleCloseFilter();
     };
 
-    const handleCancelDates = () => {
+    const handleCancelDates = (previousStart: Date, previousEnd: Date) => {
+        // Reset to previous dates
+        setStartDate(previousStart);
+        setEndDate(previousEnd);
         dateBottomSheetRef.current?.close();
         handleCloseFilter();
     };
@@ -519,6 +541,9 @@ export default function map() {
                 pickedSortByOption={pickedSortByOption}
                 setPickedSortByOption={setPickedSortByOption}
                 eventsInRegion={eventsInRegion}
+                pickedTypes={pickedTypes}
+                startDate={startDate}
+                endDate={endDate}
             />
 
             <TypesBottomSheet
@@ -542,8 +567,10 @@ export default function map() {
                 ref={dateBottomSheetRef}
                 handleAcceptDates={handleAcceptDates}
                 handleCancelDates={handleCancelDates}
-                setStartDate={setStartDate}
-                setEndDate={setEndDate}
+                startDate={startDate}
+                endDate={endDate}
+                previousStartDate={previousStartDate}
+                previousEndDate={previousEndDate}
             />
 
             <ClusterEventsBottomSheet
@@ -585,6 +612,9 @@ export default function map() {
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 events={eventData as EventFeatureCollection}
+                closeFilter={handleCloseFilter}
+                setPreviousStartDate={setPreviousStartDate}
+                setPreviousEndDate={setPreviousEndDate}
             />
         </>
     );

@@ -35,6 +35,9 @@ interface BottomSheetProps {
     pickedSortByOption: string;
     setPickedSortByOption: (sortByOption: string) => void;
     eventsInRegion?: EventFeature[];
+    pickedTypes?: string[];
+    startDate?: Date;
+    endDate?: Date;
 }
 
 const coordinatesToRegion = (coordinates: number[]) => ({
@@ -61,6 +64,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     };
 
     // create a new list with all events in region first, then all events in the whole collection
+
     const eventList = useMemo(() => {
         const eventsInRegionSet = new Set(
             props.eventsInRegion?.map((event) => event.properties.id)
@@ -343,57 +347,30 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             backgroundStyle={{ backgroundColor: "#282828" }}
             handleIndicatorStyle={{ backgroundColor: "#ffffff" }}
         >
-            <View style={styles.horizontalContainer}>
+            <View style={styles.headerContainer}>
                 <Text style={styles.header}>
                     {/* Wydarzenia: {props.events.features.length} */}
                     Wydarzenia w tym obszarze
                 </Text>
 
-                {/* <Menu>
-                    <MenuTrigger
-                        text={
-                            "Sort by: " + props.pickedSortByOption ===
-                            "Map Center"
-                                ? "W centrum mapy"
-                                : props.pickedSortByOption === "User Location"
-                                ? "Najbliej ciebie"
-                                : props.pickedSortByOption === "Date of Event"
-                                ? "Nadchodzące"
-                                : "W centrum mapy"
-                        }
-                        customStyles={triggerStyles}
-                    />
-                    <MenuOptions customStyles={optionsStyles}>
-                        <MenuOption
-                            onSelect={() =>
-                                props.setPickedSortByOption("Map Center")
-                            }
-                            text="W centrum mapy"
-                        />
-                        <MenuOption
-                            onSelect={() =>
-                                props.setPickedSortByOption("User Location")
-                            }
-                            text="Najbliej ciebie"
-                        />
-                        <MenuOption
-                            onSelect={() =>
-                                props.setPickedSortByOption("Date of Event")
-                            }
-                            text="Nadchodzące"
-                        />
-                    </MenuOptions>
-                </Menu> */}
-            </View>
+                {/* add information about applied filters */}
 
-            {/* if no events in region, show message */}
-            {/* {props.eventsInRegion?.length === 0 && (
-                <View style={styles.itemContainer}>
-                    <Text style={{ color: "#ffffff" }}>
-                        Brak wydarzeń w tym obszarze.
-                    </Text>
-                </View>
-            )} */}
+                <Text style={styles.subHeader}>
+                    Wybrane rodzaje wydarzeń:{" "}
+                    {props.pickedTypes && props.pickedTypes?.length > 0
+                        ? props.pickedTypes.join(", ")
+                        : "Wszystkie"}
+                </Text>
+
+                <Text style={styles.subHeader}>
+                    Wybrane przedział czasowy:{" "}
+                    {props.startDate && props.endDate
+                        ? `${props.startDate.toLocaleDateString(
+                              "en-GB"
+                          )} - ${props.endDate.toLocaleDateString("en-GB")}`
+                        : "Brak dat"}
+                </Text>
+            </View>
 
             <BottomSheetFlatList
                 ref={flatListRef}
@@ -475,11 +452,11 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 8,
     },
-    horizontalContainer: {
-        flexDirection: "row",
+    headerContainer: {
+        flexDirection: "column",
         justifyContent: "space-between",
-        alignItems: "center",
-        gap: "70%",
+        alignItems: "flex-start",
+        // gap: "70%",
         paddingLeft: 16,
         paddingRight: 10,
         borderBottomWidth: 1,
@@ -487,7 +464,7 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         // margin: 6,
         marginBottom: 0,
-        height: 41,
+        // height: 41,
         overflow: "visible",
     },
     contentContainer: {
@@ -527,6 +504,13 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 20,
         fontWeight: "700",
+        color: "#ffffff",
+        textAlign: "left",
+    },
+    subHeader: {
+        // fontSize: 12,
+        // fontWeight: "700",
+        marginTop: 8,
         color: "#ffffff",
         textAlign: "left",
     },

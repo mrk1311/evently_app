@@ -7,6 +7,7 @@ import {
     StyleSheet,
     Button,
     Keyboard,
+    Platform,
 } from "react-native";
 import type { EventFeatureCollection } from "./ClusteredMap";
 import { debounce, set } from "lodash";
@@ -14,6 +15,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
 import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
 
 type SearchBarProps = {
     openTypesBottomSheet: () => void;
@@ -29,13 +31,21 @@ type SearchBarProps = {
     searchQuery: string;
     setSearchQuery: (query: string) => void;
     events: EventFeatureCollection;
+    closeFilter: () => void;
+    setPreviousStartDate: (date: Date) => void;
+    setPreviousEndDate: (date: Date) => void;
 };
 
 const SearchBar: React.FC<SearchBarProps> = (props) => {
     const [text, onChangeText] = useState("");
     const inputRef = useRef<TextInput>(null);
     const router = useRouter();
-    const [minDate, setMinDate] = useState<Date>(new Date());
+
+    // save the start and end dates to go back to them if needed
+    useEffect(() => {
+        props.setPreviousStartDate(props.startDate);
+        props.setPreviousEndDate(props.endDate);
+    }, [props.openedFilter]);
 
     const FilterButton: React.FC<{ type: "Type" | "Place" | "Date" }> = ({
         type,
@@ -76,43 +86,6 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
         }
     }, [props.openedFilter]);
 
-    const DateInputField = useCallback(
-        () => (
-            <View style={styles.inputContainer}>
-                <View style={styles.dateContainer}>
-                    <Text style={{ color: "#ffffff" }}>Od:</Text>
-                    <DateTimePicker
-                        style={styles.dateInput}
-                        value={props.startDate}
-                        mode={"date"}
-                        locale="pl"
-                        // minimumDate={new Date()}
-                        onChange={(event, selectedDate) => {
-                            // const currentDate = selectedDate || props.startDate;
-
-                            setMinDate(selectedDate || props.startDate);
-                            // props.setStartDate(selectedDate || props.startDate);
-                        }}
-                    />
-                </View>
-                <View style={styles.dateContainer}>
-                    <Text style={{ color: "#ffffff" }}>Do:</Text>
-                    <DateTimePicker
-                        style={styles.dateInput}
-                        value={props.endDate}
-                        mode={"date"}
-                        locale="pl"
-                        // minimumDate={new Date()}
-                        onChange={(event, selectedDate) => {
-                            props.setEndDate(selectedDate || props.endDate);
-                        }}
-                    />
-                </View>
-            </View>
-        ),
-        [props.startDate, props.endDate]
-    );
-
     const handleQuerySearch = useCallback(
         debounce((input) => {
             props.setSearchQuery(input);
@@ -129,15 +102,15 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
             <View style={styles.searchContainer}>
                 {props.openedFilter !== "Date" && (
                     <View style={styles.inputContainer}>
-                        {text === "" && (
-                            // render a search icon
-                            <MaterialIcons
-                                name="search"
-                                size={24}
-                                color="#ffffff"
-                                style={{ marginLeft: 10 }}
-                            />
-                        )}
+                        {/* {text === "" && ( */}
+                        {/* // render a search icon */}
+                        <MaterialIcons
+                            name="search"
+                            size={24}
+                            color="#ffffff"
+                            style={{ marginLeft: 10 }}
+                        />
+                        {/* )} */}
                         <TextInput
                             ref={inputRef}
                             style={styles.input}
@@ -160,14 +133,50 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                     </View>
                 )}
                 {/* if opened filter = date, show date picker */}
-                {props.openedFilter === "Date" && <DateInputField />}
+                {props.openedFilter === "Date" && (
+                    <View style={styles.inputContainer}>
+                        <View style={styles.dateContainer}>
+                            <Text style={{ color: "#ffffff" }}>Od:</Text>
+                            {/* {showDatePicker && ( */}
+                            <DateTimePicker
+                                style={styles.dateInput}
+                                value={props.startDate}
+                                mode={"date"}
+                                locale="pl"
+                                // minimumDate={new Date()}
+                                onChange={(event, selectedDate) => {
+                                    props.setStartDate(
+                                        selectedDate || props.startDate
+                                    );
+                                }}
+                            />
+                            {/* )} */}
+                        </View>
+                        <View style={styles.dateContainer}>
+                            <Text style={{ color: "#ffffff" }}>Do:</Text>
+                            <DateTimePicker
+                                style={styles.dateInput}
+                                value={props.endDate}
+                                mode={"date"}
+                                locale="pl"
+                                // minimumDate={new Date()}
+                                onChange={(event, selectedDate) => {
+                                    props.setEndDate(
+                                        selectedDate || props.endDate
+                                    );
+                                }}
+                            />
+                        </View>
+                    </View>
+                )}
                 {props.searchQuery !== "" && (
                     <TouchableOpacity onPress={() => onChangeText("")}>
-                        <MaterialIcons
+                        <Feather name="x-circle" size={30} color="#ffffff" />
+                        {/* <MaterialIcons
                             name="cancel"
                             size={33}
-                            color="#575757"
-                        />
+                            color="#ffffff"
+                        /> */}
                     </TouchableOpacity>
                 )}
                 {props.openedFilter === null && (

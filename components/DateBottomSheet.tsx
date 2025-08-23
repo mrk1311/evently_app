@@ -1,4 +1,11 @@
-import React, { useMemo, forwardRef, memo, useCallback } from "react";
+import React, {
+    useMemo,
+    forwardRef,
+    memo,
+    useCallback,
+    useState,
+    useEffect,
+} from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
 import BottomSheet, {
     BottomSheetBackdrop,
@@ -6,10 +13,12 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 
 interface BottomSheetProps {
-    handleCancelDates: () => void;
-    handleAcceptDates: () => void;
-    setStartDate: (date: Date) => void;
-    setEndDate: (date: Date) => void;
+    handleCancelDates: (previousStartDate: Date, previousEndDate: Date) => void;
+    handleAcceptDates: (startDate: Date, endDate: Date) => void;
+    startDate: Date;
+    endDate: Date;
+    previousStartDate: Date;
+    previousEndDate: Date;
 }
 
 type Ref = BottomSheet;
@@ -36,9 +45,7 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 style={styles.cardContainer}
                 onPress={() => {
                     if (item === "Dzisiaj") {
-                        props.setStartDate(new Date());
-                        props.setEndDate(new Date());
-                        props.handleAcceptDates();
+                        props.handleAcceptDates(new Date(), new Date());
                     } else if (item === "W tym tygodniu") {
                         const today = new Date();
                         const startOfWeek = new Date(
@@ -51,9 +58,7 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                             startOfWeek.getMonth(),
                             startOfWeek.getDate() + 6
                         );
-                        props.setStartDate(startOfWeek);
-                        props.setEndDate(endOfWeek);
-                        props.handleAcceptDates();
+                        props.handleAcceptDates(startOfWeek, endOfWeek);
                     } else if (item === "W tym miesiącu") {
                         const today = new Date();
                         const startOfMonth = new Date(
@@ -66,9 +71,7 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                             today.getMonth() + 1,
                             0
                         );
-                        props.setStartDate(startOfMonth);
-                        props.setEndDate(endOfMonth);
-                        props.handleAcceptDates();
+                        props.handleAcceptDates(startOfMonth, endOfMonth);
                     }
                 }}
             >
@@ -92,11 +95,30 @@ const DateBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         >
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Button title="Anuluj" onPress={props.handleCancelDates} />
+                    <Button
+                        title="Anuluj"
+                        onPress={() => {
+                            console.log(
+                                "Anulowanie dat: ",
+                                props.previousStartDate,
+                                props.previousEndDate
+                            );
+
+                            props.handleCancelDates(
+                                props.previousStartDate,
+                                props.previousEndDate
+                            );
+                        }}
+                    />
                     <Text style={styles.headerText}>Wybierz datę</Text>
                     <Button
                         title="Akceptuj"
-                        onPress={props.handleAcceptDates}
+                        onPress={() => {
+                            props.handleAcceptDates(
+                                props.startDate,
+                                props.endDate
+                            );
+                        }}
                     />
                 </View>
 
