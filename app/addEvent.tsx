@@ -191,7 +191,7 @@ export default function AddEventPage() {
                     {/* if user is not logged in show a message to log in */}
                     {!user && (
                         <Text style={styles.error}>
-                            Please log in to add an Event.
+                            Zaloguj się, aby dodać wydarzenie.
                         </Text>
                     )}
                     {user && (
@@ -200,17 +200,17 @@ export default function AddEventPage() {
                             contentContainerStyle={styles.scrollContainer}
                             keyboardShouldPersistTaps="handled"
                         >
-                            <Text style={styles.label}>Event Name</Text>
+                            <Text style={styles.label}>Nazwa wydarzenia</Text>
                             <TextInput
                                 style={styles.input}
                                 value={formData.name}
                                 onChangeText={(text) =>
                                     setFormData({ ...formData, name: text })
                                 }
-                                placeholder="Enter event name"
+                                placeholder="Wpisz nazwę wydarzenia"
                             />
 
-                            <Text style={styles.label}>Event Type</Text>
+                            <Text style={styles.label}>Rodzaj wydarzenia</Text>
                             <Picker
                                 selectedValue={formData.type}
                                 onValueChange={(value: any) =>
@@ -221,6 +221,7 @@ export default function AddEventPage() {
                                 {eventTypes.map((type) => (
                                     <Picker.Item
                                         key={type}
+                                        color="#fff"
                                         label={
                                             type.charAt(0).toUpperCase() +
                                             type.slice(1)
@@ -230,7 +231,7 @@ export default function AddEventPage() {
                                 ))}
                             </Picker>
 
-                            <Text style={styles.label}>Description</Text>
+                            <Text style={styles.label}>Opis</Text>
                             <TextInput
                                 style={[styles.input, styles.multiline]}
                                 value={formData.description}
@@ -245,7 +246,9 @@ export default function AddEventPage() {
                                 numberOfLines={4}
                             />
 
-                            <Text style={styles.label}>Website Link</Text>
+                            <Text style={styles.label}>
+                                Link do strony wydarzenia
+                            </Text>
                             <TextInput
                                 style={styles.input}
                                 value={formData.link}
@@ -255,7 +258,7 @@ export default function AddEventPage() {
                                 placeholder="https://example.com"
                                 keyboardType="url"
                             />
-                            <Text style={styles.label}>Image</Text>
+                            <Text style={styles.label}>Zdjęcie</Text>
                             {image ? (
                                 <Image
                                     source={{ uri: image }}
@@ -270,12 +273,12 @@ export default function AddEventPage() {
 
                             <View style={styles.imageButtons}>
                                 <Button
-                                    title="Choose Photo"
+                                    title="Wybierz zdjęcie z biblioteki"
                                     onPress={pickImage}
                                     disabled={uploading}
                                 />
 
-                                {formData.photo && (
+                                {image && (
                                     <Button
                                         title="Remove Photo"
                                         onPress={() => {
@@ -298,7 +301,7 @@ export default function AddEventPage() {
                             )} */}
 
                             <View style={styles.dateContainer}>
-                                <Text style={styles.label}>Date</Text>
+                                <Text style={styles.label}>Data i czas</Text>
                                 <View style={styles.dateInputContainer}>
                                     <DateTimePicker
                                         value={formData.date}
@@ -318,11 +321,11 @@ export default function AddEventPage() {
                                 </View>
                             </View>
 
-                            <Text style={styles.label}>Location</Text>
+                            <Text style={styles.label}>Lokalizacja</Text>
                             <Text style={styles.instruction}>
-                                Tap on the map to select location
+                                Kliknij na mapę, aby wybrać lokalizację
                             </Text>
-                            <MapView
+                            {/* <MapView
                                 style={styles.map}
                                 initialRegion={{
                                     latitude: 51.1657,
@@ -345,29 +348,33 @@ export default function AddEventPage() {
                                         }}
                                     />
                                 )}
-                            </MapView>
+                            </MapView> */}
 
-                            <Text style={styles.label}>Address (Optional)</Text>
+                            <Text style={styles.label}>
+                                Adres (lub nazwa miejsca)
+                            </Text>
                             <TextInput
                                 style={styles.input}
                                 value={formData.address}
                                 onChangeText={(text) =>
                                     setFormData({ ...formData, address: text })
                                 }
-                                placeholder="Enter human-readable address"
+                                placeholder="np. Warszawa, ul. Marszałkowska 1 lub Stadion Narodowy"
                             />
 
                             <View style={styles.buttonContainer}>
                                 <Button
                                     title={
-                                        isSubmitting ? "Adding..." : "Add Event"
+                                        isSubmitting
+                                            ? "Dodawanie..."
+                                            : "Dodaj wydarzenie"
                                     }
                                     onPress={handleSubmit}
                                     disabled={isSubmitting}
                                     color="#007AFF"
                                 />
                                 <Button
-                                    title="Cancel"
+                                    title="Anuluj"
                                     onPress={() => router.back()}
                                     color="#FF3B30"
                                 />
@@ -410,6 +417,7 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         marginTop: 12,
         marginBottom: 8,
+        color: "#fff",
     },
     input: {
         height: 40,
@@ -427,6 +435,7 @@ const styles = StyleSheet.create({
         height: 200,
         marginBottom: 15,
     },
+
     map: {
         height: 300,
         borderRadius: 8,

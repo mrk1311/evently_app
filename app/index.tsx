@@ -261,16 +261,6 @@ export default function map() {
         setMapViewCenter(controlledCenter);
     };
 
-    // handleRegionChange();
-    // }, [controlledCenter]);
-    // const handleRegionChangeComplete = useMemo(
-    //     () =>
-    //         throttle((region: Region) => {
-    //             setMapViewCenter(region);
-    //         }, 500),
-    //     []
-    // );
-
     // sort events by distance from the center of the map
     const sortedEvents = useMemo(() => {
         var features = null;
@@ -586,14 +576,30 @@ export default function map() {
                 onCenterMap={() => {
                     if (openEvent) {
                         // Center the map on the selected event
-                        setControlledCenter({
-                            latitude: openEvent.geometry.coordinates[1],
-                            longitude: openEvent.geometry.coordinates[0],
-                            latitudeDelta: 0.01,
-                            longitudeDelta: 0.01,
-                        });
-                        EventDetailsBottomSheetRef.current?.snapToIndex(0);
-                        // clusterBottomSheetRef.current?.close();
+                        if (
+                            controlledCenter.latitude ===
+                                openEvent.geometry.coordinates[1] &&
+                            controlledCenter.longitude ===
+                                openEvent.geometry.coordinates[0]
+                        ) {
+                            // If already centered, zoom in
+                            setControlledCenter({
+                                ...controlledCenter,
+                                latitudeDelta:
+                                    controlledCenter.latitudeDelta / 2,
+                                longitudeDelta:
+                                    controlledCenter.longitudeDelta / 2,
+                            });
+                        } else {
+                            setControlledCenter({
+                                latitude: openEvent.geometry.coordinates[1],
+                                longitude: openEvent.geometry.coordinates[0],
+                                latitudeDelta: 0.01,
+                                longitudeDelta: 0.01,
+                            });
+                            EventDetailsBottomSheetRef.current?.snapToIndex(0);
+                            // clusterBottomSheetRef.current?.close();
+                        }
                     }
                 }}
             />

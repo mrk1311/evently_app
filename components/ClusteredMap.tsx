@@ -240,7 +240,7 @@ const ClusteredMap: React.FC<MapProps> = ({
                     Keyboard.dismiss();
                     setCenterOnUser(false);
                 }}
-                mapPadding={{ top: 100, right: 0, bottom: 100, left: 0 }}
+                mapPadding={{ top: 100, right: 0, bottom: 220, left: 0 }}
             >
                 {/* <Clusterer
                     data={data.features}

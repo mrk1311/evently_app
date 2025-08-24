@@ -51,7 +51,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
         type,
     }) => {
         const title =
-            type === "Type" ? "Rodzaj" : type === "Place" ? "Miejsce" : "Czas";
+            type === "Type" ? "Rodzaj" : type === "Place" ? "Miejsce" : "Data";
 
         return (
             <TouchableOpacity
@@ -74,7 +74,15 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                     inputRef.current?.clear();
                 }}
             >
-                <Text style={styles.filterButtonText}>{title}</Text>
+                <Text
+                    style={[
+                        styles.filterButtonText,
+                        props.activeFilters.includes(type) &&
+                            styles.activeFilterText,
+                    ]}
+                >
+                    {title}
+                </Text>
             </TouchableOpacity>
         );
     };
@@ -236,6 +244,10 @@ const styles = StyleSheet.create({
     },
     activeFilter: {
         backgroundColor: "#78c181",
+    },
+    activeFilterText: {
+        // backgroundColor: "#78c181",
+        color: "black",
     },
     filterButtonText: {
         color: "#ffffff",

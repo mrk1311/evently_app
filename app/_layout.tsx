@@ -56,14 +56,19 @@ export default function RootLayout() {
                                 headerTitle: "Ulubione", // Custom title for favourites screen
                             }}
                         />
-                        <Stack.Screen name="addEvent" />
+                        <Stack.Screen
+                            name="addEvent"
+                            options={{
+                                headerTitle: "Zaproponuj wydarzenie", // Custom title for addEvent screen
+                            }}
+                        />
                         <Stack.Screen name="settings" />
                         <Stack.Screen name="admin" />
                         <Stack.Screen name="confirm-email" />
                         <Stack.Screen
                             name="resetPassword"
                             options={{
-                                headerTitle: "Resetuj hasło", // Custom title for resetPassword screen
+                                headerTitle: "Zresetuj hasło", // Custom title for resetPassword screen
                             }}
                         />
                     </Stack>

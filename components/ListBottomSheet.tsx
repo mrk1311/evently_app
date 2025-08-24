@@ -15,17 +15,12 @@ import { EventFeature, EventFeatureCollection } from "./ClusteredMap";
 import type { Region } from "react-native-maps";
 import getMarkerColor from "../functions/getMarkerColor";
 import ScrollToTopButton from "./ScrollToTopButton";
-import {
-    Menu,
-    MenuOptions,
-    MenuOption,
-    MenuTrigger,
-} from "react-native-popup-menu";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Alert } from "react-native";
 import { supabase } from "@/utils/supabase";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { add } from "lodash";
+import TextTicker from "react-native-text-ticker";
 
 interface BottomSheetProps {
     events: EventFeatureCollection;
@@ -51,7 +46,7 @@ type Ref = BottomSheet;
 
 const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     // variables
-    const snapPoints = useMemo(() => ["15%", "85%"], []);
+    const snapPoints = useMemo(() => ["30%", "85%"], []);
 
     const flatListRef = useRef<BottomSheetFlatListMethods>(null);
     const [buttonShown, setButtonShown] = useState(false);
@@ -347,30 +342,56 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             backgroundStyle={{ backgroundColor: "#282828" }}
             handleIndicatorStyle={{ backgroundColor: "#ffffff" }}
         >
-            <View style={styles.headerContainer}>
+            {/* <View style={styles.headerContainer}> */}
+            <View style={styles.horizontalContainer}>
                 <Text style={styles.header}>
                     {/* Wydarzenia: {props.events.features.length} */}
                     Wydarzenia w tym obszarze
                 </Text>
 
                 {/* add information about applied filters */}
-
-                <Text style={styles.subHeader}>
-                    Wybrane rodzaje wydarzeń:{" "}
-                    {props.pickedTypes && props.pickedTypes?.length > 0
-                        ? props.pickedTypes.join(", ")
-                        : "Wszystkie"}
-                </Text>
-
-                <Text style={styles.subHeader}>
-                    Wybrane przedział czasowy:{" "}
-                    {props.startDate && props.endDate
-                        ? `${props.startDate.toLocaleDateString(
-                              "en-GB"
-                          )} - ${props.endDate.toLocaleDateString("en-GB")}`
-                        : "Brak dat"}
-                </Text>
+                <View style={styles.filtersContainer}>
+                    <View style={styles.filter}>
+                        <TextTicker
+                            style={styles.subHeader}
+                            duration={6000}
+                            loop
+                            bounce
+                            repeatSpacer={50}
+                            marqueeDelay={1000}
+                            // shouldAnimateTreshold={50}
+                        >
+                            Rodzaje:{" "}
+                            {props.pickedTypes && props.pickedTypes?.length > 0
+                                ? props.pickedTypes.join(", ")
+                                : "Wszystkie"}
+                        </TextTicker>
+                    </View>
+                    <View style={styles.filter}>
+                        <Text style={styles.subHeader}>
+                            Data:{" "}
+                            {props.startDate && props.endDate
+                                ? `${props.startDate.toLocaleDateString(
+                                      "pl-PL",
+                                      {
+                                          day: "2-digit",
+                                          month: "2-digit",
+                                          year: "2-digit",
+                                      }
+                                  )} - ${props.endDate.toLocaleDateString(
+                                      "pl-PL",
+                                      {
+                                          day: "2-digit",
+                                          month: "2-digit",
+                                          year: "2-digit",
+                                      }
+                                  )}`
+                                : "Brak dat"}
+                        </Text>
+                    </View>
+                </View>
             </View>
+            {/* </View> */}
 
             <BottomSheetFlatList
                 ref={flatListRef}
@@ -398,65 +419,19 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     );
 });
 
-// const triggerStyles = {
-//     triggerText: {
-//         color: "#333",
-//         padding: 8,
-//         borderRadius: 15,
-//         width: 145,
-//     },
-//     triggerOuterWrapper: {
-//         backgroundColor: "#e0e0e0",
-//         flex: 1,
-//         borderRadius: 15,
-//     },
-//     triggerWrapper: {
-//         borderRadius: 15,
-//     },
-//     triggerTouchable: {
-//         textAlign: "center",
-//         underlayColor: "#8eb3ed",
-//         borderRadius: 15,
-//         activeOpacity: 70,
-//         style: {
-//             flex: 1,
-//         },
-//     },
-// };
-
-// const optionsStyles = {
-//     optionsContainer: {
-//         backgroundColor: "transparent",
-//         marginTop: 30,
-//         marginLeft: 70,
-//     },
-//     optionsWrapper: {
-//         backgroundColor: "#e0e0e0",
-//         borderRadius: 15,
-//         width: 120,
-//     },
-//     optionWrapper: {
-//         margin: 5,
-//     },
-//     optionTouchable: {
-//         underlayColor: "#8eb3ed",
-//         activeOpacity: 70,
-//     },
-//     optionText: {
-//         color: "#333",
-//     },
-// };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 8,
     },
-    headerContainer: {
-        flexDirection: "column",
-        justifyContent: "space-between",
+    horizontalContainer: {
+        flexDirection: "row",
+        flex: 1,
+        minHeight: 40,
+        maxHeight: 40,
         alignItems: "flex-start",
-        // gap: "70%",
+        gap: 16,
+        paddingTop: 8,
         paddingLeft: 16,
         paddingRight: 10,
         borderBottomWidth: 1,
@@ -464,8 +439,19 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         // margin: 6,
         marginBottom: 0,
-        // height: 41,
-        overflow: "visible",
+    },
+    filtersContainer: {
+        flexDirection: "column",
+        justifyContent: "space-between",
+        flex: 1,
+        // gap: 10,
+    },
+    filter: {
+        flex: 1,
+        height: 120,
+        // padding: 8,
+        // width: 130,
+        // height: 40,
     },
     contentContainer: {
         backgroundColor: "#282828",
@@ -508,11 +494,13 @@ const styles = StyleSheet.create({
         textAlign: "left",
     },
     subHeader: {
-        // fontSize: 12,
+        fontSize: 12,
+
         // fontWeight: "700",
-        marginTop: 8,
+        // marginTop: 8,
+        // height: 20,
         color: "#ffffff",
-        textAlign: "left",
+        // textAlign: "left",
     },
     cardContainer: {
         flexDirection: "row",
