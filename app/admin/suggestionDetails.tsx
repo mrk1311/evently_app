@@ -41,7 +41,6 @@ export default function SuggestionDetail() {
 
     const [formData, setFormData] = useState(suggestion);
     const [isLoading, setIsLoading] = useState(false);
-    const [datePickerVisible, setDatePickerVisible] = useState(false);
     const [image, setImage] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const [geometry, setGeometry] = useState<[number, number]>(
@@ -167,226 +166,226 @@ export default function SuggestionDetail() {
 
     return (
         <KeyboardAvoidingView>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <SafeAreaView style={styles.container}>
-                    <View style={styles.header}>
-                        <TouchableOpacity
-                            onPress={() => router.back()}
-                            style={styles.backButton}
-                        >
-                            <MaterialIcons name="chevron-left" size={24} />
-                            <Text style={styles.backText}>Back</Text>
-                        </TouchableOpacity>
-                        <Text style={styles.headerTitle}>Edit Suggestion</Text>
-                        <View style={{ width: 62 }} />
+            {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
+            <SafeAreaView style={styles.container}>
+                {/* <View style={styles.header}>
+                    <TouchableOpacity
+                        onPress={() => router.back()}
+                        style={styles.backButton}
+                    >
+                        <MaterialIcons name="chevron-left" size={24} />
+                        <Text style={styles.backText}>Back</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>Edit Suggestion</Text>
+                    <View style={{ width: 62 }} />
+                </View> */}
+
+                <ScrollView
+                    style={styles.ScrollViewContainer}
+                    contentContainerStyle={styles.scrollContainer}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <Text style={styles.label}>Event Name</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={formData.title}
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, title: text })
+                        }
+                        placeholder="Enter event name"
+                    />
+
+                    <Text style={styles.label}>Event Type</Text>
+                    <Picker
+                        selectedValue={formData.type}
+                        onValueChange={(value: any) =>
+                            setFormData({ ...formData, type: value })
+                        }
+                        style={styles.picker}
+                    >
+                        {eventTypes.map((type) => (
+                            <Picker.Item
+                                key={type}
+                                label={
+                                    type.charAt(0).toUpperCase() + type.slice(1)
+                                }
+                                value={type}
+                                color={"#fff"}
+                            />
+                        ))}
+                    </Picker>
+
+                    <Text style={styles.label}>Description</Text>
+                    <TextInput
+                        style={[styles.input, styles.multiline]}
+                        value={formData.description}
+                        onChangeText={(text) =>
+                            setFormData({
+                                ...formData,
+                                description: text,
+                            })
+                        }
+                        placeholder="Enter event description"
+                        multiline
+                        numberOfLines={4}
+                    />
+
+                    <Text style={styles.label}>Website Link</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={formData.event_url}
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, event_url: text })
+                        }
+                        placeholder="https://example.com"
+                        keyboardType="url"
+                    />
+                    <Text style={styles.label}>Image</Text>
+                    {image ? (
+                        <Image
+                            source={{ uri: image }}
+                            style={styles.imagePreview}
+                        />
+                    ) : formData.photo_url ? (
+                        <Image
+                            source={{ uri: formData.photo_url }}
+                            style={styles.imagePreview}
+                        />
+                    ) : null}
+
+                    <View style={styles.imageButtons}>
+                        <Button
+                            title="Choose Photo"
+                            onPress={pickImage}
+                            disabled={uploading}
+                        />
+
+                        {image && (
+                            <Button
+                                title="Remove Photo"
+                                onPress={() => {
+                                    setImage(null);
+                                    setFormData({
+                                        ...formData,
+                                        photo_url: "",
+                                    });
+                                }}
+                                color="#FF3B30"
+                            />
+                        )}
                     </View>
 
-                    <ScrollView
-                        style={styles.ScrollViewContainer}
-                        contentContainerStyle={styles.scrollContainer}
-                        keyboardShouldPersistTaps="handled"
-                    >
-                        <Text style={styles.label}>Event Name</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={formData.title}
-                            onChangeText={(text) =>
-                                setFormData({ ...formData, title: text })
-                            }
-                            placeholder="Enter event name"
-                        />
-
-                        <Text style={styles.label}>Event Type</Text>
-                        <Picker
-                            selectedValue={formData.type}
-                            onValueChange={(value: any) =>
-                                setFormData({ ...formData, type: value })
-                            }
-                            style={styles.picker}
-                        >
-                            {eventTypes.map((type) => (
-                                <Picker.Item
-                                    key={type}
-                                    label={
-                                        type.charAt(0).toUpperCase() +
-                                        type.slice(1)
-                                    }
-                                    value={type}
-                                />
-                            ))}
-                        </Picker>
-
-                        <Text style={styles.label}>Description</Text>
-                        <TextInput
-                            style={[styles.input, styles.multiline]}
-                            value={formData.description}
-                            onChangeText={(text) =>
-                                setFormData({
-                                    ...formData,
-                                    description: text,
-                                })
-                            }
-                            placeholder="Enter event description"
-                            multiline
-                            numberOfLines={4}
-                        />
-
-                        <Text style={styles.label}>Website Link</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={formData.event_url}
-                            onChangeText={(text) =>
-                                setFormData({ ...formData, event_url: text })
-                            }
-                            placeholder="https://example.com"
-                            keyboardType="url"
-                        />
-                        <Text style={styles.label}>Image</Text>
-                        {image ? (
-                            <Image
-                                source={{ uri: image }}
-                                style={styles.imagePreview}
-                            />
-                        ) : formData.photo_url ? (
-                            <Image
-                                source={{ uri: formData.photo_url }}
-                                style={styles.imagePreview}
-                            />
-                        ) : null}
-
-                        <View style={styles.imageButtons}>
-                            <Button
-                                title="Choose Photo"
-                                onPress={pickImage}
-                                disabled={uploading}
-                            />
-
-                            {formData.photo_url && (
-                                <Button
-                                    title="Remove Photo"
-                                    onPress={() => {
-                                        setImage(null);
-                                        setFormData({
-                                            ...formData,
-                                            photo_url: "",
-                                        });
-                                    }}
-                                    color="#FF3B30"
-                                />
-                            )}
-                        </View>
-
-                        {/* {uploading && (
+                    {/* {uploading && (
                             <ActivityIndicator
                                 size="large"
                                 style={styles.uploadIndicator}
                             />
                         )} */}
 
-                        <View style={styles.dateContainer}>
-                            <Text style={styles.label}>Date</Text>
-                            <View style={styles.dateInputContainer}>
-                                <DateTimePicker
-                                    value={new Date(formData.event_time)}
-                                    style={styles.dateInput}
-                                    mode="datetime"
-                                    minimumDate={new Date()}
-                                    onChange={(event, selectedDate) => {
-                                        if (selectedDate) {
-                                            setFormData({
-                                                ...formData,
-                                                event_time:
-                                                    selectedDate.toISOString(),
-                                            });
-                                        }
-                                    }}
-                                />
-                            </View>
+                    <View style={styles.dateContainer}>
+                        <Text style={styles.label}>Date</Text>
+                        <View style={styles.dateInputContainer}>
+                            <DateTimePicker
+                                value={new Date(formData.event_time)}
+                                style={styles.dateInput}
+                                mode="datetime"
+                                minimumDate={new Date()}
+                                onChange={(event, selectedDate) => {
+                                    if (selectedDate) {
+                                        setFormData({
+                                            ...formData,
+                                            event_time:
+                                                selectedDate.toISOString(),
+                                        });
+                                    }
+                                }}
+                            />
                         </View>
+                    </View>
 
-                        <Text style={styles.label}>Location</Text>
-                        <Text style={styles.instruction}>
-                            Tap on the map to select location
-                        </Text>
-                        <MapView
-                            style={styles.map}
-                            initialRegion={{
-                                latitude: 51.1657,
-                                longitude: 10.4515,
-                                latitudeDelta: 30,
-                                longitudeDelta: 30,
-                            }}
-                            onPress={handleMapPress}
-                            showsCompass={false}
-                            showsUserLocation={true}
-                            showsMyLocationButton={true}
-                            rotateEnabled={false}
-                            pitchEnabled={false}
+                    <Text style={styles.label}>Location</Text>
+                    <Text style={styles.instruction}>
+                        Tap on the map to select location
+                    </Text>
+                    <MapView
+                        style={styles.map}
+                        initialRegion={{
+                            latitude: 51.1657,
+                            longitude: 10.4515,
+                            latitudeDelta: 30,
+                            longitudeDelta: 30,
+                        }}
+                        onPress={handleMapPress}
+                        showsCompass={false}
+                        showsUserLocation={true}
+                        showsMyLocationButton={true}
+                        rotateEnabled={false}
+                        pitchEnabled={false}
+                    >
+                        {geometry && (
+                            <Marker
+                                coordinate={{
+                                    latitude: geometry[1],
+                                    longitude: geometry[0],
+                                }}
+                            />
+                        )}
+                    </MapView>
+
+                    <Text style={styles.label}>Address (Optional)</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={formData.location}
+                        onChangeText={(text) =>
+                            setFormData({ ...formData, location: text })
+                        }
+                        placeholder="Enter human-readable address"
+                    />
+
+                    {/* </ScrollView> */}
+
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity
+                            style={[styles.button, styles.saveButton]}
+                            onPress={handleSave}
+                            disabled={isLoading}
                         >
-                            {formData.location && (
-                                <Marker
-                                    coordinate={{
-                                        latitude: geometry[1],
-                                        longitude: geometry[0],
-                                    }}
-                                />
-                            )}
-                        </MapView>
-
-                        <Text style={styles.label}>Address (Optional)</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={formData.location}
-                            onChangeText={(text) =>
-                                setFormData({ ...formData, location: text })
-                            }
-                            placeholder="Enter human-readable address"
-                        />
-
-                        {/* </ScrollView> */}
-
-                        <View style={styles.buttonContainer}>
-                            <TouchableOpacity
-                                style={[styles.button, styles.saveButton]}
-                                onPress={handleSave}
-                                disabled={isLoading}
-                            >
-                                {isLoading ? (
-                                    <ActivityIndicator color="#fff" />
-                                ) : (
-                                    <Text style={styles.buttonText}>
-                                        Save Changes
-                                    </Text>
-                                )}
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={[styles.button, styles.approveButton]}
-                                onPress={handleApprove}
-                                disabled={isLoading}
-                            >
-                                {isLoading ? (
-                                    <ActivityIndicator color="#fff" />
-                                ) : (
-                                    <Text style={styles.buttonText}>
-                                        Approve Event
-                                    </Text>
-                                )}
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={[styles.button, styles.rejectButton]}
-                                onPress={handleReject}
-                                disabled={isLoading}
-                            >
+                            {isLoading ? (
+                                <ActivityIndicator color="#fff" />
+                            ) : (
                                 <Text style={styles.buttonText}>
-                                    Reject Suggestion
+                                    Save Changes
                                 </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </ScrollView>
-                </SafeAreaView>
-            </TouchableWithoutFeedback>
+                            )}
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={[styles.button, styles.approveButton]}
+                            onPress={handleApprove}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <ActivityIndicator color="#fff" />
+                            ) : (
+                                <Text style={styles.buttonText}>
+                                    Approve Event
+                                </Text>
+                            )}
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={[styles.button, styles.rejectButton]}
+                            onPress={handleReject}
+                            disabled={isLoading}
+                        >
+                            <Text style={styles.buttonText}>
+                                Reject Suggestion
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+            {/* </TouchableWithoutFeedback> */}
         </KeyboardAvoidingView>
     );
 }
@@ -394,7 +393,7 @@ export default function SuggestionDetail() {
 const styles = StyleSheet.create({
     container: {
         padding: 16,
-        backgroundColor: "#fff",
+        backgroundColor: "#282828",
     },
     header: {
         flexDirection: "row",
@@ -425,6 +424,7 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         marginBottom: 8,
         marginTop: 16,
+        color: "#fff",
     },
     input: {
         borderWidth: 1,
@@ -432,6 +432,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 12,
         fontSize: 16,
+        color: "#fff",
     },
     textArea: {
         minHeight: 100,
@@ -463,7 +464,7 @@ const styles = StyleSheet.create({
     },
     ScrollViewContainer: {
         padding: 16,
-        backgroundColor: "#fff",
+        backgroundColor: "#282828",
     },
     scrollContainer: {
         paddingBottom: 250,

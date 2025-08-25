@@ -22,6 +22,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { supabase } from "@/utils/supabase";
 import { Link } from "expo-router";
+import EventPhotoPlaceholder from "./EventPlaceholder";
 
 interface BottomSheetProps {
     event: EventFeature | null;
@@ -160,17 +161,24 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                     />
                     <View style={styles.horizontalContainer}>
                         {/* Event Image */}
-                        {/* {props.event?.properties.photo && ( */}
-                        <Image
-                            source={{ uri: props.event?.properties.photo }}
-                            style={styles.cardImagePlaceholder}
-                            resizeMode="cover"
-                        />
-                        {/* )} */}
+                        {props.event?.properties.photo ? (
+                            <Image
+                                source={{ uri: props.event?.properties.photo }}
+                                style={styles.cardImagePlaceholder}
+                                resizeMode="cover"
+                            />
+                        ) : (
+                            <EventPhotoPlaceholder
+                                type={props.event?.properties.type || null} // Fixing type issue
+                                componentWidth={200}
+                                componentHeight={200}
+                            />
+                        )}
                         <View style={styles.infoContainer}>
                             <Text style={styles.infoTitle}>Rodzaj</Text>
                             <Text style={styles.infoText}>
-                                {props.event?.properties.type.toUpperCase()}
+                                {props.event?.properties.type?.toUpperCase() ||
+                                    "N/A"}{" "}
                             </Text>
                             <Text style={styles.infoTitle}>Miejsce</Text>
                             <Text style={styles.infoText}>
@@ -244,7 +252,7 @@ const styles = StyleSheet.create({
     link: {
         color: "#2563eb",
         fontSize: 16,
-        marginBottom: 8,
+        // marginBottom: 8,
         textDecorationLine: "underline",
         textAlign: "center",
         fontWeight: "bold",

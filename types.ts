@@ -10,6 +10,7 @@ export type EventSuggestion = {
     type: string;
     user_id: string;
     user_email?: string;
+    organizer_id: string;
     status: "pending" | "approved" | "rejected";
     created_at: string;
 };

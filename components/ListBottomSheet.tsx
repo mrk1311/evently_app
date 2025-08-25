@@ -21,6 +21,7 @@ import { supabase } from "@/utils/supabase";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { add } from "lodash";
 import TextTicker from "react-native-text-ticker";
+import EventPhotoPlaceholder from "./EventPlaceholder";
 
 interface BottomSheetProps {
     events: EventFeatureCollection;
@@ -258,13 +259,19 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                         }}
                     >
                         {/* Event Image */}
-                        {/* {item.properties.photo && ( */}
-                        <Image
-                            source={{ uri: item.properties.photo }}
-                            style={styles.cardImagePlaceholder}
-                            resizeMode="cover"
-                        />
-                        {/* )} */}
+                        {item.properties.photo ? (
+                            <Image
+                                source={{ uri: item.properties.photo }}
+                                style={styles.cardImagePlaceholder}
+                                resizeMode="cover"
+                            />
+                        ) : (
+                            <EventPhotoPlaceholder
+                                type={item.properties.type}
+                                componentWidth={80}
+                                componentHeight={80}
+                            />
+                        )}
 
                         {/* Event Type Indicator */}
                         <View

@@ -107,7 +107,7 @@ export default function AdminDashboard() {
                 style={styles.cardContainer}
                 onPress={() => {
                     router.push({
-                        pathname: "/userPage/admin/suggestionDetails",
+                        pathname: "/admin/suggestionDetails",
                         params: { suggestion: JSON.stringify(item) },
                     });
                 }}
@@ -172,7 +172,7 @@ export default function AdminDashboard() {
                     </Text>
 
                     <Text style={styles.userInfo}>
-                        Submitted by: {item.user_email || "Anonymous"}
+                        Submitted by: {item.user_id || "Anonymous"}
                     </Text>
                 </View>
             </TouchableOpacity>
@@ -182,7 +182,7 @@ export default function AdminDashboard() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
+            {/* <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => navigation.goBack()}
@@ -192,7 +192,7 @@ export default function AdminDashboard() {
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Event Suggestions</Text>
                 <Text style={{ width: 94 }} />
-            </View>
+            </View> */}
 
             {isLoading ? (
                 <ActivityIndicator size="large" style={styles.loader} />
@@ -215,7 +215,7 @@ export default function AdminDashboard() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: "#282828",
     },
     header: {
         flexDirection: "row",
@@ -291,6 +291,7 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         flex: 1,
         marginRight: 8,
+        color: "#fff",
     },
     actionsContainer: {
         flexDirection: "row",
