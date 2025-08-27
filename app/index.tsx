@@ -259,6 +259,7 @@ export default function map() {
 
     const handleRegionChangeComplete = () => {
         setMapViewCenter(controlledCenter);
+        // TODO set list bottom sheet to top after region change is complete
     };
 
     // sort events by distance from the center of the map

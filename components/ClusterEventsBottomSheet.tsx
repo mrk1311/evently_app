@@ -18,6 +18,7 @@ import getMarkerColor from "@/functions/getMarkerColor";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { supabase } from "@/utils/supabase";
 import { AntDesign } from "@expo/vector-icons";
+import EventPhotoPlaceholder from "./EventPlaceholder";
 
 type ClusterEventsBottomSheetProps = {
     events: EventFeature[];
@@ -132,19 +133,6 @@ const ClusterEventsBottomSheet = forwardRef<
 
         handleRemoveFavoriteFromServer(eventId);
     }, []);
-    // const renderItem = ({ item }: { item: EventFeature }) => (
-    //     <TouchableOpacity
-    //         style={styles.eventItem}
-    //         onPress={() => onEventPress(item)}
-    //     >
-    //         <Text style={styles.eventName}>{item.properties.name}</Text>
-    //         <Text style={styles.eventType}>
-    //             {item.properties.type} •{" "}
-    //             {new Date(item.properties.date).toLocaleDateString()}
-    //         </Text>
-    //         <Text style={styles.eventLocation}>{item.properties.location}</Text>
-    //     </TouchableOpacity>
-    // );
 
     const renderItem = useCallback(
         ({ item }: { item: EventFeature }) => (
@@ -159,13 +147,19 @@ const ClusterEventsBottomSheet = forwardRef<
                 }}
             >
                 {/* Event Image */}
-                {/* {item.properties.photo && ( */}
-                <Image
-                    source={{ uri: item.properties.photo }}
-                    style={styles.cardImagePlaceholder}
-                    resizeMode="cover"
-                />
-                {/* )} */}
+                {item.properties.photo ? (
+                    <Image
+                        source={{ uri: item.properties.photo }}
+                        style={styles.cardImagePlaceholder}
+                        resizeMode="cover"
+                    />
+                ) : (
+                    <EventPhotoPlaceholder
+                        type={item.properties.type}
+                        componentWidth={80}
+                        componentHeight={80}
+                    />
+                )}
 
                 {/* Event Type Indicator */}
                 <View
@@ -247,7 +241,12 @@ const ClusterEventsBottomSheet = forwardRef<
                 />
             )}
             backgroundStyle={{ backgroundColor: "#282828" }}
-            handleIndicatorStyle={{ backgroundColor: "#fff" }}
+            handleIndicatorStyle={{
+                width: 60,
+                height: 4,
+                backgroundColor: "#fff",
+                marginTop: 8,
+            }}
         >
             <View style={styles.container}>
                 <View style={styles.header}>

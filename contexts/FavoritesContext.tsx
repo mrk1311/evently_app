@@ -64,7 +64,10 @@ export const FavoritesProvider = ({
             data: { user },
         } = await supabase.auth.getUser();
         if (!user) {
-            Alert.alert("Login Required", "Please log in to save favorites");
+            Alert.alert(
+                "Wymagane Logowanie",
+                "Zaloguj się aby zapisać ulubione wydarzenia"
+            );
             return;
         }
 

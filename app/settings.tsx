@@ -12,22 +12,13 @@ import { useRouter } from "expo-router";
 
 export default function settings() {
     const router = useRouter();
-    return (
-        <SafeAreaView style={styles.container}>
-            <TouchableOpacity
-                style={styles.header}
-                onPress={() => router.back()}
-            >
-                <MaterialIcons name="chevron-left" size={24} />
-                <Text style={styles.backText}>Back</Text>
-            </TouchableOpacity>
-        </SafeAreaView>
-    );
+    return <SafeAreaView style={styles.container}></SafeAreaView>;
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#282828",
     },
     header: {
         display: "flex",

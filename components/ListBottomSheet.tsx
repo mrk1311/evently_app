@@ -126,6 +126,11 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
         }
     }, [currentIndex]);
 
+    // list to top after events in region change
+    useEffect(() => {
+        flatListRef.current?.scrollToIndex({ animated: false, index: 0 });
+    }, [props.eventsInRegion, props.events]);
+
     const handleAddFavoriteToServer = useCallback(
         async (eventId: string) => {
             console.log("adding to server");
@@ -347,7 +352,12 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             enableDynamicSizing={false}
             style={styles.container}
             backgroundStyle={{ backgroundColor: "#282828" }}
-            handleIndicatorStyle={{ backgroundColor: "#ffffff" }}
+            handleIndicatorStyle={{
+                width: 60,
+                height: 4,
+                backgroundColor: "#fff",
+                marginTop: 8,
+            }}
         >
             {/* <View style={styles.headerContainer}> */}
             <View style={styles.horizontalContainer}>
@@ -429,7 +439,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 8,
+        // paddingTop: 8,
     },
     horizontalContainer: {
         flexDirection: "row",

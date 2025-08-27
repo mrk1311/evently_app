@@ -80,6 +80,7 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
         };
 
         return (
+            // make a wider handle for the bottom sheet
             <BottomSheet
                 ref={ref}
                 index={-1}
@@ -89,7 +90,16 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                 enableContentPanningGesture={true}
                 enablePanDownToClose={true}
                 backgroundStyle={{ backgroundColor: "#282828" }}
-                handleIndicatorStyle={{ backgroundColor: "#ffffff" }}
+                // handleIndicatorStyle={{
+                //     height: 80,
+                //     backgroundColor: "#555555",
+                // }}
+                handleIndicatorStyle={{
+                    width: 60,
+                    height: 4,
+                    backgroundColor: "#fff",
+                    marginTop: 8,
+                }}
             >
                 <View style={styles.container}>
                     <View style={styles.header}>

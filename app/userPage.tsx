@@ -77,30 +77,6 @@ export default function userPage() {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.backButton}
-                    onPress={() => router.back()}
-                >
-                    <MaterialIcons
-                        name="chevron-left"
-                        size={24}
-                        color={"#ffffff"}
-                    />
-                    <Text style={styles.backText}>Cofnij</Text>
-                </TouchableOpacity>
-                <Text
-                    style={{
-                        fontSize: 25,
-                        fontWeight: "bold",
-                        // margin: "auto",
-                        color: "#ffffff",
-                    }}
-                >
-                    MyEventMap
-                </Text>
-                <Text style={{ width: 94 }} />
-            </View> */}
             {user && (
                 <View style={styles.userPreview}>
                     <View style={styles.userIcon}>
@@ -118,7 +94,8 @@ export default function userPage() {
             )}
             {!user && (
                 <TouchableOpacity
-                    style={styles.userPreview}
+                    // change to noUserPreview
+                    style={styles.noUserPreview}
                     onPress={() => router.navigate("/auth")}
                 >
                     <View style={styles.userIcon}>
@@ -222,6 +199,16 @@ const styles = StyleSheet.create({
         color: "#ffffff",
     },
     userPreview: {
+        flexDirection: "row",
+        padding: 20,
+        alignItems: "center",
+        gap: 30,
+        borderBottomWidth: 1,
+        borderTopWidth: 1,
+        borderColor: "#575757",
+        backgroundColor: "#333333",
+    },
+    noUserPreview: {
         flexDirection: "row",
         padding: 20,
         alignItems: "center",

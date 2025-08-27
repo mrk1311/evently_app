@@ -22,6 +22,7 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import EventDetailsBottomSheet from "@/components/EventDetailsBottomSheet";
 import { useMap } from "@/contexts/MapContext";
 import { fetchEvents } from "@/utils/fetchEvents";
+import EventPhotoPlaceholder from "@/components/EventPlaceholder";
 
 // Define proper response type for the joined data
 type FavoriteResponse = {
@@ -94,11 +95,19 @@ export default function Favourites() {
                 onPress={() => openEventDetails(item)}
             >
                 {/* Event Image */}
-                <Image
-                    source={{ uri: item.properties.photo }}
-                    style={styles.cardImagePlaceholder}
-                    resizeMode="cover"
-                />
+                {item.properties.photo ? (
+                    <Image
+                        source={{ uri: item.properties.photo }}
+                        style={styles.cardImagePlaceholder}
+                        resizeMode="cover"
+                    />
+                ) : (
+                    <EventPhotoPlaceholder
+                        type={item.properties.type}
+                        componentWidth={80}
+                        componentHeight={80}
+                    />
+                )}
 
                 {/* Event Type Indicator */}
                 <View
@@ -172,27 +181,6 @@ export default function Favourites() {
 
     return (
         <View style={styles.container}>
-            {/* <SafeAreaView style={styles.container}> */}
-            {/* <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.backButton}
-                    onPress={() => router.back()}
-                >
-                    <MaterialIcons name="chevron-left" size={24} />
-                    <Text style={styles.backText}>Back</Text>
-                </TouchableOpacity>
-                <Text
-                    style={{
-                        fontSize: 20,
-                        fontWeight: "bold",
-                        // margin: "auto",
-                    }}
-                >
-                    Your Favorites
-                </Text>
-                <Text style={{ width: 94 }} />
-            </View> */}
-
             {/* Show loading indicator or error message */}
 
             {isLoading ? (
@@ -242,7 +230,6 @@ export default function Favourites() {
                     }
                 }}
             />
-            {/* </SafeAreaView> */}
         </View>
     );
 }

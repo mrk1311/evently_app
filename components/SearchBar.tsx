@@ -177,7 +177,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
                         </View>
                     </View>
                 )}
-                {props.searchQuery !== "" && (
+                {props.searchQuery !== "" && props.openedFilter === null && (
                     <TouchableOpacity onPress={() => onChangeText("")}>
                         <Feather name="x-circle" size={30} color="#ffffff" />
                         {/* <MaterialIcons
