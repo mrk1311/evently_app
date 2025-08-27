@@ -55,8 +55,8 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     const { favorites, addFavorite, removeFavorite, refreshFavorites } =
         useFavorites();
 
-    const listToTop = () => {
-        flatListRef.current?.scrollToIndex({ animated: true, index: 0 });
+    const listToTop = (animated: boolean) => {
+        flatListRef.current?.scrollToIndex({ animated: animated, index: 0 });
     };
 
     // create a new list with all events in region first, then all events in the whole collection
@@ -128,7 +128,9 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
     // list to top after events in region change
     useEffect(() => {
-        flatListRef.current?.scrollToIndex({ animated: false, index: 0 });
+        console.log("events in region changed, scrolling to top");
+        // sometimes console log works but scrollToIndex doesn't
+        listToTop(false);
     }, [props.eventsInRegion, props.events]);
 
     const handleAddFavoriteToServer = useCallback(
@@ -429,7 +431,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 
             <ScrollToTopButton
                 active={buttonShown}
-                listToTop={listToTop}
+                listToTop={() => listToTop(true)}
                 setButtonShown={setButtonShown}
             />
         </BottomSheet>

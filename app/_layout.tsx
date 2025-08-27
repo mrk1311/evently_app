@@ -62,9 +62,19 @@ export default function RootLayout() {
                                 headerTitle: "Zaproponuj wydarzenie", // Custom title for addEvent screen
                             }}
                         />
-                        <Stack.Screen name="settings" />
+                        <Stack.Screen
+                            name="settings"
+                            options={{
+                                headerTitle: "Ustawienia", // Custom title for settings screen
+                            }}
+                        />
                         <Stack.Screen name="admin" />
-                        <Stack.Screen name="confirm-email" />
+                        <Stack.Screen
+                            name="confirm-email"
+                            options={{
+                                headerTitle: "Potwierdź email", // Custom title for confirm-email screen
+                            }}
+                        />
                         <Stack.Screen
                             name="resetPassword"
                             options={{
