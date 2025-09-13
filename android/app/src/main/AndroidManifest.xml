@@ -27,16 +27,40 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="myapp"/>
-        <data android:scheme="com.emerka.evently_app"/>
-        <data android:scheme="exp+eventlyapp"/>
         <data android:scheme="MyEventMap"/>
         <data android:scheme="com.emerka.MyEventMap"/>
+        <data android:scheme="exp+eventlyapp"/>
+        <data android:scheme="exp+myeventmap"/>
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.SEND"/>
+        <data android:mimeType="text/*"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.SEND"/>
+        <data android:mimeType="text/*"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.SEND"/>
+        <data android:mimeType="text/*"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.SEND"/>
+        <data android:mimeType="text/*"/>
+        <category android:name="android.intent.category.DEFAULT"/>
       </intent-filter>
       <intent-filter data-generated="true">
         <action android:name="android.intent.action.VIEW"/>
         <data android:scheme="MyEventMap" android:host="confirm" android:pathPrefix="/"/>
         <category android:name="android.intent.category.BROWSABLE"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.SEND"/>
+        <data android:mimeType="text/*"/>
         <category android:name="android.intent.category.DEFAULT"/>
       </intent-filter>
     </activity>

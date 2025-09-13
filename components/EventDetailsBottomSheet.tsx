@@ -187,8 +187,7 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                         <View style={styles.infoContainer}>
                             <Text style={styles.infoTitle}>Rodzaj</Text>
                             <Text style={styles.infoText}>
-                                {props.event?.properties.type?.toUpperCase() ||
-                                    "N/A"}{" "}
+                                {props.event?.properties.type || "N/A"}{" "}
                             </Text>
                             <Text style={styles.infoTitle}>Miejsce</Text>
                             <Text style={styles.infoText}>

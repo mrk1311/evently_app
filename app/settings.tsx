@@ -16,7 +16,7 @@ export default function settings() {
         <SafeAreaView style={styles.container}>
             <TouchableOpacity
                 style={styles.menuItem}
-                // onPress={() => router.navigate("/userPage/settings")}
+                onPress={() => router.navigate("/notifications")}
             >
                 <MaterialIcons name="notifications" size={36} color="#fff" />
                 <Text style={{ color: "#ffffff" }}>Powiadomienia</Text>
@@ -27,7 +27,7 @@ export default function settings() {
             >
                 <MaterialIcons name="light-mode" size={36} color="#fff" />
                 <Text style={{ color: "#ffffff" }}>
-                    Zmiana trybu na jasny dostępna wkrótce
+                    Zmiana trybu na jasny (dostępna wkrótce)
                 </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -36,7 +36,7 @@ export default function settings() {
             >
                 <MaterialIcons name="password" size={36} color="#fff" />
                 <Text style={{ color: "#ffffff" }}>
-                    Zmiana hasła dostępna wkrótce
+                    Zmiana hasła (dostępna wkrótce)
                 </Text>
             </TouchableOpacity>
         </SafeAreaView>

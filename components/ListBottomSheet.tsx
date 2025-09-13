@@ -25,6 +25,7 @@ import EventPhotoPlaceholder from "./EventPlaceholder";
 
 interface BottomSheetProps {
     events: EventFeatureCollection;
+    uniqueEventTypes: string[];
     setCenter: (region: Region) => void;
     snapToIndex: (index: number) => void;
     openEventDetailsBottomSheet: (event: EventFeature) => void;
@@ -362,7 +363,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             }}
         >
             {/* <View style={styles.headerContainer}> */}
-            <View style={styles.horizontalContainer}>
+            <View style={styles.headerContainer}>
                 <Text style={styles.header}>
                     {/* Wydarzenia: {props.events.features.length} */}
                     Wydarzenia w tym obszarze
@@ -381,9 +382,11 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                             // shouldAnimateTreshold={50}
                         >
                             Rodzaje:{" "}
-                            {props.pickedTypes && props.pickedTypes?.length > 0
-                                ? props.pickedTypes.join(", ")
-                                : "Wszystkie"}
+                            {props.pickedTypes?.length ===
+                                props.uniqueEventTypes.length ||
+                            props.pickedTypes?.length === 0
+                                ? "Wszystkie"
+                                : props.pickedTypes.join(", ")}
                         </TextTicker>
                     </View>
                     <View style={styles.filter}>
@@ -395,14 +398,14 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                                       {
                                           day: "2-digit",
                                           month: "2-digit",
-                                          year: "2-digit",
+                                          year: "numeric",
                                       }
                                   )} - ${props.endDate.toLocaleDateString(
                                       "pl-PL",
                                       {
                                           day: "2-digit",
                                           month: "2-digit",
-                                          year: "2-digit",
+                                          year: "numeric",
                                       }
                                   )}`
                                 : "Brak dat"}
@@ -443,13 +446,13 @@ const styles = StyleSheet.create({
         flex: 1,
         // paddingTop: 8,
     },
-    horizontalContainer: {
-        flexDirection: "row",
+    headerContainer: {
+        flexDirection: "column",
         flex: 1,
-        minHeight: 40,
-        maxHeight: 40,
+        minHeight: 70,
+        maxHeight: 70,
         alignItems: "flex-start",
-        gap: 16,
+        gap: 8,
         paddingTop: 8,
         paddingLeft: 16,
         paddingRight: 10,
@@ -460,17 +463,25 @@ const styles = StyleSheet.create({
         marginBottom: 0,
     },
     filtersContainer: {
-        flexDirection: "column",
+        flexDirection: "row",
         justifyContent: "space-between",
         flex: 1,
-        // gap: 10,
+        gap: 10,
+        width: "100%",
+        height: 20,
     },
     filter: {
         flex: 1,
-        height: 120,
-        // padding: 8,
+        // height: 120,
+        // paddingRight: 8,
+        // margin: "auto",
+        // alignItems: "space-around",
+        // margin: 8,
         // width: 130,
-        // height: 40,
+        height: 20,
+        // border between left and right filter
+        // borderRightWidth: 1,
+        // borderRightColor: "#575757",
     },
     contentContainer: {
         backgroundColor: "#282828",

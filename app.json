@@ -1,7 +1,8 @@
 {
     "expo": {
-        "name": "evently_app",
-        "slug": "evently_app",
+        "name": "MyEventMap",
+        "displayName": "MyEventMap",
+        "slug": "MyEventMap",
         "version": "1.0.0",
         "orientation": "portrait",
         "icon": "./assets/images/icon.png",
@@ -46,19 +47,25 @@
         },
         "plugins": [
             "expo-router",
+            "expo-share-intent",
             [
                 "expo-splash-screen",
                 {
+                    "backgroundColor": "#232323",
                     "image": "./assets/images/splash-icon.png",
-                    "imageWidth": 200,
-                    "resizeMode": "contain",
-                    "backgroundColor": "#ffffff"
+                    "imageWidth": 200
                 }
             ],
             [
                 "expo-location",
                 {
                     "locationAlwaysAndWhenInUsePermission": "Allow Evently to access your location."
+                }
+            ],
+            [
+                "expo-notifications",
+                {
+                    "enableBackgroundRemoteNotifications": true
                 }
             ]
         ],

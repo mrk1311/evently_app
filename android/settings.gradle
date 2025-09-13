@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'evently_app'
+rootProject.name = 'MyEventMap'
 
 dependencyResolutionManagement {
   versionCatalogs {

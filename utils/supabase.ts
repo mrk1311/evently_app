@@ -1,4 +1,3 @@
-// utils/supabase-client.ts
 import { createClient } from '@supabase/supabase-js'
 
 // Get these from your Supabase project settings
