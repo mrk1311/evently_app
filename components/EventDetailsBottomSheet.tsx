@@ -14,6 +14,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Alert,
+    ScrollView,
 } from "react-native";
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { EventFeature } from "./ClusteredMap";
@@ -219,10 +220,12 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                             </Link>
                         </View>
                     </View>
-                    <Text style={styles.subHeaderText}>Opis</Text>
-                    <Text style={styles.description}>
-                        {props.event?.properties.description}
-                    </Text>
+                    <ScrollView>
+                        <Text style={styles.subHeaderText}>Opis</Text>
+                        <Text style={styles.description}>
+                            {props.event?.properties.description}
+                        </Text>
+                    </ScrollView>
                 </View>
             </BottomSheet>
         );

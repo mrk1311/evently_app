@@ -6,7 +6,13 @@ import type {
 } from "../components/ClusteredMap";
 import ListBottomSheet from "../components/ListBottomSheet";
 import { InteractionManager, StyleSheet } from "react-native";
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, {
+    useState,
+    useRef,
+    useEffect,
+    useMemo,
+    useCallback,
+} from "react";
 import type { Region } from "react-native-maps";
 import SearchBar from "../components/SearchBar";
 import TypesBottomSheet from "../components/TypesBottomSheet";
@@ -222,11 +228,9 @@ export default function map() {
     const [dateInterval, setDateInterval] = useState<Interval | null>(null);
     const [mapViewCenter, setMapViewCenter] =
         useState<Region>(controlledCenter);
-
-    const [pickedSortByOption, setPickedSortByOption] =
-        useState<string>("Map Center");
     const [clusterEvents, setClusterEvents] = useState<EventFeature[]>([]);
     const clusterBottomSheetRef = useRef<BottomSheet>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const openClusterEventsBottomSheet = (events: EventFeature[]) => {
         setClusterEvents(events);
@@ -376,76 +380,74 @@ export default function map() {
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     };
 
-    const handleRegionChangeComplete = () => {
-        setMapViewCenter(controlledCenter);
-        // TODO set list bottom sheet to top after region change is complete
-    };
+    // const handleRegionChangeComplete = (region: Region) => {
+    //     setMapViewCenter(region);
+    // };
+
+    const handleRegionChangeComplete = useCallback(
+        throttle((region: Region) => {
+            setMapViewCenter(region);
+        }, 1000),
+        []
+    );
+
+    // const throttledRegionChange = useCallback(
+    //     throttle((region: Region) => {
+    //         handleRegionChangeComplete(region);
+    //     }, 1000),
+    //     []
+    // );
 
     // sort events by distance from the center of the map
     const sortedEvents = useMemo(() => {
         var features = null;
-        if (pickedSortByOption === "Date") {
-            features = filteredEvents.features
-                .map((feature) => {
-                    return feature;
-                })
-                .sort((a, b) => {
-                    const dateA = new Date(a.properties?.date).valueOf();
-                    const dateB = new Date(b.properties?.date).valueOf();
-                    if (dateA > dateB) {
-                        return 1;
-                    }
-                    return -1;
-                });
-        } else {
-            features = filteredEvents.features
-                .map((feature) => {
-                    // Ensure we're working with Point geometry
-                    if (feature.geometry.type === "Point") {
-                        const [lon, lat] = feature.geometry.coordinates;
-
-                        if (pickedSortByOption === "Map Center") {
-                            return {
-                                ...feature,
-                                properties: {
-                                    ...feature.properties,
-                                    distance: haversine(
-                                        lat,
-                                        lon,
-                                        mapViewCenter.latitude,
-                                        mapViewCenter.longitude
-                                    ),
-                                },
-                            };
-                        } else if (pickedSortByOption === "User Location") {
-                            return {
-                                ...feature,
-                                properties: {
-                                    ...feature.properties,
-                                    distance: haversine(
-                                        lat,
-                                        lon,
-                                        location.coords.latitude,
-                                        location.coords.longitude
-                                    ),
-                                },
-                            };
-                        }
-                    }
-                    return feature;
-                })
-                .sort(
-                    (a, b) =>
-                        (a.properties?.distance || 0) -
-                        (b.properties?.distance || 0)
-                );
-        }
+        // if (pickedSortByOption === "Date") {
+        //     features = filteredEvents.features
+        //         .map((feature) => {
+        //             return feature;
+        //         })
+        //         .sort((a, b) => {
+        //             const dateA = new Date(a.properties?.date).valueOf();
+        //             const dateB = new Date(b.properties?.date).valueOf();
+        //             if (dateA > dateB) {
+        //                 return 1;
+        //             }
+        //             return -1;
+        //         });
+        // } else {
+        console.log("sorting events");
+        features = filteredEvents.features
+            .map((feature) => {
+                // Ensure we're working with Point geometry
+                if (feature.geometry.type === "Point") {
+                    const [lon, lat] = feature.geometry.coordinates;
+                    return {
+                        ...feature,
+                        properties: {
+                            ...feature.properties,
+                            distance: haversine(
+                                lat,
+                                lon,
+                                mapViewCenter.latitude,
+                                mapViewCenter.longitude
+                            ),
+                        },
+                    };
+                }
+                return feature;
+            })
+            .sort(
+                (a, b) =>
+                    (a.properties?.distance || 0) -
+                    (b.properties?.distance || 0)
+            );
+        // }
 
         return {
             type: "FeatureCollection",
             features: features,
         } as EventFeatureCollection;
-    }, [filteredEvents, mapViewCenter, pickedSortByOption, location]);
+    }, [filteredEvents, mapViewCenter, location]);
 
     const filterBySearch = (
         array: EventFeatureCollection
@@ -632,6 +634,8 @@ export default function map() {
                 setCenterOnUser={setCenterOnUser}
                 openClusterEventsBottomSheet={openClusterEventsBottomSheet}
                 setEventsInRegion={setEventsInRegion}
+                // isLoading={isLoading}
+                // setIsLoading={setIsLoading}
             />
             <ShowUserLocationButton
                 active={centerOnUser}
@@ -649,12 +653,12 @@ export default function map() {
                     setOpenEvent(event);
                     EventDetailsBottomSheetRef.current?.snapToIndex(0);
                 }}
-                pickedSortByOption={pickedSortByOption}
-                setPickedSortByOption={setPickedSortByOption}
                 eventsInRegion={eventsInRegion}
                 pickedTypes={pickedTypes}
                 startDate={startDate}
                 endDate={endDate}
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
             />
 
             <TypesBottomSheet

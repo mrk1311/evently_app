@@ -1,10 +1,10 @@
-// EventMarker.tsx
 import React, { FunctionComponent, memo, useCallback } from "react";
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import { Marker as MapsMarker } from "react-native-maps";
 import type { supercluster } from "react-native-clusterer";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
-import { useFavorites } from "@/contexts/FavoritesContext"; // Add this import
+import { FontAwesome5 } from "@expo/vector-icons";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import getMarkerStyle from "@/functions/getMarkerStyle";
 
 type IFeature = supercluster.PointOrClusterFeature<any, any>;
 
@@ -13,17 +13,17 @@ interface Props {
     onPress: (item: IFeature) => void;
 }
 
-const getMarkerColor = (type: string) => {
-    const colors: { [key: string]: string } = {
-        music: "#FF4081",
-        sport: "#7C4DFF",
-        conference: "#00BCD4",
-        art: "#FF9800",
-        theatre: "#4CAF50",
-        festival: "#9C27B0",
-    };
-    return colors[type] || "#2196F3";
-};
+// const getMarkerColor = (type: string) => {
+//     const colors: { [key: string]: string } = {
+//         music: "#FF4081",
+//         sport: "#7C4DFF",
+//         conference: "#00BCD4",
+//         art: "#FF9800",
+//         theatre: "#4CAF50",
+//         festival: "#9C27B0",
+//     };
+//     return colors[type] || "#2196F3";
+// };
 
 type iconName =
     | "music-note"
@@ -34,33 +34,32 @@ type iconName =
     | "festival"
     | "question-mark";
 
-const getMarkerIcon = (type: string): iconName => {
-    const icons: { [key: string]: iconName } = {
-        music: "music-note",
-        sport: "sports-basketball",
-        conference: "school",
-        art: "palette",
-        theatre: "theater-comedy",
-        festival: "festival",
-    };
-    return icons[type] || "question-mark";
-};
+// const getMarkerIcon = (type: string): iconName => {
+//     const icons: { [key: string]: iconName } = {
+//         music: "music-note",
+//         sport: "sports-basketball",
+//         conference: "school",
+//         art: "palette",
+//         theatre: "theater-comedy",
+//         festival: "festival",
+//     };
+//     return icons[type] || "question-mark";
+// };
 
 const EventMarker: FunctionComponent<Props> = memo(
     ({ item, onPress }) => {
         const { favorites } = useFavorites(); // Access favorites context
         const isFavorite = favorites.has(item.properties.id); // Check if event is favorited
 
+        const { color, icon } = getMarkerStyle(item.properties.type);
+
         // Check if this cluster contains any favorite events
         const hasFavoritesInCluster = item.properties?.hasFavorites || false;
 
         const MarkerIcon = useCallback(({ type }: { type: string }) => {
+            const { color, icon } = getMarkerStyle(type);
             return (
-                <MaterialIcons
-                    name={getMarkerIcon(type)}
-                    size={20}
-                    color="#fff"
-                />
+                <FontAwesome5 name={icon as iconName} size={20} color="#fff" />
             );
         }, []);
 
@@ -84,14 +83,14 @@ const EventMarker: FunctionComponent<Props> = memo(
                         {hasFavoritesInCluster && (
                             <>
                                 <View style={styles.favoriteBadge}>
-                                    <AntDesign
+                                    <FontAwesome5
                                         name="heart"
                                         size={18}
                                         color="#d35050"
                                     />
                                 </View>
                                 <View style={styles.favoriteBadge}>
-                                    <AntDesign
+                                    <FontAwesome5
                                         name="hearto"
                                         size={18}
                                         color="white"
@@ -114,9 +113,7 @@ const EventMarker: FunctionComponent<Props> = memo(
                                 style={[
                                     styles.eventMarker,
                                     {
-                                        backgroundColor: getMarkerColor(
-                                            item.properties.type
-                                        ),
+                                        backgroundColor: color,
                                     },
                                 ]}
                             >
@@ -125,14 +122,14 @@ const EventMarker: FunctionComponent<Props> = memo(
                                 {isFavorite && (
                                     <>
                                         <View style={styles.favoriteBadge}>
-                                            <AntDesign
+                                            <FontAwesome5
                                                 name="heart"
                                                 size={18}
                                                 color="#d35050"
                                             />
                                         </View>
                                         <View style={styles.favoriteBadge}>
-                                            <AntDesign
+                                            <FontAwesome5
                                                 name="hearto"
                                                 size={18}
                                                 color="white"
@@ -193,12 +190,12 @@ const styles = StyleSheet.create({
         width: 100,
         padding: 2,
         borderRadius: 5,
-        backgroundColor: "#fff",
+        backgroundColor: "#282828",
     },
     markerTitle: {
         justifyContent: "center",
         alignItems: "center",
-        color: "#000",
+        color: "#fff",
         fontSize: 12,
         textAlign: "center",
     },

@@ -279,6 +279,22 @@ const ClusteredMap: React.FC<MapProps> = ({
     );
 };
 
+// const findMarkersInRegion = async (
+//     region: Region,
+//     data: EventFeatureCollection
+// ) => {
+//     const markersInRegion = data.features.filter((feature) => {
+//         const [lon, lat] = feature.geometry.coordinates;
+//         return (
+//             lon >= region.longitude - region.longitudeDelta / 2 &&
+//             lon <= region.longitude + region.longitudeDelta / 2 &&
+//             lat >= region.latitude - region.latitudeDelta / 2 &&
+//             lat <= region.latitude + region.latitudeDelta / 2
+//         );
+//     });
+//     return markersInRegion;
+// };
+
 // Check if markers in a cluster are too close to decluster
 const areMarkersTooClose = (
     events: EventFeature[],

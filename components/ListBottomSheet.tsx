@@ -6,7 +6,14 @@ import React, {
     forwardRef,
     useState,
 } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+    View,
+    Text,
+    Image,
+    StyleSheet,
+    TouchableOpacity,
+    ActivityIndicator,
+} from "react-native";
 import BottomSheet, {
     BottomSheetFlatList,
     BottomSheetFlatListMethods,
@@ -19,7 +26,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { Alert } from "react-native";
 import { supabase } from "@/utils/supabase";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import { add } from "lodash";
+import { add, debounce } from "lodash";
 import TextTicker from "react-native-text-ticker";
 import EventPhotoPlaceholder from "./EventPlaceholder";
 
@@ -29,12 +36,12 @@ interface BottomSheetProps {
     setCenter: (region: Region) => void;
     snapToIndex: (index: number) => void;
     openEventDetailsBottomSheet: (event: EventFeature) => void;
-    pickedSortByOption: string;
-    setPickedSortByOption: (sortByOption: string) => void;
     eventsInRegion?: EventFeature[];
     pickedTypes?: string[];
     startDate?: Date;
     endDate?: Date;
+    isLoading: boolean;
+    setIsLoading: (loading: boolean) => void;
 }
 
 const coordinatesToRegion = (coordinates: number[]) => ({
@@ -56,13 +63,16 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     const { favorites, addFavorite, removeFavorite, refreshFavorites } =
         useFavorites();
 
+    // Local state for processed events
+    const [processedEvents, setProcessedEvents] = useState<EventFeature[]>([]);
+    const [isProcessing, setIsProcessing] = useState(false);
+
     const listToTop = (animated: boolean) => {
         flatListRef.current?.scrollToIndex({ animated: animated, index: 0 });
     };
 
     // create a new list with all events in region first, then all events in the whole collection
-
-    const eventList = useMemo(() => {
+    const memoizedEventList = useMemo(() => {
         const eventsInRegionSet = new Set(
             props.eventsInRegion?.map((event) => event.properties.id)
         );
@@ -71,7 +81,6 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             (event) => !eventsInRegionSet.has(event.properties.id)
         );
 
-        // separator between two lists
         if (props.eventsInRegion) {
             listWithoutEventsInRegion.unshift({
                 type: "Feature",
@@ -128,11 +137,11 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
     }, [currentIndex]);
 
     // list to top after events in region change
-    useEffect(() => {
-        console.log("events in region changed, scrolling to top");
-        // sometimes console log works but scrollToIndex doesn't
-        listToTop(false);
-    }, [props.eventsInRegion, props.events]);
+    // useEffect(() => {
+    //     console.log("events in region changed, scrolling to top");
+    //     // sometimes console log works but scrollToIndex doesn't
+    //     listToTop(false);
+    // }, [props.eventsInRegion, props.events]);
 
     const handleAddFavoriteToServer = useCallback(
         async (eventId: string) => {
@@ -220,6 +229,78 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 Alert.alert("Error", "Failed to remove favorite");
             }
         },
+        []
+    );
+
+    // Process events asynchronously
+    const processEvents = useCallback(
+        debounce(
+            (
+                events: EventFeatureCollection,
+                eventsInRegion?: EventFeature[]
+            ) => {
+                setIsProcessing(true);
+
+                // Use requestIdleCallback or setTimeout to avoid blocking UI
+                requestIdleCallback(() => {
+                    const eventsInRegionSet = new Set(
+                        eventsInRegion?.map((event) => event.properties.id)
+                    );
+
+                    const listWithoutEventsInRegion = events.features.filter(
+                        (event) => !eventsInRegionSet.has(event.properties.id)
+                    );
+
+                    if (eventsInRegion) {
+                        listWithoutEventsInRegion.unshift({
+                            type: "Feature",
+                            geometry: {
+                                type: "Point",
+                                coordinates: [0, 0],
+                            },
+                            properties: {
+                                id: "separator",
+                                name: "Pozostałe najbliższe wydarzenia",
+                                type: "",
+                                description: "",
+                                date: "",
+                                link: "/#${string}",
+                                photo: "",
+                                location: "",
+                            },
+                        });
+                    }
+
+                    if (eventsInRegion?.length === 0) {
+                        listWithoutEventsInRegion.unshift({
+                            type: "Feature",
+                            geometry: {
+                                type: "Point",
+                                coordinates: [0, 0],
+                            },
+                            properties: {
+                                id: "separator2",
+                                name: "Brak wydarzeń w okolicy",
+                                type: "",
+                                description: "",
+                                date: "",
+                                link: "/#${string}",
+                                photo: "",
+                                location: "",
+                            },
+                        });
+                    }
+
+                    const result = [
+                        ...(eventsInRegion || []),
+                        ...listWithoutEventsInRegion,
+                    ];
+                    setProcessedEvents(result);
+                    setIsProcessing(false);
+                });
+            },
+            300
+        ),
         []
     );
 
@@ -362,14 +443,16 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                 marginTop: 8,
             }}
         >
-            {/* <View style={styles.headerContainer}> */}
-            <View style={styles.headerContainer}>
-                <Text style={styles.header}>
-                    {/* Wydarzenia: {props.events.features.length} */}
-                    Wydarzenia w tym obszarze
-                </Text>
+            {/* if isLoading = true render a loader */}
 
-                {/* add information about applied filters */}
+            {/* <View style={styles.headerContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+                <Text style={styles.header}>Updating markers...</Text>
+            </View> */}
+
+            <View style={styles.headerContainer}>
+                <Text style={styles.header}>Wydarzenia w tym obszarze</Text>
+
                 <View style={styles.filtersContainer}>
                     <View style={styles.filter}>
                         <TextTicker
@@ -386,7 +469,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                                 props.uniqueEventTypes.length ||
                             props.pickedTypes?.length === 0
                                 ? "Wszystkie"
-                                : props.pickedTypes.join(", ")}
+                                : props.pickedTypes?.join(", ")}
                         </TextTicker>
                     </View>
                     <View style={styles.filter}>
@@ -413,11 +496,9 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                     </View>
                 </View>
             </View>
-            {/* </View> */}
-
             <BottomSheetFlatList
                 ref={flatListRef}
-                data={eventList}
+                data={memoizedEventList}
                 keyExtractor={(item) => item.properties.id.toString()}
                 renderItem={renderEventCard}
                 contentContainerStyle={styles.contentContainer}
@@ -585,4 +666,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ListBottomSheet;
+export default React.memo(ListBottomSheet);
