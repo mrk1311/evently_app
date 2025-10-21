@@ -8,12 +8,14 @@ interface EventMarkerProps {
     type: string | null;
     componentWidth: number;
     componentHeight: number;
+    iconSize?: number;
 }
 
 const EventPhotoPlaceholder: React.FC<EventMarkerProps> = ({
     type,
     componentWidth,
     componentHeight,
+    iconSize,
 }) => {
     const { color, icon } = getMarkerStyle(type);
 
@@ -39,7 +41,7 @@ const EventPhotoPlaceholder: React.FC<EventMarkerProps> = ({
                 />
 
                 {/* Icon */}
-                <FontAwesome5 name={icon} size={28} color="white" />
+                <FontAwesome5 name={icon} size={iconSize} color="white" />
             </View>
         </View>
     );

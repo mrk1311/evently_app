@@ -106,6 +106,7 @@ export default function Favourites() {
                         type={item.properties.type}
                         componentWidth={80}
                         componentHeight={80}
+                        iconSize={28}
                     />
                 )}
 

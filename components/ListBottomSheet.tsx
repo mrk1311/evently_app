@@ -359,6 +359,7 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
                                 type={item.properties.type}
                                 componentWidth={80}
                                 componentHeight={80}
+                                iconSize={28}
                             />
                         )}
 
@@ -525,7 +526,6 @@ const ListBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // paddingTop: 8,
     },
     headerContainer: {
         flexDirection: "column",

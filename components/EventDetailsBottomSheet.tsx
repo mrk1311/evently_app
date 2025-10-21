@@ -24,6 +24,7 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { supabase } from "@/utils/supabase";
 import { Link } from "expo-router";
 import EventPhotoPlaceholder from "./EventPlaceholder";
+import TextTicker from "react-native-text-ticker";
 
 interface BottomSheetProps {
     event: EventFeature | null;
@@ -108,9 +109,18 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                             title="map"
                             onPress={props.handleCancelDetails}
                         /> */}
-                        <Text style={styles.headerText}>
+                        <TextTicker
+                            style={styles.headerText}
+                            duration={6000}
+                            loop
+                            bounce
+                            repeatSpacer={50}
+                            marqueeDelay={1000}
+                        >
+                            {/* <Text style={styles.headerText}> */}
                             {props.event?.properties.name}
-                        </Text>
+                            {/* </Text> */}
+                        </TextTicker>
 
                         <View style={{ gap: 15, flexDirection: "row" }}>
                             <TouchableOpacity onPress={props.onCenterMap}>
@@ -183,6 +193,7 @@ const EventDetailsBottomSheet = forwardRef<Ref, BottomSheetProps>(
                                 type={props.event?.properties.type || null} // Fixing type issue
                                 componentWidth={200}
                                 componentHeight={200}
+                                iconSize={56}
                             />
                         )}
                         <View style={styles.infoContainer}>
@@ -246,6 +257,7 @@ const styles = StyleSheet.create({
         padding: 8,
         paddingLeft: 0,
         alignItems: "center",
+        width: "100%",
     },
     headerText: {
         fontSize: 20,

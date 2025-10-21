@@ -13,7 +13,7 @@ const getMarkerStyle = (type: string | null) => {
         conference: { color: "#00BCD4", icon: "users" },
         art: { color: "#FF9800", icon: "paint-brush" },
         theatre: { color: "#4CAF50", icon: "theater-masks" },
-        festival: { color: "#9C27B0", icon: "sun" },
+        festival: { color: "#9C27B0", icon: "icons" },
     };
 
     if (type && type in styles) {

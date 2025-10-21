@@ -2,7 +2,7 @@ import React, { FunctionComponent, memo, useCallback } from "react";
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import { Marker as MapsMarker } from "react-native-maps";
 import type { supercluster } from "react-native-clusterer";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { AntDesign, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import getMarkerStyle from "@/functions/getMarkerStyle";
 
@@ -83,17 +83,17 @@ const EventMarker: FunctionComponent<Props> = memo(
                         {hasFavoritesInCluster && (
                             <>
                                 <View style={styles.favoriteBadge}>
-                                    <FontAwesome5
+                                    <AntDesign
                                         name="heart"
                                         size={18}
                                         color="#d35050"
                                     />
                                 </View>
                                 <View style={styles.favoriteBadge}>
-                                    <FontAwesome5
+                                    <AntDesign
                                         name="hearto"
                                         size={18}
-                                        color="white"
+                                        color="black"
                                     />
                                 </View>
                             </>
@@ -122,17 +122,17 @@ const EventMarker: FunctionComponent<Props> = memo(
                                 {isFavorite && (
                                     <>
                                         <View style={styles.favoriteBadge}>
-                                            <FontAwesome5
+                                            <AntDesign
                                                 name="heart"
                                                 size={18}
                                                 color="#d35050"
                                             />
                                         </View>
                                         <View style={styles.favoriteBadge}>
-                                            <FontAwesome5
+                                            <AntDesign
                                                 name="hearto"
                                                 size={18}
-                                                color="white"
+                                                color="black"
                                             />
                                         </View>
                                     </>

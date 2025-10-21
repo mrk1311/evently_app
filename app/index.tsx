@@ -415,7 +415,7 @@ export default function map() {
         //             return -1;
         //         });
         // } else {
-        console.log("sorting events");
+        // console.log("sorting events");
         features = filteredEvents.features
             .map((feature) => {
                 // Ensure we're working with Point geometry
