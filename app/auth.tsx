@@ -98,7 +98,8 @@ export default function LoginScreen() {
 
             <KeyboardAvoidingView
                 style={styles.keyboardAvoidingContainer}
-                // behavior={Platform.OS === "ios" ? "padding" : "height"}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                keyboardVerticalOffset={60}
             >
                 <ScrollView
                     contentContainerStyle={styles.scrollContent}
@@ -123,10 +124,12 @@ export default function LoginScreen() {
                             autoCapitalize="none"
                             autoComplete="email"
                             keyboardType="email-address"
+                            textContentType="emailAddress"
                             returnKeyType="next"
                             onSubmitEditing={() =>
                                 passwordInputRef.current?.focus()
                             }
+                            autoCorrect={false}
                         />
                         {errors.email && (
                             <Text style={styles.errorText}>{errors.email}</Text>
@@ -144,6 +147,7 @@ export default function LoginScreen() {
                             onChangeText={setPassword}
                             autoComplete="password"
                             secureTextEntry
+                            textContentType="password"
                             returnKeyType="done"
                             onSubmitEditing={Keyboard.dismiss}
                         />

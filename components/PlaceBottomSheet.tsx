@@ -38,6 +38,7 @@ const PlaceBottomSheet = forwardRef<Ref, BottomSheetProps>((props, ref) => {
             <BottomSheetBackdrop
                 appearsOnIndex={0}
                 disappearsOnIndex={-1}
+                pressBehavior={"none"}
                 {...props}
             />
         ),

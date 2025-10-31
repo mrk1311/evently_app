@@ -32,7 +32,9 @@ export default function SignUpScreen() {
     // Password strength checker
     const checkPasswordStrength = (password: string) => {
         const strongRegex =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{8,}$/;
+            // removed special character requirement for now
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
         return strongRegex.test(password);
     };
 
@@ -59,7 +61,7 @@ export default function SignUpScreen() {
             newErrors.password = "Hasło musi mieć co najmniej 8 znaków";
         } else if (!checkPasswordStrength(password)) {
             newErrors.password =
-                "Hasło musi zawierać wielką literę, małą literę, cyfrę i znak specjalny";
+                "Hasło musi zawierać wielką literę, małą literę, cyfrę";
         }
 
         // Confirm password validation
@@ -72,7 +74,6 @@ export default function SignUpScreen() {
     };
 
     const handleSignUp = async () => {
-        // Inside handleSignUp function
         const { error } = await supabase.auth.signUp({
             email,
             password,
@@ -86,19 +87,20 @@ export default function SignUpScreen() {
         setLoading(true);
         setErrors({});
 
+        // user_already_exists and email_exists errors handling
         try {
             // Check if email already exists
-            const { data: userData, error: userError } = await supabase
-                .from("profiles")
-                .select("id")
-                .eq("email", email)
-                .single();
+            // const { data: userData, error: userError } = await supabase
+            //     .from("profiles")
+            //     .select("id")
+            //     .eq("email", email)
+            //     .single();
 
-            if (userData) {
-                setErrors({ email: "Email is already registered" });
-                setLoading(false);
-                return;
-            }
+            // if (userData) {
+            //     setErrors({ email: "Email is already registered" });
+            //     setLoading(false);
+            //     return;
+            // }
 
             // Create account
             const { error } = await supabase.auth.signUp({
@@ -106,14 +108,17 @@ export default function SignUpScreen() {
                 password,
             });
 
-            if (error) {
-                if (error.message.includes("already been registered")) {
-                    setErrors({ email: "Email is already registered" });
-                } else {
-                    setErrors({ server: error.message });
-                }
-                return;
-            }
+            // TODO when correct signup, there is an error: For security purposes, you can only request this after 59 seconds"
+            // double signup request?
+
+            // if (error) {
+            //     if (error.message.includes("already been registered")) {
+            //         setErrors({ email: "Email is already registered" });
+            //     } else {
+            //         setErrors({ server: error.message });
+            //     }
+            //     return;
+            // }
 
             // Show success message and navigate back
             setErrors({
@@ -157,6 +162,7 @@ export default function SignUpScreen() {
             <KeyboardAvoidingView
                 style={styles.keyboardAvoidingContainer}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
+                keyboardVerticalOffset={60}
             >
                 <ScrollView
                     contentContainerStyle={styles.scrollContent}
@@ -182,13 +188,15 @@ export default function SignUpScreen() {
                             placeholderTextColor={"#fff"}
                             value={email}
                             onChangeText={setEmail}
-                            autoCapitalize="none"
-                            autoComplete="email"
-                            keyboardType="email-address"
-                            returnKeyType="next"
-                            onSubmitEditing={() =>
-                                confirmEmailInputRef.current?.focus()
-                            }
+                            // autoCapitalize="none"
+                            // autoComplete="email"
+                            // keyboardType="email-address"
+                            // textContentType="emailAddress"
+                            // returnKeyType="next"
+                            // onSubmitEditing={() =>
+                            //     confirmEmailInputRef.current?.focus()
+                            // }
+                            // autoCorrect={false}
                         />
                         {errors.email && (
                             <Text style={styles.errorText}>{errors.email}</Text>
@@ -207,10 +215,12 @@ export default function SignUpScreen() {
                             autoCapitalize="none"
                             autoComplete="email"
                             keyboardType="email-address"
+                            textContentType="emailAddress"
                             returnKeyType="next"
                             onSubmitEditing={() =>
                                 passwordInputRef.current?.focus()
                             }
+                            autoCorrect={false}
                         />
                         {errors.confirmEmail && (
                             <Text style={styles.errorText}>
@@ -229,6 +239,7 @@ export default function SignUpScreen() {
                             value={password}
                             onChangeText={setPassword}
                             autoComplete="password"
+                            textContentType="newPassword"
                             secureTextEntry
                             returnKeyType="next"
                             onSubmitEditing={() =>
@@ -308,7 +319,7 @@ export default function SignUpScreen() {
                                 />
                                 <Text style={styles.ruleText}>Cyfrę</Text>
                             </View>
-                            <View style={styles.ruleItem}>
+                            {/* <View style={styles.ruleItem}>
                                 <Octicons
                                     name="dot-fill"
                                     size={24}
@@ -331,7 +342,7 @@ export default function SignUpScreen() {
                                 <Text style={styles.ruleText}>
                                     Znak specjalny
                                 </Text>
-                            </View>
+                            </View> */}
                         </View>
 
                         <TextInput
@@ -346,6 +357,7 @@ export default function SignUpScreen() {
                             onChangeText={setConfirmPassword}
                             autoComplete="password"
                             secureTextEntry
+                            textContentType="newPassword"
                             returnKeyType="done"
                             onSubmitEditing={Keyboard.dismiss}
                         />
