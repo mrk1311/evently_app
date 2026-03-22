@@ -6,10 +6,10 @@ Hi! I'm building this app with ambition to show events in a interactive map form
 Mobile application built with React Native for discovering cultural events on an interactive map.
 
 <p align=\"center\">
-    <img src=\"screenshots/scr1.png" width=\"250\" />
-    <img src=\"screenshots/scr1.png\" width=\"250\" />
-    <img src=\"screenshots/scr4.png\" width=\"250\" />
-    <img src=\"screenshots/scr2.png\" width=\"250\" />
+    <img src="screenshots/scr3.jpg" width="200" />
+    <img src="screenshots/scr1.jpg" width="200" />
+    <img src="screenshots/scr2.jpg" width="200" />
+    <img src="screenshots/scr4.jpg" width="200" />
 </p>
 
 ---
