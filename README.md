@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Hi! I'm building this app with ambition to show events in a interactive map format.
 # Event Map App
 Mobile application built with React Native for discovering cultural events on an interactive map.
