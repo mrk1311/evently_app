@@ -10,12 +10,14 @@ import {
     ScrollView,
     Platform,
     Keyboard,
+    Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useState, useRef } from "react";
 import { supabase } from "@/utils/supabase";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { useUser } from "@/hooks/useUser";
+import { set } from "lodash";
 
 export default function LoginScreen() {
     const router = useRouter();
@@ -51,23 +53,26 @@ export default function LoginScreen() {
         setLoading(true);
         setErrors({});
 
-        try {
-            const { error } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            });
+        // try {
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
 
-            if (error) {
-                setErrors({ server: error.message });
-                return;
-            }
-
-            router.back(); // Return to previous screen after successful login
-        } catch (err) {
-            setErrors({ server: "An unexpected error occurred" });
-        } finally {
-            setLoading(false);
+        if (error) {
+            // setErrors({ server: error.message });
+            Alert.alert("Błąd logowania", error.message);
+            return;
         }
+
+        setLoading(false);
+
+        router.back(); // Return to previous screen after successful login
+        // } catch (err) {
+        //     setErrors({ server: "An unexpected error occurred" });
+        // } finally {
+        //     setLoading(false);
+        // }
     };
 
     return (
