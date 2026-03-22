@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-Hi! I'm building this app with ambition to show events in a interactive map format.
-
 # Event Map App
 
 Mobile application built with React Native for discovering cultural events on an interactive map.
@@ -39,7 +36,7 @@ Although the project was discontinued due to lack of external funding, it demons
 
 ## Features
 
--   📍 Interactive map with event markers
+-   📍 Interactive map with clustering event markers
 -   🔍 Filtering by category and date
 -   📄 Event details screen
 -   📱 Mobile-first, responsive UI
